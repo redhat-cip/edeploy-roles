@@ -21,6 +21,7 @@
 MAKEFILE_DIR=$(shell pwd)
 SDIR=/srv/edeploy
 TOP=/var/lib/debootstrap
+ARCHIVE=/var/cache/edeploy-roles
 DVER=D7
 PVER=H
 REL=1.0.0
@@ -92,6 +93,11 @@ chef-server: $(INST)/chef-server.done
 $(INST)/chef-server.done: chef-server.install $(INST)/base.done
 	./chef-server.install $(INST)/base $(INST)/chef-server $(VERS)
 	touch $(INST)/chef-server.done
+
+$(INST)/base.done: $(ARCHIVE)/$(VERS)/base-$(VERS).edeploy
+	mkdir -p $(INST)/base
+	tar zxf $(ARCHIVE)/$(VERS)/base-$(VERS).edeploy -C $(INST)/base
+	touch $(INST)/base.done
 
 dist:
 	tar zcvf ../edeploy-roles.tgz Makefile README.rst *.install *.exclude
