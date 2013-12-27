@@ -94,7 +94,7 @@ $(INST)/chef-server.done: chef-server.install $(INST)/base.done
 	./chef-server.install $(INST)/base $(INST)/chef-server $(VERS)
 	touch $(INST)/chef-server.done
 
-$(INST)/base.done: $(ARCHIVE)/$(VERS)/base-$(VERS).edeploy
+$(INST)/base.done:
 	mkdir -p $(INST)/base
 	tar zxf $(ARCHIVE)/$(VERS)/base-$(VERS).edeploy -C $(INST)/base
 	touch $(INST)/base.done
