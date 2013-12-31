@@ -38,6 +38,10 @@ EOF
      cat > ${dir}/etc/apt/sources.list.d/mongodb.list <<EOF
 deb http://downloads-distro.mongodb.org/repo/debian-sysvinit dist 10gen
 EOF
+     do_chroot $dir apt-key adv --keyserver keyserver.ubuntu.com --recv 0x7ebfdd5d17ed316d
+     cat > ${dir}/etc/apt/sources.list.d/ceph.list <<EOF
+deb http://ceph.com/debian $DIST main
+EOF
     ;;
     "Ubuntu")
      do_chroot $dir apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
@@ -47,6 +51,10 @@ EOF
      do_chroot $dir apt-key adv --keyserver keyserver.ubuntu.com --recv 7F0CEB10
      cat > ${dir}/etc/apt/sources.list.d/mongodb.list <<EOF
 deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen
+EOF
+     do_chroot $dir apt-key adv --keyserver keyserver.ubuntu.com --recv 0x7ebfdd5d17ed316d
+     cat > ${dir}/etc/apt/sources.list.d/ceph.list <<EOF
+deb http://ceph.com/debian $DIST main
 EOF
     ;;
     "CentOS"|"RedHatEnterpriseServer")
@@ -143,6 +151,7 @@ packages=(
         ceilometer-api \
         ceilometer-collector \
         ceph \
+        ceph-mds \
         euca2ools \
         galera \
         glance \
@@ -179,6 +188,7 @@ packages=(
         pacemaker \
         pm-utils \
         rabbitmq-server \
+        radosgw \
         rsync \
         ruby-activerecord \
         ruby-sqlite3 \
