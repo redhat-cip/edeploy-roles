@@ -240,12 +240,10 @@ case "$OS" in
     "CentOS"|"RedHatEnterpriseServer")
         add_puppet_repository $DIST $dir
         install_packages $dir puppetdb
-        remove_puppet_repository $DIST $dir
 
         # We want to use rabbitmq on Redhat instead of QPID
         add_epel_repository $DIST $dir
         install_packages_disabled $dir rabbitmq-server
-        remove_epel_repository $DIST $dir
 
         install_packages_disabled $dir ${packages[$(package_type)]}
 
