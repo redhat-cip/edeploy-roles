@@ -39,7 +39,7 @@ setup_puppet_rpm() {
     local dir=$1
     add_puppet_repository $DIST $dir
     install_packages $dir puppet
-    remove_puppet_repository $DIST $dir
+    remove_puppet_repository $dir
 }
 
 prepare_packages () {
