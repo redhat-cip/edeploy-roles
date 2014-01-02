@@ -136,6 +136,7 @@ packages=(
         galera \
         glance \
         $headers \
+        haproxy \
         heat-api \
         heat-api-cfn \
         heat-api-cloudwatch \
@@ -184,6 +185,7 @@ packages=(
 
     ["rpm"]="
         ceph \
+        haproxy \
         httpd \
         MariaDB-client \
         MariaDB-server \
