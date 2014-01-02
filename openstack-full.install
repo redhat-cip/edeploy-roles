@@ -188,7 +188,6 @@ packages=(
         pacemaker \
         pm-utils \
         rabbitmq-server \
-        radosgw \
         rsync \
         ruby-activerecord \
         ruby-sqlite3 \
