@@ -70,7 +70,10 @@ EOF
             setup_puppet_rpm $dir
 
             # Redhat is using a channel to get openstack
-            add_rhn_channel $dir rhel-x86_64-server-6-ost-4
+#            add_rhn_channel $dir rhel-x86_64-server-6-ost-4
+
+            # cloud-init is in Red Hat Common for RHEL Server (v. 6)
+            add_rhn_channel $dir rhel-x86_64-server-rh-common-6
          ;;
 
         *)

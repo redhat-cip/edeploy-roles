@@ -109,18 +109,21 @@ gpgcheck=1
 type=rpm-md
 gpgkey=https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc
 
-[ceph-extras-noarch]
-name=Ceph Extras noarch
-baseurl=http://ceph.com/packages/ceph-extras/rpm/{distro}/noarch
+            cat > ${dir}/etc/yum.repos.d/osp4.repo <<EOF
+[rh6]
+name=RH6 mirror
+baseurl=http://os-ci-admin.ring.enovance.com/distrib/rhel6s-x86_64/RPMS.all
+gpgcheck=0
 enabled=1
 priority=2
 gpgcheck=1
 type=rpm-md
 gpgkey=https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc
 
-[ceph-extras-source]
-name=Ceph Extras Sources
-baseurl=http://ceph.com/packages/ceph-extras/rpm/c{distro}/SRPMS
+[rh6-osp4]
+name=RH6 mirror
+baseurl=http://os-ci-admin.ring.enovance.com/distrib/rhel6s-x86_64/RPMS.openstack4
+gpgcheck=0
 enabled=1
 priority=2
 gpgcheck=1
@@ -243,9 +246,13 @@ packages=(
 
 # As the openstack repository is part of the rhn, we need to register it again
 # edeploy does unregister from rhn between roles at build time
-if [ "$OS" = "RedHatEnterpriseServer" ]; then
-    add_rhn_channel $dir rhel-x86_64-server-6-ost-4
-fi
+#if [ "$OS" = "RedHatEnterpriseServer" ]; then
+#    add_rhn_channel $dir rhel-x86_64-server-6-ost-4
+#fi
+
+
+# xfsprogs is in Red Hat Common for RHEL Server (v. 6)
+add_rhn_channel $dir rhel-x86_64-server-sfs-6
 
 update_repositories $dir
 
