@@ -76,38 +76,22 @@ gpgcheck=0
 enabled=1
 EOF
             cat > ${dir}/etc/yum.repos.d/ceph.repo <<EOF
+[ceph-noarch]
+name=Ceph packages for $basearch
+baseurl=http://ceph.com/rpm/el6/noarch/
+enabled=1
+gpgcheck=1
+type=rpm-md
+gpgkey=https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc
+
 [ceph]
 name=Ceph packages for $basearch
-baseurl=http://ceph.com/rpm-{ceph-release}/{distro}/$basearch
+baseurl=http://ceph.com/rpm/el6/x86_64/
 enabled=1
 gpgcheck=1
 type=rpm-md
 gpgkey=https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc
-
-[ceph-noarch]
-name=Ceph noarch packages
-baseurl=http://ceph.com/rpm-{ceph-release}/{distro}/noarch
-enabled=1
-gpgcheck=1
-type=rpm-md
-gpgkey=https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc
-
-[ceph-source]
-name=Ceph source packages
-baseurl=http://ceph.com/rpm-{ceph-release}/{distro}/SRPMS
-enabled=0
-gpgcheck=1
-type=rpm-md
-gpgkey=https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc
-
-[ceph-extras]
-name=Ceph Extras Packages
-baseurl=http://ceph.com/packages/ceph-extras/rpm/{distro}/$basearch
-enabled=1
-priority=2
-gpgcheck=1
-type=rpm-md
-gpgkey=https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc
+EOF
 
             cat > ${dir}/etc/yum.repos.d/osp4.repo <<EOF
 [rh6]
@@ -115,21 +99,14 @@ name=RH6 mirror
 baseurl=http://os-ci-admin.ring.enovance.com/distrib/rhel6s-x86_64/RPMS.all
 gpgcheck=0
 enabled=1
-priority=2
-gpgcheck=1
-type=rpm-md
-gpgkey=https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc
 
 [rh6-osp4]
 name=RH6 mirror
 baseurl=http://os-ci-admin.ring.enovance.com/distrib/rhel6s-x86_64/RPMS.openstack4
 gpgcheck=0
 enabled=1
-priority=2
-gpgcheck=1
-type=rpm-md
-gpgkey=https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc
 EOF
+
       fi
       ;;
     *)
