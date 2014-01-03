@@ -241,7 +241,6 @@ case "$OS" in
         install_packages_disabled $dir ${packages[$(package_type)]}
     ;;
     "CentOS"|"RedHatEnterpriseServer")
-        add_puppet_repository $DIST $dir
 
         install_packages $dir puppetdb
 
