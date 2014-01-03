@@ -141,6 +141,7 @@ packages=(
         heat-api-cfn \
         heat-api-cloudwatch \
         heat-engine \
+        keepalived \
         keystone \
         libdbd-mysql-perl \
         mariadb-client \
