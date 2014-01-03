@@ -149,7 +149,7 @@ cloud_final_modules:
 EOF
 }
 
-add_epel_repository $DIST $dir
+add_epel_repository $dir
 install_puppet
 configure_cloudinit
-remove_epel_repository $DIST $dir
+remove_epel_repository $dir

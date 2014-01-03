@@ -246,7 +246,7 @@ case "$OS" in
         install_packages $dir puppetdb
 
         # We want to use rabbitmq on Redhat instead of QPID
-        add_epel_repository $DIST $dir
+        add_epel_repository $dir
         install_packages_disabled $dir rabbitmq-server
 
         install_packages_disabled $dir ${packages[$(package_type)]}
