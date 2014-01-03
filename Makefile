@@ -40,7 +40,7 @@ export CURRENT_TARGET
 INST=$(TOP)/install/$(VERS)
 META=$(TOP)/metadata/$(VERS)
 
-ROLES = cloud devstack openstack-common openstack-full mysql ceph puppet-master
+ROLES = $(patsubst %.install,%,$(wildcard *.install))
 
 all: $(ROLES)
 
@@ -108,8 +108,10 @@ clean:
 distclean: clean
 	-rm -rf $(INST)/*
 
+list:
+	@echo "$(ROLES)"
+
 version:
 	@echo "$(VERS)"
 
-.PHONY: cloud devstack openstack-common openstack-full mysql ceph docker puppet-master\
-	chef-server dist clean distclean version
+.PHONY: $(ROLES) dist clean distclean version
