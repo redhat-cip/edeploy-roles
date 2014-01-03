@@ -260,6 +260,7 @@ case "$OS" in
         add_epel_repository $dir
 
         install_packages_disabled $dir ${packages[$(package_type)]}
+        install_packages_disabled $dir ${packages[$(package_type)]}
 
         do_chroot $dir chkconfig puppet on
 
