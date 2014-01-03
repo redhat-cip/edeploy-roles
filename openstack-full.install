@@ -185,10 +185,11 @@ packages=(
 
     ["rpm"]="
         ceph \
+        galera \
         haproxy \
         httpd \
         MariaDB-client \
-        MariaDB-server \
+        MariaDB-Galera-server \
         memcached \
         mongo-10gen \
         mongo-10gen-server \
@@ -242,7 +243,6 @@ case "$OS" in
     "CentOS"|"RedHatEnterpriseServer")
         add_puppet_repository $DIST $dir
 
-        install_packages $dir https://launchpad.net/galera/3.x/25.3.2/+download/galera-25.3.2-1.rhel6.x86_64.rpm
         install_packages $dir puppetdb
 
         # We want to use rabbitmq on Redhat instead of QPID
