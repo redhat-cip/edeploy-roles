@@ -94,6 +94,7 @@ case "$OS" in
           install_packages $dir "cloud-init"
        fi
        ;;
+       add_epel_repository $dir
     *)
         fatal_error "OS ($OS) or Release ($RELEASE) not supported"
     ;;
@@ -149,7 +150,6 @@ cloud_final_modules:
 EOF
 }
 
-add_epel_repository $dir
 install_puppet
 configure_cloudinit
 remove_epel_repository $dir
