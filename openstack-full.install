@@ -222,6 +222,7 @@ packages=(
         openstack-swift-object \
         openstack-swift-proxy \
         python-cinderclient \
+        rabbitmq-server \
         rsync \
         xfsprogs \
         xinetd"
@@ -257,7 +258,6 @@ case "$OS" in
 
         # We want to use rabbitmq on Redhat instead of QPID
         add_epel_repository $dir
-        install_packages_disabled $dir rabbitmq-server
 
         install_packages_disabled $dir ${packages[$(package_type)]}
 
