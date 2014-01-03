@@ -188,6 +188,7 @@ packages=(
         galera \
         haproxy \
         httpd \
+        keepalived \
         MariaDB-client \
         MariaDB-Galera-server \
         memcached \
