@@ -65,6 +65,7 @@ EOF
 [mariadb]
 name = MariaDB
 baseurl = http://yum.mariadb.org/5.5/rhel6-amd64
+          http://os-ci-admin.ring.enovance.com/distrib/mariadb/rhel6-amd64
 gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
 gpgcheck=1
 EOF
