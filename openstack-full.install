@@ -193,6 +193,7 @@ packages=(
         keepalived \
         MariaDB-client \
         MariaDB-Galera-server \
+        MySQL-python \
         memcached \
         mongo-10gen \
         mongo-10gen-server \
