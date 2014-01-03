@@ -258,6 +258,8 @@ case "$OS" in
         install_packages_disabled $dir ${packages[$(package_type)]}
 
         do_chroot $dir chkconfig puppet on
+
+        rpm -qv ${packages[$(package_type)]} || fatal_error "Some packages are not installed"
     ;;
     *)
     fatal_error "OS or Release not supported"
