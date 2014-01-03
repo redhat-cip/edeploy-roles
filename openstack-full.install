@@ -222,7 +222,6 @@ packages=(
         openstack-swift-object \
         openstack-swift-proxy \
         python-cinderclient \
-        qemu-kvm \
         rsync \
         xfsprogs \
         xinetd"
@@ -248,7 +247,14 @@ case "$OS" in
         # haproxy is in RHEL Server Load Balancer (v. 6 for 64-bit x86_64)
         add_rhn_channel $dir rhel-x86_64-server-lb-6
 
-    ;;
+        # qemu-kvm-rhev provides a kvm that supersedes the standard qemu-kvm.
+        # This package is not yet available in CentOS. So we have to take care
+        # of that.
+        install_packages $dir qemu-kvm-rhev
+    ;& # → means "continue"
+    "CentOS")
+        install_packages $dir qemu-kvm
+    ;&
     "CentOS"|"RedHatEnterpriseServer")
 
         install_packages $dir puppetdb
