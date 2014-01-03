@@ -93,8 +93,8 @@ case "$OS" in
        if [ "$(get_redhat_major_version $CODENAME)" == "6" ]; then
           install_packages $dir "cloud-init"
        fi
-       ;;
        add_epel_repository $dir
+       ;;
     *)
         fatal_error "OS ($OS) or Release ($RELEASE) not supported"
     ;;
