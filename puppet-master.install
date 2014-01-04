@@ -89,6 +89,10 @@ case "$OS" in
         do_chroot ${dir} apt-get -f install -y -o Dpkg::Options::="--force-confold"
         do_chroot ${dir} rm cloud-init_0.7.3-0ubuntu2_all.deb python-json-patch_1.0-2_all.deb python-json-pointer_1.0-1ubuntu2_all.deb
         ;;
+    "RedHatEnterpriseServer")
+        # cloud-init is in Red Hat Common for RHEL Server (v. 6)
+        add_rhn_channel $dir rhel-x86_64-server-rh-common-6
+    ;&
     "CentOS"|"RedHatEnterpriseServer")
        if [ "$(get_redhat_major_version $CODENAME)" == "6" ]; then
           install_packages $dir "cloud-init"
