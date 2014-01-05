@@ -187,6 +187,7 @@ packages=(
 
     ["rpm"]="
         ceph \
+        corosync \
         galera \
         haproxy \
         httpd \
