@@ -221,6 +221,7 @@ packages=(
         openstack-swift-container \
         openstack-swift-object \
         openstack-swift-proxy \
+        pacemaker \
         python-cinderclient \
         rabbitmq-server \
         rsync \
