@@ -57,7 +57,7 @@ case "$OS" in
     "CentOS"|"RedHatEnterpriseServer")
         if [ "$(get_redhat_major_version $CODENAME)" == "6" ]; then
             add_puppet_repository $DIST $dir
-            install_packages $dir puppet-server mysql-server git augeas
+            install_packages $dir puppet-server mysql-server git augeas rubygem-activesupport ruby-mysql
             remove_puppet_repository $dir
         fi
    ;;
