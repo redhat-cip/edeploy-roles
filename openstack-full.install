@@ -203,6 +203,7 @@ packages=(
         openstack-ceilometer-api \
         openstack-ceilometer-collector \
         openstack-ceilometer-compute \
+        openstack-ceilometer-alarm \
         openstack-dashboard \
         openstack-glance \
         openstack-heat-api \
