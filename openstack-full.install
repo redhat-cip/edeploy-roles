@@ -159,6 +159,7 @@ packages=(
         neutron-lbaas-agent \
         neutron-metadata-agent \
         nova-api \
+        nova-cert \
         nova-conductor \
         nova-consoleauth \
         nova-consoleproxy \
@@ -212,6 +213,8 @@ packages=(
         openstack-heat-engine \
         openstack-keystone \
         openstack-nova-api \
+        openstack-nova-cert \
+        openstack-nova-compute \
         openstack-nova-conductor \
         openstack-nova-console \
         openstack-nova-scheduler \
