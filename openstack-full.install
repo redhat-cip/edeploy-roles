@@ -199,6 +199,7 @@ packages=(
         memcached \
         mongo-10gen \
         mongo-10gen-server \
+        novnc \
         ntp \
         openstack-ceilometer-central \
         openstack-ceilometer-api \
@@ -217,6 +218,7 @@ packages=(
         openstack-nova-compute \
         openstack-nova-conductor \
         openstack-nova-console \
+        openstack-nova-novncproxy \
         openstack-nova-scheduler \
         openstack-neutron \
         openstack-neutron-openvswitch \
