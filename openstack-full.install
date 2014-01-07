@@ -229,6 +229,7 @@ packages=(
         pacemaker \
         python-cinderclient \
         python-kombu \
+        python-memcached \
         rabbitmq-server \
         rsync \
         xfsprogs \
