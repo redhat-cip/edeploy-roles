@@ -228,6 +228,7 @@ packages=(
         openstack-swift-proxy \
         pacemaker \
         python-cinderclient \
+        python-kombu \
         rabbitmq-server \
         rsync \
         xfsprogs \
