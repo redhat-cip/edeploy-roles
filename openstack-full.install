@@ -133,6 +133,10 @@ packages=(
         ceilometer-collector \
         ceph \
         ceph-mds \
+        cinder-api \
+        cinder-backup \
+        cinder-scheduler \
+        cinder-volume \
         euca2ools \
         galera \
         glance \
@@ -206,6 +210,7 @@ packages=(
         openstack-ceilometer-collector \
         openstack-ceilometer-compute \
         openstack-ceilometer-alarm \
+        openstack-cinder \
         openstack-dashboard \
         openstack-glance \
         openstack-heat-api \
