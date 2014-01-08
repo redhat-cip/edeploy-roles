@@ -28,6 +28,7 @@ REL=1.0.0
 VERSION:=$(PVER).$(REL)
 VERS=$(DVER)-$(VERSION)
 DIST=wheezy
+BASE=base
 
 ARCH=amd64
 export PATH := /sbin:/bin::$(PATH)
@@ -40,61 +41,20 @@ export CURRENT_TARGET
 INST=$(TOP)/install/$(VERS)
 META=$(TOP)/metadata/$(VERS)
 
-ROLES = cloud devstack openstack-common openstack-full mysql ceph puppet-master
+ROLES = $(patsubst %.install,%,$(wildcard *.install))
+RDONE = $(patsubst %.install,$(INST)/%.done,$(wildcard *.install))
+RBASE = $(patsubst %.install,$(INST)/%.base,$(wildcard *.install))
 
-all: $(ROLES)
+$(ROLES): $(INST)/$(MAKECMDGOALS).done
+$(RDONE): $(MAKECMDGOALS).install $(INST)/$(BASE).base
+	./$(MAKECMDGOALS).install $(INST)/$(BASE) $(INST)/$(MAKECMDGOALS) $(VERS)
+	touch $(INST)/$(MAKECMDGOALS).done
 
-#sample: $(INST)/sample.done
-#$(INST)/sample.done: sample.install $(INST)/base.done
-#	./sample.install $(INST)/base $(INST)/sample $(VERS)
-#	touch $(INST)/sample.done
+$(RBASE): $(BASE).install $(INST)/base.base
+	./$(BASE).install $(INST)/base $(INST)/$(BASE) $(VERS)
+	touch $(INST)/$(BASE).done
 
-cloud: $(INST)/cloud.done
-$(INST)/cloud.done: cloud.install $(INST)/base.done
-	./cloud.install $(INST)/base $(INST)/cloud $(VERS)
-	touch $(INST)/cloud.done
-
-devstack: $(INST)/devstack.done
-$(INST)/devstack.done: devstack.install $(INST)/cloud.done
-	./devstack.install $(INST)/cloud $(INST)/devstack $(DIST) $(VERS)
-	touch $(INST)/devstack.done
-
-openstack-common: $(INST)/openstack-common.done
-$(INST)/openstack-common.done: openstack-common.install $(INST)/base.done
-	./openstack-common.install $(INST)/base $(INST)/openstack-common $(VERS)
-	touch $(INST)/openstack-common.done
-
-openstack-full: $(INST)/openstack-full.done
-$(INST)/openstack-full.done: openstack-full.install $(INST)/openstack-common.done
-	./openstack-full.install $(INST)/openstack-common $(INST)/openstack-full $(VERS)
-	touch $(INST)/openstack-full.done
-
-mysql: $(INST)/mysql.done
-$(INST)/mysql.done: mysql.install $(INST)/base.done
-	./mysql.install $(INST)/base $(INST)/mysql $(VERS)
-	touch $(INST)/mysql.done
-
-ceph: $(INST)/ceph.done
-$(INST)/ceph.done: ceph.install $(INST)/base.done
-	./ceph.install $(INST)/base $(INST)/ceph $(VERS)
-	touch $(INST)/ceph.done
-
-docker: $(INST)/docker.done
-$(INST)/docker.done: docker.install $(INST)/base.done
-	./docker.install $(INST)/base $(INST)/docker $(VERS)
-	touch $(INST)/docker.done
-
-puppet-master: $(INST)/puppet-master.done
-$(INST)/puppet-master.done: puppet-master.install $(INST)/base.done
-	./puppet-master.install $(INST)/base $(INST)/puppet-master $(VERS)
-	touch $(INST)/puppet-master.done
-
-chef-server: $(INST)/chef-server.done
-$(INST)/chef-server.done: chef-server.install $(INST)/base.done
-	./chef-server.install $(INST)/base $(INST)/chef-server $(VERS)
-	touch $(INST)/chef-server.done
-
-$(INST)/base.done:
+$(INST)/base.base:
 	mkdir -p $(INST)/base
 	tar zxf $(ARCHIVE)/$(VERS)/base-$(VERS).edeploy -C $(INST)/base
 	touch $(INST)/base.done
@@ -108,8 +68,10 @@ clean:
 distclean: clean
 	-rm -rf $(INST)/*
 
+list:
+	@echo "$(ROLES)"
+
 version:
 	@echo "$(VERS)"
 
-.PHONY: cloud devstack openstack-common openstack-full mysql ceph docker puppet-master\
-	chef-server dist clean distclean version
+.PHONY: $(ROLES) dist clean distclean version
