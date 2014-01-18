@@ -252,6 +252,9 @@ packages=(
 update_repositories $dir
 
 case "$OS" in
+    "Debian")
+        do_chroot $dir apt-get install -y -t wheezy-backports qemu-kvm nova-compute-kvm
+    ;&
     "Debian"|"Ubuntu")
         install_packages_disabled $dir ${packages[$(package_type)]}
     ;;
