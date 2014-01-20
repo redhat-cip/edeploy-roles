@@ -131,6 +131,7 @@ cloud_init_modules:
  - rsyslog
  - ssh
  - users-groups
+ - write-files
 
 cloud_config_modules:
  - mounts
