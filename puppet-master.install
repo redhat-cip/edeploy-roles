@@ -52,13 +52,11 @@ EOF
 	    PACKAGES="puppetmaster puppetmaster-passenger puppet augeas-tools git ntp puppetdb puppetdb-terminus"
 	    install_packages $dir $PACKAGES
 	    do_chroot ${dir} a2dissite puppetmaster
-	    do_chroot ${dir} service apache2 reload
-	    do_chroot ${dir} service puppetmaster restart
 	    ;;
 	"CentOS"|"RedHatEnterpriseServer")
 	    if [ "$(get_redhat_major_version $CODENAME)" == "6" ]; then
 		add_puppet_repository $DIST $dir
-		install_packages $dir puppet-server git augeas puppetdb puppetdb-terminus
+		install_packages $dir puppet-server git augeas ntp httpd puppetdb puppetdb-terminus
 		remove_puppet_repository $dir
 	    fi
 	    ;;
@@ -67,7 +65,7 @@ EOF
 	    ;;
     esac
 
-    do_chroot ${dir} rm -rf /var/lib/puppet/ssl/* || true
+    do_chroot ${dir} rm -rf /var/lib/puppet/ssl/* || :
 }
 
 install_puppet
