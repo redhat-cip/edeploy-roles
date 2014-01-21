@@ -165,6 +165,7 @@ packages=(
         neutron-metadata-agent \
         neutron-plugin-openvswitch \
         neutron-plugin-openvswitch-agent \
+        neutron-plugin-linuxbridge-agent \
         neutron-server \
         neutron-lbaas-agent \
         neutron-metadata-agent \
