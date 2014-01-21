@@ -26,35 +26,55 @@ ORIG=$(cd $(dirname $0); pwd)
 
 . ${ORIG}/functions
 
-if [ "$(package_type)" = "rpm" ]; then
-    fatal_error "rpm based distro are not yet supported in this role"
-fi
-
 install_ib_if_needed $ORIG $dir
 
-if [ "$RELEASE" = "wheezy" ]; then
-    # for cloud-init
-    repository=$(add_main_repository $DIST)
-    cat > ${dir}/etc/apt/sources.list.d/backport.list <<EOF
-deb $repository wheezy-backports main
+configure_cloudinit () {
+
+    mkdir -p ${dir}/etc/cloud/cloud.cfg.d
+    rm -f ${dir}/etc/cloud/cloud.cfg
+
+    case "$OS" in
+	"Debian")
+	    local repository=$(add_main_repository $DIST)
+	    cat > ${dir}/etc/apt/sources.list.d/$RELEASE-backport.list <<EOF
+deb $repository ${RELEASE}-backports main
 EOF
-fi
+            update_repositories $dir
+	    install_packages ${dir} "cloud-init"
+	    ;;
+	"Ubuntu")
+            update_repositories $dir
+	    # Todo(EmilienM): Move cloud-init into backports repo to have last release properly
+	    do_chroot ${dir} wget --no-verbose http://security.ubuntu.com/ubuntu/pool/main/c/cloud-init/cloud-init_0.7.3-0ubuntu2_all.deb
+	    do_chroot ${dir} wget --no-verbose http://security.ubuntu.com/ubuntu/pool/main/p/python-json-patch/python-json-patch_1.0-2_all.deb
+	    do_chroot ${dir} wget --no-verbose http://security.ubuntu.com/ubuntu/pool/main/p/python-json-pointer/python-json-pointer_1.0-1ubuntu2_all.deb
+	    do_chroot ${dir} dpkg -i cloud-init_0.7.3-0ubuntu2_all.deb  || true
+	    do_chroot ${dir} dpkg -i python-json-patch_1.0-2_all.deb  || true
+	    do_chroot ${dir} dpkg -i python-json-pointer_1.0-1ubuntu2_all.deb  || true
+	    do_chroot ${dir} apt-get -f install -y -o Dpkg::Options::="--force-confold"
+	    do_chroot ${dir} rm cloud-init_0.7.3-0ubuntu2_all.deb python-json-patch_1.0-2_all.deb python-json-pointer_1.0-1ubuntu2_all.deb
+	    ;;
+	"RedHatEnterpriseServer")
+	    # cloud-init is in Red Hat Common for RHEL Server (v. 6)
+	    add_rhn_channel $dir rhel-x86_64-server-rh-common-6
+	    ;&
+	"CentOS"|"RedHatEnterpriseServer")
+	    add_epel_repository $dir
+	    if [ "$(get_redhat_major_version $CODENAME)" == "6" ]; then
+		install_packages $dir "cloud-init"
+	    fi
+	    remove_epel_repository $dir
+	    ;;
+	*)
+	    fatal_error "OS ($OS) or Release ($RELEASE) not supported"
+	    ;;
+    esac
 
-rm -f ${dir}/etc/cloud/cloud.cfg
-
-PACKAGES="cloud-init"
-update_repositories $dir
-install_packages $dir "$PACKAGES"
-clear_packages_cache $dir
-
-mkdir -p ${dir}/etc/cloud/cloud.cfg.d
-
-cat > ${dir}/etc/cloud/cloud.cfg.d/90_dpkg.cfg << EOF
-# to update this file, run dpkg-reconfigure cloud-init
+    cat > ${dir}/etc/cloud/cloud.cfg.d/90_dpkg.cfg << EOF
 datasource_list: [ NoCloud ]
 EOF
 
-cat > ${dir}/etc/cloud/cloud.cfg <<EOF
+    cat > ${dir}/etc/cloud/cloud.cfg <<EOF
 user: root
 disable_root: 0
 preserve_hostname: False
@@ -99,9 +119,12 @@ cloud_final_modules:
  - phone-home
  - final-message
 EOF
+}
 
 # invalidate root password
 do_chroot ${dir} usermod -L root
 
 # ssh key gen is being taken care by cloud-init
 rm -f ${dir}/etc/first-boot.d/01-ssh
+
+configure_cloudinit

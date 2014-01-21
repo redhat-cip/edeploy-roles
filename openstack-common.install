@@ -82,110 +82,28 @@ EOF
 esac
 }
 
-configure_cloudinit () {
-mkdir -p ${dir}/etc/cloud/cloud.cfg.d
-rm -f ${dir}/etc/cloud/cloud.cfg
-
-case "$OS" in
-    "Debian")
-        local packages="-t $RELEASE-backports cloud-init"
-        install_packages $dir "$packages"
-        ;;
-    "Ubuntu")
-        # Todo(EmilienM): Move cloud-init into backports repo to have last release properly
-        do_chroot ${dir} wget --no-verbose http://security.ubuntu.com/ubuntu/pool/main/c/cloud-init/cloud-init_0.7.3-0ubuntu2_all.deb
-        do_chroot ${dir} wget --no-verbose http://security.ubuntu.com/ubuntu/pool/main/p/python-json-patch/python-json-patch_1.0-2_all.deb
-        do_chroot ${dir} wget --no-verbose http://security.ubuntu.com/ubuntu/pool/main/p/python-json-pointer/python-json-pointer_1.0-1ubuntu2_all.deb
-        do_chroot ${dir} dpkg -i cloud-init_0.7.3-0ubuntu2_all.deb  || true
-        do_chroot ${dir} dpkg -i python-json-patch_1.0-2_all.deb  || true
-        do_chroot ${dir} dpkg -i python-json-pointer_1.0-1ubuntu2_all.deb  || true
-        do_chroot ${dir} apt-get -f install -y -o Dpkg::Options::="--force-confold"
-        do_chroot ${dir} rm cloud-init_0.7.3-0ubuntu2_all.deb python-json-patch_1.0-2_all.deb python-json-pointer_1.0-1ubuntu2_all.deb
-        ;;
-     "CentOS"|"RedHatEnterpriseServer")
-        if [ "$(get_redhat_major_version $CODENAME)" == "6" ]; then
-          install_packages $dir "cloud-init"
-        fi
-        ;;
-     *)
-        fatal_error "OS ($OS) or Release ($RELEASE) not supported"
-        ;;
-esac
-
-cat > ${dir}/etc/cloud/cloud.cfg.d/90_dpkg.cfg << EOF
-datasource_list: [ NoCloud ]
-EOF
-
-cat > ${dir}/etc/cloud/cloud.cfg <<EOF
-user: root
-disable_root: 0
-preserve_hostname: False
-
-cloud_init_modules:
- - bootcmd
- - resizefs
- - set_hostname
- - update_hostname
- - update_etc_hosts
- - ca-certs
- - rsyslog
- - ssh
- - users-groups
- - write-files
-
-cloud_config_modules:
- - mounts
- - ssh-import-id
- - locale
- - set-passwords
- - grub-dpkg
- - apt-pipelining
- - apt-update-upgrade
- - landscape
- - timezone
- - puppet
- - chef
- - salt-minion
- - mcollective
- - disable-ec2-metadata
- - runcmd
- - byobu
-
-cloud_final_modules:
- - rightscale_userdata
- - scripts-per-once
- - scripts-per-boot
- - scripts-per-instance
- - scripts-user
- - keys-to-console
- - phone-home
- - final-message
-EOF
-}
-
 os_install_packages () {
-update_repositories $dir
+    update_repositories $dir
 
-case $OS in
-    "Debian" | "Ubuntu")
-        packages="puppet augeas-tools openssh-server wget iptables build-essential ntpdate"
-        install_packages $dir "$packages"
-        do_chroot ${dir} sed -e 's/START=yes/START=no/' -i /etc/default/puppet
-    ;;
-    "CentOS"|"RedHatEnterpriseServer")
-       if [ "$(get_redhat_major_version $CODENAME)" == "6" ]; then
-           packages="augeas openssh-server wget ntpdate"
-           install_packages $dir "$packages"
-       fi
-       ;;
-    *)
-        fatal_error "OS ($OS) or Release ($RELEASE) not supported"
-        ;;
-esac
+    case $OS in
+	"Debian" | "Ubuntu")
+	    packages="puppet augeas-tools openssh-server wget iptables build-essential ntpdate"
+	    install_packages $dir "$packages"
+	    do_chroot ${dir} sed -e 's/START=yes/START=no/' -i /etc/default/puppet
+	    ;;
+	"CentOS"|"RedHatEnterpriseServer")
+	    if [ "$(get_redhat_major_version $CODENAME)" == "6" ]; then
+		packages="augeas openssh-server wget ntpdate"
+		install_packages $dir "$packages"
+	    fi
+	    ;;
+	*)
+	    fatal_error "OS ($OS) or Release ($RELEASE) not supported"
+	    ;;
+    esac
 
-do_chroot ${dir} rm -rf /var/lib/puppet/ssl/* || true
+    do_chroot ${dir} rm -rf /var/lib/puppet/ssl/* || true
 }
 
 prepare_packages
 os_install_packages
-configure_cloudinit

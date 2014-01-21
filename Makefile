@@ -60,8 +60,8 @@ $(INST)/devstack.done: devstack.install $(INST)/cloud.done
 	touch $(INST)/devstack.done
 
 openstack-common: $(INST)/openstack-common.done
-$(INST)/openstack-common.done: openstack-common.install $(INST)/base.done
-	./openstack-common.install $(INST)/base $(INST)/openstack-common $(VERS)
+$(INST)/openstack-common.done: openstack-common.install $(INST)/cloud.done
+	./openstack-common.install $(INST)/cloud $(INST)/openstack-common $(VERS)
 	touch $(INST)/openstack-common.done
 
 openstack-full: $(INST)/openstack-full.done
@@ -85,8 +85,8 @@ $(INST)/docker.done: docker.install $(INST)/base.done
 	touch $(INST)/docker.done
 
 puppet-master: $(INST)/puppet-master.done
-$(INST)/puppet-master.done: puppet-master.install $(INST)/base.done
-	./puppet-master.install $(INST)/base $(INST)/puppet-master $(VERS)
+$(INST)/puppet-master.done: puppet-master.install $(INST)/cloud.done
+	./puppet-master.install $(INST)/cloud $(INST)/puppet-master $(VERS)
 	touch $(INST)/puppet-master.done
 
 chef-server: $(INST)/chef-server.done
