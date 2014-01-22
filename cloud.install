@@ -63,7 +63,7 @@ EOF
 	    if [ "$(get_redhat_major_version $CODENAME)" == "6" ]; then
 		install_packages $dir "cloud-init"
 	    fi
-	    remove_epel_repository $dir
+	    remove_epel_repository $DIST $dir
 	    ;;
 	*)
 	    fatal_error "OS ($OS) or Release ($RELEASE) not supported"
