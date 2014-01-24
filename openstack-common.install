@@ -53,7 +53,7 @@ prepare_packages () {
             cat > ${dir}/etc/apt/sources.list.d/$RELEASE-backport.list <<EOF
 deb $repository ${RELEASE}-backports main
 EOF
-            get_openstack_repository $DIST $OS_VERS > ${dir}/etc/apt/sources.list.d/openstack-$RELEASE-$OS-VERS.list
+            get_openstack_repository $DIST $OS_VERS > ${dir}/etc/apt/sources.list.d/openstack-$RELEASE-$OS_VERS.list
         ;;
         "Ubuntu")
             do_chroot ${dir} wget --no-verbose http://apt.puppetlabs.com/puppetlabs-release-$RELEASE.deb
