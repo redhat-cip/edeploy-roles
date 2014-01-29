@@ -87,13 +87,13 @@ os_install_packages () {
 
     case $OS in
 	"Debian" | "Ubuntu")
-	    packages="puppet augeas-tools openssh-server wget iptables build-essential ntpdate"
+	    packages="puppet augeas-tools iptables build-essential"
 	    install_packages $dir "$packages"
 	    do_chroot ${dir} sed -e 's/START=yes/START=no/' -i /etc/default/puppet
 	    ;;
 	"CentOS"|"RedHatEnterpriseServer")
 	    if [ "$(get_redhat_major_version $CODENAME)" == "6" ]; then
-		packages="augeas openssh-server wget ntpdate"
+		packages="augeas"
 		install_packages $dir "$packages"
 	    fi
 	    ;;
