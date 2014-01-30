@@ -187,6 +187,7 @@ packages=(
         openvswitch-datapath-dkms \
         pacemaker \
         pm-utils \
+        python-argparse \
         python-swiftclient \
         rabbitmq-server \
         rsync \
