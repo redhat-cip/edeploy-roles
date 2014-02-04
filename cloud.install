@@ -60,8 +60,9 @@ EOF
 	    ;&
 	"CentOS")
 	    add_epel_repository $dir
+	    cloud_init_release="0.7.2-2.el6"
 	    if [ "$(get_redhat_major_version $CODENAME)" == "6" ]; then
-		install_packages $dir "cloud-init"
+        install_packages $dir "http://repos.fedorapeople.org/repos/openstack/cloud-init/epel-6/cloud-init-${cloud_init_release}.noarch.rpm"
 	    fi
 	    remove_epel_repository $DIST $dir
 	    ;;
