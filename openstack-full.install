@@ -135,6 +135,7 @@ fi
 declare -A packages
 packages=(
     ["deb"]="\
+        $headers \
         apache2 \
         build-essential \
         ceilometer-agent-central \
@@ -151,7 +152,6 @@ packages=(
         euca2ools \
         galera \
         glance \
-        $headers \
         haproxy \
         heat-api \
         heat-api-cfn \
@@ -167,13 +167,12 @@ packages=(
         mysql-client \
         neutron-dhcp-agent \
         neutron-l3-agent \
-        neutron-metadata-agent \
-        neutron-plugin-openvswitch \
-        neutron-plugin-openvswitch-agent \
-        neutron-plugin-linuxbridge-agent \
-        neutron-server \
         neutron-lbaas-agent \
         neutron-metadata-agent \
+        neutron-plugin-linuxbridge-agent \
+        neutron-plugin-openvswitch \
+        neutron-plugin-openvswitch-agent \
+        neutron-server \
         nova-api \
         nova-cert \
         nova-conductor \
@@ -205,25 +204,25 @@ packages=(
 "
 
     ["rpm"]="
+        MariaDB-Galera-server \
+        MariaDB-client \
+        MySQL-python \
         ceph \
         corosync \
         galera \
         haproxy \
         httpd \
         keepalived \
-        MariaDB-client \
-        MariaDB-Galera-server \
-        MySQL-python \
         memcached \
         mongo-10gen \
         mongo-10gen-server \
         novnc \
         ntp \
-        openstack-ceilometer-central \
+        openstack-ceilometer-alarm \
         openstack-ceilometer-api \
+        openstack-ceilometer-central \
         openstack-ceilometer-collector \
         openstack-ceilometer-compute \
-        openstack-ceilometer-alarm \
         openstack-cinder \
         openstack-dashboard \
         openstack-glance \
@@ -232,18 +231,21 @@ packages=(
         openstack-heat-api-cloudwatch \
         openstack-heat-engine \
         openstack-keystone \
+        openstack-neutron \
+        openstack-neutron \
+        openstack-neutron-linuxbridge \
+        openstack-neutron-ml2 \
+        openstack-neutron-ml2 \
+        openstack-neutron-openvswitch \
+        openstack-neutron-openvswitch \
         openstack-nova-api \
         openstack-nova-cert \
+        openstack-nova-compute \
         openstack-nova-compute \
         openstack-nova-conductor \
         openstack-nova-console \
         openstack-nova-novncproxy \
         openstack-nova-scheduler \
-        openstack-neutron \
-        openstack-neutron-openvswitch \
-        openstack-neutron-linuxbridge \
-        openstack-neutron-ml2 \
-        openstack-nova-compute \
         openstack-swift-account \
         openstack-swift-container \
         openstack-swift-object \
