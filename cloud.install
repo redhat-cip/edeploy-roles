@@ -58,7 +58,7 @@ EOF
 	    # cloud-init is in Red Hat Common for RHEL Server (v. 6)
 	    add_rhn_channel $dir rhel-x86_64-server-rh-common-6
 	    ;&
-	"CentOS"|"RedHatEnterpriseServer")
+	"CentOS")
 	    add_epel_repository $dir
 	    if [ "$(get_redhat_major_version $CODENAME)" == "6" ]; then
 		install_packages $dir "cloud-init"
