@@ -53,12 +53,11 @@ EOF
         install_packages $dir $PACKAGES
         do_chroot ${dir} a2dissite puppetmaster
         ;;
+    "RedHatEnterpriseServer")
+        add_rhn_channel $dir rhel-x86_64-server-6-ost-4 # rubygem-activerecord
+        add_rhn_channel $dir sam-rhel-x86_64-server-6 # puppet
+        ;&
     "CentOS"|"RedHatEnterpriseServer")
-        if [ "$(get_redhat_major_version $CODENAME)" == "6" ]; then
-        # Red Hat OpenStack 4.0
-        add_rhn_channel $dir rhel-x86_64-server-6-ost-4 # ruby193-rubygem-activerecord
-        add_rhn_channel $dir sam-rhel-x86_64-server-6 # ruby193-puppet
-
         add_epel_repository $dir
         install_packages $dir puppet-server puppet mod_passenger rubygem-activerecord ruby-mysql git augeas ntp httpd rubygem-kwalify mysql-server
         fi
