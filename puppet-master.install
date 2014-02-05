@@ -55,10 +55,12 @@ EOF
 	    ;;
 	"CentOS"|"RedHatEnterpriseServer")
 	    if [ "$(get_redhat_major_version $CODENAME)" == "6" ]; then
-		add_puppet_repository $DIST $dir
+        # Red Hat OpenStack 4.0
+        add_rhn_channel $dir rhel-x86_64-server-6-ost-4 # ruby193-rubygem-activerecord
+        add_rhn_channel $dir sam-rhel-x86_64-server-6 # ruby193-puppet
+
 		add_epel_repository $dir
-		install_packages $dir puppet-server git augeas ntp httpd puppetdb puppetdb-terminus rubygem-kwalify
-		remove_puppet_repository $dir
+		install_packages $dir puppet-server puppet mod_passenger rubygem-activerecord ruby-mysql git augeas ntp httpd rubygem-kwalify mysql-server
 	    fi
 	    ;;
 	*)
