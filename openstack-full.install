@@ -28,6 +28,22 @@ ORIG=$(cd $(dirname $0); pwd)
 
 install_ib_if_needed $ORIG $dir
 
+function build_dkms() {
+    local package=$1
+    local name=$2
+    local kernel=$3
+    
+    local version=`do_chroot $dir dpkg-query -W -f='${Version}' "$package" \
+        |rev|cut -d- -f2-|rev|cut -d':' -f2|tr -d "\n"`
+    local isadded=`do_chroot $dir dkms status -m "$name" -v "$version"`
+
+    if [ "x${isadded}" = "x" ] ; then
+        do_chroot $dir dkms add -m "$name" -v "$version"
+    fi
+
+    do_chroot $dir dkms build -m "$name" -v "$version" -k "$kernel" && do_chroot $dir dkms install -m "$name" -v "$version" -k "$kernel"
+}
+
 case "$OS" in
     "Debian")
      do_chroot $dir apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
@@ -269,6 +285,7 @@ case "$OS" in
     ;&
     "Debian"|"Ubuntu")
         install_packages_disabled $dir ${packages[$(package_type)]}
+	build_dkms openvswitch-datapath-dkms openvswitch $(echo $dir/boot/vmlinuz-3.2.0-4-amd64 |sed "s@$dir/boot/vmlinuz-@@")
     ;;
     "RedHatEnterpriseServer")
         # Red Hat OpenStack 4.0
@@ -313,4 +330,4 @@ esac
 
 clear_packages_cache $dir
 
-
+# openstack-full.install ends here
