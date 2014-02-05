@@ -46,20 +46,20 @@ prepare_packages () {
             cat > ${dir}/etc/apt/sources.list.d/$RELEASE-backport.list <<EOF
 deb $repository ${RELEASE}-backports main
 EOF
-            get_openstack_repository $DIST $OS_VERS > ${dir}/etc/apt/sources.list.d/openstack-$RELEASE-$OS_VERS.list
+            add_openstack_repository $dir $DIST $OS_VERS
         ;;
         "Ubuntu")
             do_chroot ${dir} wget --no-verbose http://apt.puppetlabs.com/puppetlabs-release-$RELEASE.deb
             do_chroot ${dir} dpkg -i puppetlabs-release-$RELEASE.deb
             do_chroot ${dir} rm puppetlabs-release-$RELEASE.deb
             do_chroot ${dir} apt-key adv --recv-keys --keyserver keyserver.ubuntu.com E52660B15D964F0B
-            get_openstack_repository $DIST $OS_VERS > ${dir}/etc/apt/sources.list.d/openstack.list
+            add_openstack_repository $dir $DIST $OS_VERS
         ;;
         "CentOS")
             add_puppet_repository $DIST $dir
             install_packages $dir puppet
             remove_puppet_repository $dir
-            install_packages $dir $(get_openstack_repository $DIST $OS_VERS)
+            add_openstack_repository $dir $DIST $OS_VERS
          ;;
          "RedHatEnterpriseServer")
             # Redhat is using a channel to get openstack
