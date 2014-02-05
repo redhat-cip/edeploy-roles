@@ -57,7 +57,7 @@ EOF
 	    if [ "$(get_redhat_major_version $CODENAME)" == "6" ]; then
 		add_puppet_repository $DIST $dir
 		add_epel_repository $dir
-		install_packages $dir puppet-server git augeas ntp httpd puppetdb puppetdb-terminus rubygem-kwalify
+		install_packages $dir puppet-server mod_passenger git augeas ntp httpd puppetdb puppetdb-terminus rubygem-kwalify
 		remove_puppet_repository $dir
 	    fi
 	    ;;
