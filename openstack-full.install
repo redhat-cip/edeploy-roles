@@ -241,6 +241,7 @@ packages=(
         openstack-nova-scheduler \
         openstack-neutron \
         openstack-neutron-openvswitch \
+        openstack-neutron-linuxbridge \
         openstack-neutron-ml2 \
         openstack-nova-compute \
         openstack-swift-account \
