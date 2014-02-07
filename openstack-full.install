@@ -290,8 +290,6 @@ case "$OS" in
     ;&
     "CentOS"|"RedHatEnterpriseServer")
 
-        install_packages $dir puppetdb
-
         # We want to use rabbitmq on Redhat instead of QPID
         add_epel_repository $dir
 
