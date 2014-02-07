@@ -215,8 +215,8 @@ packages=(
         MariaDB-Galera-server \
         MySQL-python \
         memcached \
-        mongo-10gen \
-        mongo-10gen-server \
+        mongodb-server \
+        mongodb \
         novnc \
         numpy \
         ntp \
