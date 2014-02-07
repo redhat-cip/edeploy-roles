@@ -218,6 +218,7 @@ packages=(
         mongo-10gen \
         mongo-10gen-server \
         novnc \
+        numpy \
         ntp \
         openstack-ceilometer-central \
         openstack-ceilometer-api \
@@ -233,6 +234,7 @@ packages=(
         openstack-heat-engine \
         openstack-keystone \
         openstack-nova-api \
+        openstack-nova-cells \
         openstack-nova-cert \
         openstack-nova-compute \
         openstack-nova-conductor \
@@ -255,6 +257,7 @@ packages=(
         python-swiftclient \
         rabbitmq-server \
         rsync \
+        scsi-target-utils \
         xfsprogs \
         xinetd"
 )
