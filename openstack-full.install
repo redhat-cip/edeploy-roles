@@ -241,6 +241,7 @@ packages=(
         openstack-nova-scheduler \
         openstack-neutron \
         openstack-neutron-openvswitch \
+        openstack-neutron-linuxbridge \
         openstack-neutron-ml2 \
         openstack-nova-compute \
         openstack-swift-account \
@@ -289,8 +290,6 @@ case "$OS" in
         install_packages $dir qemu-kvm
     ;&
     "CentOS"|"RedHatEnterpriseServer")
-
-        install_packages $dir puppetdb
 
         # We want to use rabbitmq on Redhat instead of QPID
         add_epel_repository $dir
