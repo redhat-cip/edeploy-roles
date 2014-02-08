@@ -84,6 +84,16 @@ EOF
 deb http://ceph.com/debian $DIST main
 EOF
     ;;
+    "CentOS")
+        cat > ${dir}/etc/yum.repos.d/mongodb.repo <<EOF
+[mongodb]
+name=MongoDB Repository
+baseurl=http://downloads-distro.mongodb.org/repo/redhat/os/x86_64/
+gpgcheck=0
+enabled=1
+EOF
+
+    ;&
     "CentOS"|"RedHatEnterpriseServer")
       if [ "$(get_redhat_major_version $CODENAME)" == "6" ]; then
           cat > ${dir}/etc/yum.repos.d/mariadb.repo <<EOF
@@ -95,13 +105,6 @@ baseurl = http://yum.mariadb.org/5.5/rhel6-amd64
           http://os-ci-admin.ring.enovance.com/distrib/mariadb/rhel6-amd64
 gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
 gpgcheck=1
-EOF
-            cat > ${dir}/etc/yum.repos.d/mongodb.repo <<EOF
-[mongodb]
-name=MongoDB Repository
-baseurl=http://downloads-distro.mongodb.org/repo/redhat/os/x86_64/
-gpgcheck=0
-enabled=1
 EOF
             cat > ${dir}/etc/yum.repos.d/ceph.repo <<EOF
 [ceph-noarch]
@@ -230,9 +233,10 @@ packages=(
         httpd \
         keepalived \
         memcached \
-        mongo-10gen \
-        mongo-10gen-server \
+        mongodb-server \
+        mongodb \
         novnc \
+        numpy \
         ntp \
         openstack-ceilometer-alarm \
         openstack-ceilometer-api \
@@ -255,6 +259,7 @@ packages=(
         openstack-neutron-openvswitch \
         openstack-neutron-openvswitch \
         openstack-nova-api \
+        openstack-nova-cells \
         openstack-nova-cert \
         openstack-nova-compute \
         openstack-nova-compute \
@@ -273,6 +278,7 @@ packages=(
         python-swiftclient \
         rabbitmq-server \
         rsync \
+        scsi-target-utils \
         xfsprogs \
         xinetd"
 )
