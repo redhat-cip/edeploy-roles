@@ -31,39 +31,40 @@ ORIG=$(cd $(dirname $0); pwd)
 install_puppet () {
 
     case "$OS" in
-	"Debian")
-	    local repository=$(add_main_repository $DIST)
-	    cat > ${dir}/etc/apt/sources.list.d/$RELEASE-backport.list <<EOF
+    "Debian")
+        local repository=$(add_main_repository $DIST)
+        cat > ${dir}/etc/apt/sources.list.d/$RELEASE-backport.list <<EOF
 deb $repository ${RELEASE}-backports main
 EOF
             ;;
-	"Ubuntu")
-	    ;;
+    "Ubuntu")
+        ;;
     esac
 
     update_repositories $dir
 
     case "$OS" in
-	"Debian" | "Ubuntu")
-	    do_chroot ${dir} wget --no-verbose http://apt.puppetlabs.com/puppetlabs-release-$RELEASE.deb
-	    do_chroot ${dir} dpkg -i puppetlabs-release-$RELEASE.deb
-	    do_chroot ${dir} rm puppetlabs-release-$RELEASE.deb
-	    do_chroot ${dir} apt-get update
-	    PACKAGES="puppetmaster puppetmaster-passenger puppet augeas-tools git ntp puppetdb puppetdb-terminus kwalify"
-	    install_packages $dir $PACKAGES
-	    do_chroot ${dir} a2dissite puppetmaster
-	    ;;
-	"CentOS"|"RedHatEnterpriseServer")
-	    if [ "$(get_redhat_major_version $CODENAME)" == "6" ]; then
-		add_puppet_repository $DIST $dir
-		add_epel_repository $dir
-		install_packages $dir puppet-server git augeas ntp httpd puppetdb puppetdb-terminus rubygem-kwalify
-		remove_puppet_repository $dir
-	    fi
-	    ;;
-	*)
-	    fatal_error "OS ($OS) or Release $(RELEASE) not supported"
-	    ;;
+    "Debian" | "Ubuntu")
+        do_chroot ${dir} wget --no-verbose http://apt.puppetlabs.com/puppetlabs-release-$RELEASE.deb
+        do_chroot ${dir} dpkg -i puppetlabs-release-$RELEASE.deb
+        do_chroot ${dir} rm puppetlabs-release-$RELEASE.deb
+        do_chroot ${dir} apt-get update
+        PACKAGES="puppetmaster puppetmaster-passenger puppet augeas-tools git ntp puppetdb puppetdb-terminus kwalify"
+        install_packages $dir $PACKAGES
+        do_chroot ${dir} a2dissite puppetmaster
+        ;;
+    "RedHatEnterpriseServer")
+        add_rhn_channel $dir rhel-x86_64-server-6-ost-4 # rubygem-activerecord
+        add_rhn_channel $dir sam-rhel-x86_64-server-6 # puppet
+        ;&
+    "CentOS"|"RedHatEnterpriseServer")
+        add_epel_repository $dir
+        install_packages $dir puppet-server puppet mod_passenger rubygem-activerecord ruby-mysql git augeas ntp httpd rubygem-kwalify mysql-server
+        fi
+        ;;
+    *)
+        fatal_error "OS ($OS) or Release $(RELEASE) not supported"
+        ;;
     esac
 
     do_chroot ${dir} rm -rf /var/lib/puppet/ssl/* || :
