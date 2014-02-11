@@ -169,6 +169,7 @@ packages=(
         galera \
         glance \
         haproxy \
+        hdparm \
         heat-api \
         heat-api-cfn \
         heat-api-cloudwatch \
@@ -227,6 +228,7 @@ packages=(
         corosync \
         galera \
         haproxy \
+        hdparm \
         httpd \
         keepalived \
         memcached \
