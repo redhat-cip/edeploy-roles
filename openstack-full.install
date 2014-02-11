@@ -259,7 +259,6 @@ packages=(
         openstack-nova-api \
         openstack-nova-cert \
         openstack-nova-compute \
-        openstack-nova-compute \
         openstack-nova-conductor \
         openstack-nova-console \
         openstack-nova-novncproxy \
