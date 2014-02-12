@@ -102,11 +102,3 @@ os_install_packages () {
 prepare_packages
 os_install_packages
 
-case $OS in
-    "Debian" | "Ubuntu")
-	cd $dir
-	patch -p0 < $SRC/puppet-common_3.4.2-1puppetlabs1_fix-enable-service.patch
-	cd -
-	;;
-esac
-
