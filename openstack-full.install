@@ -215,6 +215,7 @@ packages=(
         swift-object \
         swift-plugin-s3 \
         swift-proxy \
+        sysfsutils \
         unzip \
         xfsprogs \
         xinetd
@@ -274,6 +275,7 @@ packages=(
         python-swiftclient \
         rabbitmq-server \
         rsync \
+        sysfsutils \
         xfsprogs \
         xinetd"
 )
