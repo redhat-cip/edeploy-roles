@@ -288,7 +288,10 @@ case "$OS" in
     ;&
     "Debian"|"Ubuntu")
         install_packages_disabled $dir ${packages[$(package_type)]}
-	build_dkms openvswitch-datapath-dkms openvswitch $(echo $dir/boot/vmlinuz-3.2.0-4-amd64 |sed "s@$dir/boot/vmlinuz-@@")
+	# try to build the dkms module but do not care if it fails (it'll built at boot time)
+	for kernel in $(echo $dir/boot/vmlinuz-* |sed "s@$dir/boot/vmlinuz-@@"); do
+	    build_dkms openvswitch-datapath-dkms openvswitch $kernel || :
+	done
     ;;
     "RedHatEnterpriseServer")
         # Red Hat OpenStack 4.0
