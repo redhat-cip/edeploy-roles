@@ -58,7 +58,7 @@ EOF
         "CentOS")
             add_puppet_repository $DIST $dir
             install_packages $dir puppet
-            remove_puppet_repository $dir
+            remove_puppet_repository $DIST $dir
             install_packages $dir $(get_openstack_repository $DIST $OS_VERS)
          ;;
          "RedHatEnterpriseServer")
