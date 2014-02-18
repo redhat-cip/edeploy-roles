@@ -55,10 +55,10 @@ EOF
 	    ;;
 	"CentOS"|"RedHatEnterpriseServer")
 	    if [ "$(get_redhat_major_version $CODENAME)" == "6" ]; then
-		add_puppet_repository $DIST $dir
+		add_puppet_repository $DIST
 		add_epel_repository $dir
 		install_packages $dir puppet-server git augeas ntp httpd puppetdb puppetdb-terminus rubygem-kwalify
-		remove_puppet_repository $DIST $dir
+		remove_puppet_repository $DIST
 	    fi
 	    ;;
 	*)
