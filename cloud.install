@@ -59,11 +59,11 @@ EOF
 	    add_rhn_channel $dir rhel-x86_64-server-rh-common-6
 	    ;&
 	"CentOS")
-	    add_epel_repository $dir
+	    add_epel_repository $DIST
 	    if [ "$(get_redhat_major_version $CODENAME)" == "6" ]; then
 		install_packages $dir "cloud-init"
 	    fi
-	    remove_epel_repository $DIST $dir
+	    remove_epel_repository $DIST
 	    ;;
 	*)
 	    fatal_error "OS ($OS) or Release ($RELEASE) not supported"

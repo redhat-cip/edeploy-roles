@@ -56,9 +56,9 @@ EOF
             get_openstack_repository $DIST $OS_VERS > ${dir}/etc/apt/sources.list.d/openstack.list
         ;;
         "CentOS")
-            add_puppet_repository $DIST $dir
+            add_puppet_repository $DIST
             install_packages $dir puppet
-            remove_puppet_repository $DIST $dir
+            remove_puppet_repository $DIST
             install_packages $dir $(get_openstack_repository $DIST $OS_VERS)
          ;;
          "RedHatEnterpriseServer")
