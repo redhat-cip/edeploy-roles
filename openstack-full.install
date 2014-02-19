@@ -296,16 +296,16 @@ case "$OS" in
     ;;
     "RedHatEnterpriseServer")
         # Red Hat OpenStack 4.0
-        add_rhn_channel $dir rhel-x86_64-server-6-ost-4
+        add_rhn_channel rhel-x86_64-server-6-ost-4
 
         # xfsprogs is in Red Hat Common for RHEL Server (v. 6)
-        add_rhn_channel $dir rhel-x86_64-server-sfs-6
+        add_rhn_channel rhel-x86_64-server-sfs-6
 
         # haproxy is in RHEL Server Load Balancer (v. 6 for 64-bit x86_64)
-        add_rhn_channel $dir rhel-x86_64-server-lb-6
+        add_rhn_channel rhel-x86_64-server-lb-6
 
         # pacemaker is in RHEL Server High Availability (v. 6 for 64-bit x86_64)
-        add_rhn_channel $dir rhel-x86_64-server-ha-6
+        add_rhn_channel rhel-x86_64-server-ha-6
 
         # qemu-kvm-rhev provides a kvm that supersedes the standard qemu-kvm.
         # This package is not yet available in CentOS. So we have to take care
@@ -318,7 +318,7 @@ case "$OS" in
     "CentOS"|"RedHatEnterpriseServer")
 
         # We want to use rabbitmq on Redhat instead of QPID
-        add_epel_repository $dir
+        add_epel_repository $DIST
 
         install_packages_disabled $dir ${packages[$(package_type)]}
         install_packages_disabled $dir ${packages[$(package_type)]}
