@@ -288,6 +288,9 @@ case "$OS" in
         install_packages_disabled $dir -t wheezy-backports qemu-kvm nova-compute-kvm initramfs-tools
         install_packages_disabled $dir -t wheezy-backports linux-image-3.12-0.bpo.1-amd64
     ;&
+    "Ubuntu")
+        install_packages_disabled $dir linux-image-3.8.0-35-generic
+    ;&
     "Debian"|"Ubuntu")
         install_packages_disabled $dir ${packages[$(package_type)]}
 	# try to build the dkms module but do not care if it fails (it'll built at boot time)
