@@ -83,6 +83,10 @@ EOF
      cat > ${dir}/etc/apt/sources.list.d/ceph.list <<EOF
 deb http://ceph.com/debian $DIST main
 EOF
+     do_chroot $dir apt-key adv --keyserver keyserver.ubuntu.com --recv 0x8A6844A29F68104E
+     cat > ${dir}/etc/apt/sources.list.d/ubuntu-cloud.list <<EOF
+deb http://ubuntu-cloud.archive.canonical.com/ubuntu precise-updates $DIST main
+EOF
     ;;
     "CentOS"|"RedHatEnterpriseServer")
       if [ "$(get_redhat_major_version $CODENAME)" == "6" ]; then
@@ -289,6 +293,7 @@ case "$OS" in
         install_packages_disabled $dir -t wheezy-backports linux-image-3.12-0.bpo.1-amd64
     ;&
     "Debian"|"Ubuntu")
+        install_packages_disabled $dir -t precise-updates qemu
         install_packages_disabled $dir ${packages[$(package_type)]}
 	# try to build the dkms module but do not care if it fails (it'll built at boot time)
 	for kernel in $(echo $dir/boot/vmlinuz-* |sed "s@$dir/boot/vmlinuz-@@"); do
