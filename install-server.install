@@ -26,6 +26,18 @@ ORIG=$(cd $(dirname $0); pwd)
 . ${ORIG}/functions
 
 install_packages $dir cpp rake
+
+case "$OS" in
+    "RedHatEnterpriseServer")
+	add_epel_repository $DIST
+	install_packages $dir rubygems
+	remove_epel_repository $DIST
+	;;
+    "CentOS")
+	install_packages $dir rubygems
+	;;
+esac
+
 do_chroot $dir gem install serverspec r10k
 
 $ORIG/deploy.install $dir $dir $version
