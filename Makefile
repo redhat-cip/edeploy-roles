@@ -40,7 +40,7 @@ export CURRENT_TARGET
 INST=$(TOP)/install/$(VERS)
 META=$(TOP)/metadata/$(VERS)
 
-ROLES = cloud devstack openstack-common openstack-full mysql ceph puppet-master
+ROLES = cloud devstack openstack-common openstack-full mysql ceph puppet-master install-server
 
 all: $(ROLES)
 
@@ -93,6 +93,11 @@ chef-server: $(INST)/chef-server.done
 $(INST)/chef-server.done: chef-server.install $(INST)/base.done
 	./chef-server.install $(INST)/base $(INST)/chef-server $(VERS)
 	touch $(INST)/chef-server.done
+
+install-server: $(INST)/install-server.done
+$(INST)/install-server.done: install-server.install $(INST)/cloud.done
+	./install-server.install $(INST)/cloud $(INST)/install-server $(VERS)
+	touch $(INST)/install-server.done
 
 $(INST)/base.done:
 	mkdir -p $(INST)/base
