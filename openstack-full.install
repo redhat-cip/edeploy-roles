@@ -26,6 +26,11 @@ ORIG=$(cd $(dirname $0); pwd)
 
 . ${ORIG}/functions
 
+if [ -z "$OS_VERS" ]; then
+    echo "OS_VERS is not set, Havana will be built by default"
+    OS_VERS=havana
+fi
+
 install_ib_if_needed $ORIG $dir
 
 function build_dkms() {
@@ -71,10 +76,7 @@ EOF
 
     ;;
     "Ubuntu")
-     do_chroot $dir apt-key adv --keyserver keyserver.ubuntu.com --recv 0x8A6844A29F68104E
-     cat > ${dir}/etc/apt/sources.list.d/ubuntu-cloud.list <<EOF
-deb http://ubuntu-cloud.archive.canonical.com/ubuntu precise-updates/$DIST main
-EOF
+     do_chroot $dir add-apt-repository cloud-archive:$OS_VERS
      do_chroot $dir apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
      cat > ${dir}/etc/apt/sources.list.d/maria.list <<EOF
 deb [trusted=yes] http://ftp.igh.cnrs.fr/pub/mariadb/repo/5.5/ubuntu $DIST main
