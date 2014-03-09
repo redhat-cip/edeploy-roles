@@ -71,6 +71,10 @@ EOF
 
     ;;
     "Ubuntu")
+     do_chroot $dir apt-key adv --keyserver keyserver.ubuntu.com --recv 0x8A6844A29F68104E
+     cat > ${dir}/etc/apt/sources.list.d/ubuntu-cloud.list <<EOF
+deb http://ubuntu-cloud.archive.canonical.com/ubuntu precise-updates $DIST/main
+EOF
      do_chroot $dir apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
      cat > ${dir}/etc/apt/sources.list.d/maria.list <<EOF
 deb [trusted=yes] http://ftp.igh.cnrs.fr/pub/mariadb/repo/5.5/ubuntu $DIST main
@@ -289,6 +293,7 @@ case "$OS" in
         install_packages_disabled $dir -t wheezy-backports linux-image-3.12-0.bpo.1-amd64
     ;&
     "Debian"|"Ubuntu")
+        install_packages_disabled $dir -t precise-updates qemu libvirt0 libvirt-bin
         install_packages_disabled $dir ${packages[$(package_type)]}
 	# try to build the dkms module but do not care if it fails (it'll built at boot time)
 	for kernel in $(echo $dir/boot/vmlinuz-* |sed "s@$dir/boot/vmlinuz-@@"); do
