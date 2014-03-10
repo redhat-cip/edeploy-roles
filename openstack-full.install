@@ -294,8 +294,10 @@ case "$OS" in
         install_packages_disabled $dir -t wheezy-backports qemu-kvm nova-compute-kvm initramfs-tools
         install_packages_disabled $dir -t wheezy-backports linux-image-3.12-0.bpo.1-amd64
     ;&
-    "Debian"|"Ubuntu")
+    "Ubuntu")
         install_packages_disabled $dir -t precise-updates/$OS_VERS qemu libvirt0 libvirt-bin
+    ;&
+    "Debian"|"Ubuntu")
         install_packages_disabled $dir ${packages[$(package_type)]}
 	# try to build the dkms module but do not care if it fails (it'll built at boot time)
 	for kernel in $(echo $dir/boot/vmlinuz-* |sed "s@$dir/boot/vmlinuz-@@"); do
