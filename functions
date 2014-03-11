@@ -7,9 +7,10 @@ SRC=$(cd $(dirname $0); pwd)
 
 get_openstack_repository() {
   local dist=$1
-  local openstack_release=$2
+  local dir=$2
+  local openstack_release=$3
 
-  check_usage $# 2 "get_openstack_repository <dist> <openstack_release>"
+  check_usage $# 3 "get_openstack_repository <dist> <chroot> <openstack_release>"
 
   if [ -n "$OPENSTACK_REPOSITORY" ]; then
     echo "$OPENSTACK_REPOSITORY"
@@ -18,10 +19,12 @@ get_openstack_repository() {
 
   case "$dist" in
     $supported_debian_dists)
+        pin_repository $dist $dir 'cloud.pkgs.enovance.com' 1001 stable $openstack_release main
         echo "deb http://cloud.pkgs.enovance.com/${RELEASE}-${openstack_release}/ ${openstack_release} main"
         return 0
     ;;
     $supported_ubuntu_dists)
+        pin_repository $dist $dir 'cloud.pkgs.enovance.com' 1001 stable $openstack_release main
         echo "deb http://cloud.pkgs.enovance.com/${RELEASE}-${openstack_release}/ ${openstack_release} main"
         return 0
     ;;
