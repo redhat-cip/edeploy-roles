@@ -82,7 +82,7 @@ os_install_packages () {
     case $OS in
 	"Ubuntu")
 	    softprop=python-software-properties
-	    ;&
+      ;;&
 	"Debian" | "Ubuntu")
 	    packages="$softprop puppet augeas-tools iptables build-essential"
 	    install_packages $dir "$packages"
