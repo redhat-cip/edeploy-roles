@@ -5,6 +5,17 @@ SRC=$(cd $(dirname $0); pwd)
 
 . ${ORIG}/functions
 
+keep_track_of_revs() {
+  local edeploy_rev=$(git -C ${SDIR} rev-parse HEAD 2>/dev/null || true)
+  local edeploy_roles_rev=$(git -C ${SRC} rev-parse HEAD 2>/dev/null || true)
+
+  mkdir -p $dir/var/lib/edeploy
+  echo "EDEPLOY_REV=${edeploy_rev}" >> $dir/var/lib/edeploy/conf
+  echo "EDEPLOY_ROLES_REV=${edeploy_roles_rev}" >> $dir/var/lib/edeploy/conf
+}
+
+keep_track_of_revs
+
 get_openstack_repository() {
   local dist=$1
   local openstack_release=$2
