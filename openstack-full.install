@@ -76,7 +76,6 @@ EOF
 
     ;;
     "Ubuntu")
-     do_chroot $dir add-apt-repository -y cloud-archive:$OS_VERS
      do_chroot $dir apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
      cat > ${dir}/etc/apt/sources.list.d/maria.list <<EOF
 deb [trusted=yes] http://ftp.igh.cnrs.fr/pub/mariadb/repo/5.5/ubuntu $DIST main
@@ -293,9 +292,6 @@ case "$OS" in
     "Debian")
         install_packages_disabled $dir -t wheezy-backports qemu-kvm nova-compute-kvm initramfs-tools
         install_packages_disabled $dir -t wheezy-backports linux-image-3.12-0.bpo.1-amd64
-    ;;&
-    "Ubuntu")
-        install_packages_disabled $dir -t precise-updates/$OS_VERS qemu libvirt0 libvirt-bin
     ;;&
     "Debian"|"Ubuntu")
         install_packages_disabled $dir ${packages[$(package_type)]}
