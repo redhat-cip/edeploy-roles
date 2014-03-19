@@ -71,7 +71,7 @@ EOF
          ;;
 
         *)
-            fatal_error "OS ($OS) or Release ($OS) not supported"
+            fatal_error "OS ($OS) or Release ($RELEASE) not supported"
          ;;
 esac
 }
