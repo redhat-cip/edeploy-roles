@@ -37,7 +37,7 @@ function build_dkms() {
     local package=$1
     local name=$2
     local kernel=$3
-    
+
     local version=`do_chroot $dir dpkg-query -W -f='${Version}' "$package" \
         |rev|cut -d- -f2-|rev|cut -d':' -f2|tr -d "\n"`
     local isadded=`do_chroot $dir dkms status -m "$name" -v "$version"`
