@@ -196,6 +196,7 @@ packages=(
         neutron-plugin-openvswitch \
         neutron-plugin-openvswitch-agent \
         neutron-server \
+        nfs-common \
         nova-api \
         nova-cert \
         nova-conductor \
@@ -241,6 +242,7 @@ packages=(
         memcached \
         mongo-10gen \
         mongo-10gen-server \
+        nfs-utils \
         novnc \
         ntp \
         openstack-ceilometer-alarm \
