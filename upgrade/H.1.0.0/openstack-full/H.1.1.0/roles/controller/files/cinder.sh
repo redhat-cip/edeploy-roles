@@ -26,7 +26,12 @@ echo "### 1. Upgrade Cinder"
 echo "#### FROM : RBD mono-backend"
 echo "#### TO   : RBD multi-backend"
 
-VOLUME_TYPE_ID=$(cinder --os-username admin --os-tenant-name admin --os-password Xokoph5io2aenaoh0nuiquei9aineigo --os-auth-url http://os-ci-vip.ring.enovance.com:5000/v2.0 extra-specs-list | awk '/ ceph /{print $2}')
+OS_USERNAME=$1
+OS_TENANT_NAME=$2
+OS_PASSWORD=$3
+OS_AUTH_URL=$4
+
+VOLUME_TYPE_ID=$(cinder --os-username $OS_USERNAME --os-tenant-name $OSE_TENANT_NAME --os-password $OS_PASSWORD --os-auth-url $OS_AUTH_URL extra-specs-list | awk '/ ceph /{print $2}')
 
 echo "update volumes set volume_type_id='$VOLUME_TYPE_ID' where volume_type_id is NULL;">cinder.sql
 
