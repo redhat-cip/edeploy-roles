@@ -25,6 +25,29 @@ ORIG=$(cd $(dirname $0); pwd)
 
 . ${ORIG}/functions
 
+# eDeploy
+
+$ORIG/deploy.install $dir $dir $version
+install_packages_disabled $dir dnsmasq
+
+# Ansible
+
+case "$OS" in
+    "Debian"|"Ubuntu")
+	install_packages $dir python-jinja2 python-paramiko
+	do_chroot $dir pip install ansible
+	;;
+    "CentOS"|"RedHatEnterpriseServer")
+	echo "Ansible not supported yet on RH"
+	;;
+esac
+
+# Puppet master
+
+$SRC/puppet-master.install $dir $dir $version
+
+# Serverspec
+
 install_packages $dir cpp rake make
 
 case "$OS" in
@@ -40,7 +63,4 @@ esac
 
 do_chroot $dir gem install --no-ri --no-rdoc --no-prerelease serverspec r10k rspec-extra-formatters
 
-$ORIG/deploy.install $dir $dir $version
-install_packages_disabled $dir dnsmasq
-
-$SRC/puppet-master.install $dir $dir $version
+# install-server.install ends here
