@@ -1,0 +1,8 @@
+---
+# file: site.yml
+
+- hosts: all
+  user: jenkins
+  sudo: true
+
+- include: controllers.yml

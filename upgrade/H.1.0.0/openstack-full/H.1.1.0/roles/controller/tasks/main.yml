@@ -1,0 +1,36 @@
+---
+# file: roles/common/tasks/main.yml
+
+- name: be sure cinder-api is not running
+  service: name=cinder-api state=stopped
+  tags: api
+
+- name: be sure cinder-scheduler is not running
+  service: name=cinder-scheduler state=stopped
+  tags: scheduler
+
+- name: be sure cinder-volume is not running
+  service: name=cinder-volume state=stopped
+  tags: spof
+
+- name: edeploy upgrade
+  edeploy: command=upgrade version={{ version }}
+  tags: edeploy
+
+# This action should be realised on one node, since database is replicated
+- name: migrate database to multi-backend
+  script: cinder.sh {{ os_username }} {{ os_tenant_name }} {{ os_password }} {{ os_auth_url }}
+  tags: db
+  when: inventory_hostname == groups['controllers'][0]
+
+- name: be sure cinder-api is running
+  service: name=cinder-api state=started
+  tags: api
+
+- name: be sure cinder-scheduler is running
+  service: name=cinder-scheduler state=started
+  tags: scheduler
+
+- name: be sure cinder-volume is running
+  service: name=cinder-volume state=started
+  tags: spof
