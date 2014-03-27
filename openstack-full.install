@@ -73,7 +73,12 @@ Package: *
 Pin: origin ftp.igh.cnrs.fr
 Pin-Priority: 900
 EOF
-
+    do_chroot $dir wget http://www.rabbitmq.com/rabbitmq-signing-key-public.asc
+    do_chroot $dir apt-key add rabbitmq-signing-key-public.asc
+    do_chroot $dir rm rabbitmq-signing-key-public.asc
+    cat > ${dir}/etc/apt/sources.list.d/rabbitmq.list <<EOF
+deb http://www.rabbitmq.com/debian/ testing main
+EOF
     ;;
     "Ubuntu")
      do_chroot $dir apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
@@ -87,6 +92,12 @@ EOF
      do_chroot $dir apt-key adv --keyserver keyserver.ubuntu.com --recv 0x7ebfdd5d17ed316d
      cat > ${dir}/etc/apt/sources.list.d/ceph.list <<EOF
 deb http://ceph.com/debian $DIST main
+EOF
+    do_chroot $dir wget http://www.rabbitmq.com/rabbitmq-signing-key-public.asc
+    do_chroot $dir apt-key add rabbitmq-signing-key-public.asc
+    do_chroot $dir rm rabbitmq-signing-key-public.asc
+    cat > ${dir}/etc/apt/sources.list.d/rabbitmq.list <<EOF
+deb http://www.rabbitmq.com/debian/ testing main
 EOF
     ;;
     "CentOS"|"RedHatEnterpriseServer")
