@@ -49,6 +49,11 @@ all: $(ROLES)
 #	./sample.install $(INST)/base $(INST)/sample $(VERS)
 #	touch $(INST)/sample.done
 
+base: $(INST)/base.done
+$(INST)/base.done: base.install policy-rc.d edeploy common packages distributions
+	./base.install $(INST)/base $(DIST) $(VERS)
+	touch $(INST)/base.done
+
 cloud: $(INST)/cloud.done
 $(INST)/cloud.done: cloud.install $(INST)/base.done
 	./cloud.install $(INST)/base $(INST)/cloud $(VERS)
