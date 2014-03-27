@@ -19,9 +19,8 @@
 .EXPORT_ALL_VARIABLES:
 
 MAKEFILE_DIR=$(shell pwd)
-SDIR=/srv/edeploy
+SDIR=/root/edeploy
 TOP=/var/lib/debootstrap
-ARCHIVE=/var/cache/edeploy-roles
 DVER=D7
 PVER=H
 REL=1.1.0
@@ -29,9 +28,19 @@ VERSION:=$(PVER).$(REL)
 VERS=$(DVER)-$(VERSION)
 DIST=wheezy
 
+IMG=initrd.pxe
+HEALTH_IMG=health.pxe
 ARCH=amd64
 export PATH := /sbin:/bin::$(PATH)
+SERV:=10.66.6.10
+HSERV:=10.66.6.10
+DEBUG=1
+UPLOAD_LOG:=0
+PYDIR=../src
+PYSERVERDIR=../server
 
+LOAD=5
+HTTP=
 MAKEFILE_TARGET=$(MAKECMDGOALS)
 CURRENT_TARGET=$@
 export MAKEFILE_TARGET
@@ -40,72 +49,56 @@ export CURRENT_TARGET
 INST=$(TOP)/install/$(VERS)
 META=$(TOP)/metadata/$(VERS)
 
-ROLES = cloud devstack openstack-common openstack-full mysql ceph puppet-master install-server
+TEST_ROLE:=base
+
+DEPS = $(PYDIR)/detect.py $(PYDIR)/hpacucli.py $(PYDIR)/megacli.py $(PYSERVERDIR)/matcher.py $(PYDIR)/diskinfo.py $(PYDIR)/ipmi.py $(PYDIR)/infiniband.py
+
+ROLES = base pxe health-check deploy
 
 all: $(ROLES)
 
-#sample: $(INST)/sample.done
-#$(INST)/sample.done: sample.install $(INST)/base.done
-#	./sample.install $(INST)/base $(INST)/sample $(VERS)
-#	touch $(INST)/sample.done
+health-check: $(INST)/$(HEALTH_IMG)
+$(INST)/$(HEALTH_IMG): $(INST)/base.done  init.health init.common health-check.install $(DEPS)
+	DEPS="$(DEPS)" ENABLE_IB=y ENABLE_MELLANOX=n ./health-check.install $(INST)/base $(INST)/health-check $(HEALTH_IMG) $(VERS) $(DEBUG)
 
-cloud: $(INST)/cloud.done
-$(INST)/cloud.done: cloud.install $(INST)/base.done
-	./cloud.install $(INST)/base $(INST)/cloud $(VERS)
-	touch $(INST)/cloud.done
+health-img: $(INST)/$(HEALTH_IMG)
+	./img.install $(INST)/base $(HEALTH_IMG) $(VERS) $(INST) $(SERV) $(HSERV) $(DEBUG) health
 
-devstack: $(INST)/devstack.done
-$(INST)/devstack.done: devstack.install $(INST)/cloud.done
-	./devstack.install $(INST)/cloud $(INST)/devstack $(DIST) $(VERS)
-	touch $(INST)/devstack.done
+pxe: $(INST)/$(IMG)
+$(INST)/$(IMG): $(INST)/base.done init init.common pxe.install $(DEPS) $(PYSERVERDIR)/upload.py
+	DEPS="$(DEPS) $(PYSERVERDIR)/upload.py $(PYSERVERDIR)/try_match" ENABLE_IB=y ENABLE_MELLANOX=n ./pxe.install $(INST)/base $(INST)/pxe $(IMG) $(VERS) $(DEBUG)
 
-openstack-common: $(INST)/openstack-common.done
-$(INST)/openstack-common.done: openstack-common.install $(INST)/cloud.done
-	./openstack-common.install $(INST)/cloud $(INST)/openstack-common $(VERS)
-	touch $(INST)/openstack-common.done
+img: $(INST)/$(IMG)
+	./img.install $(INST)/base $(IMG) $(VERS) $(INST) $(SERV) $(HSERV) $(DEBUG)
 
-openstack-full: $(INST)/openstack-full.done
-$(INST)/openstack-full.done: openstack-full.install $(INST)/openstack-common.done
-	./openstack-full.install $(INST)/openstack-common $(INST)/openstack-full $(VERS)
-	touch $(INST)/openstack-full.done
-
-mysql: $(INST)/mysql.done
-$(INST)/mysql.done: mysql.install $(INST)/base.done
-	./mysql.install $(INST)/base $(INST)/mysql $(VERS)
-	touch $(INST)/mysql.done
-
-ceph: $(INST)/ceph.done
-$(INST)/ceph.done: ceph.install $(INST)/base.done
-	./ceph.install $(INST)/base $(INST)/ceph $(VERS)
-	touch $(INST)/ceph.done
-
-docker: $(INST)/docker.done
-$(INST)/docker.done: docker.install $(INST)/base.done
-	./docker.install $(INST)/base $(INST)/docker $(VERS)
-	touch $(INST)/docker.done
-
-puppet-master: $(INST)/puppet-master.done
-$(INST)/puppet-master.done: puppet-master.install $(INST)/cloud.done
-	./puppet-master.install $(INST)/cloud $(INST)/puppet-master $(VERS)
-	touch $(INST)/puppet-master.done
-
-chef-server: $(INST)/chef-server.done
-$(INST)/chef-server.done: chef-server.install $(INST)/base.done
-	./chef-server.install $(INST)/base $(INST)/chef-server $(VERS)
-	touch $(INST)/chef-server.done
-
-install-server: $(INST)/install-server.done
-$(INST)/install-server.done: install-server.install $(INST)/cloud.done
-	./install-server.install $(INST)/cloud $(INST)/install-server $(VERS)
-	touch $(INST)/install-server.done
-
-$(INST)/base.done:
-	mkdir -p $(INST)/base
-	tar zxf $(ARCHIVE)/$(VERS)/base-$(VERS).edeploy -C $(INST)/base
+base: $(INST)/base.done
+$(INST)/base.done: base.install policy-rc.d edeploy common packages distributions
+	./base.install $(INST)/base $(DIST) $(VERS)
 	touch $(INST)/base.done
 
+deploy: $(INST)/deploy.done
+$(INST)/deploy.done: deploy.install $(INST)/base.done
+	./deploy.install $(INST)/base $(INST)/deploy $(VERS)
+	touch $(INST)/deploy.done
+
+health-test: health-check
+	cd ../tests/tftpboot/; ln -sf $(INST)/base/boot/vmlinuz* vmlinuz; ln -sf $(INST)/health.pxe initrd;
+	cd ../tests; ./run_kvm.sh $(TOP) health
+
+test: $(INST)/$(IMG) $(TEST_ROLE)
+	cd ../tests/tftpboot/; ln -sf $(INST)/base/boot/vmlinuz* vmlinuz; ln -sf $(INST)/initrd.pxe initrd;
+	cd ../tests; ./run_kvm.sh $(TOP)
+
+stress-http:
+	cd ../tests; ./run_kvm.sh $(TOP) stress-http $(LOAD) $(HTTP)
+
+benchmark: $(INST)/benchmark.done
+$(INST)/benchmark.done: benchmark.install $(INST)/base.done
+	ENABLE_IB=y ./benchmark.install $(INST)/base $(INST)/benchmark $(VERS)
+	touch $(INST)/benchmark.done
+
 dist:
-	tar zcvf ../edeploy-roles.tgz Makefile README.rst *.install *.exclude
+	tar zcvf ../edeploy.tgz Makefile init init.common README.rst *.install *.exclude edeploy update-scenario.sh *.py
 
 clean:
 	-rm -f *~ $(INST)/*.done
@@ -116,5 +109,4 @@ distclean: clean
 version:
 	@echo "$(VERS)"
 
-.PHONY: cloud devstack openstack-common openstack-full mysql ceph docker puppet-master\
-	chef-server dist clean distclean version
+.PHONY: base img base pxe test stress-http benchmark dist clean distclean version health-check

@@ -1,0 +1,280 @@
+# -*- shell-script -*-
+
+export DEBIAN_FRONTEND=noninteractive
+
+. $ORIG/repositories
+
+# A clever way to find the differences between two bash arrays
+array_diff() {
+  awk 'BEGIN{RS=ORS=" "}
+       {NR==FNR?a[$0]++:a[$0]--}
+       END{for(k in a)if(a[k])print k}' <(echo -n "${!1}") <(echo -n "${!2}")
+}
+
+get_redhat_major_version() {
+    echo $1 | sed -e 's/\(.*\)\..*/\1/g'
+}
+
+get_redhat_minor_version() {
+    echo $1 | sed -e 's/.*\.\(.*\)/\1/g'
+}
+
+save_package_list() {
+case $(package_type) in
+    "deb")
+        do_chroot ${dir} dpkg -l > ${INST}/${ROLE}.packages
+     ;;
+     "rpm")
+        do_chroot ${dir} rpm -qa > ${INST}/${ROLE}.packages
+     ;;
+     *)
+        fatal_error "Unsupported package_type ($package_type) in save_package_list()"
+     ;;
+esac
+}
+
+package_type() {
+    DISTRO="$DIST"
+    if [ -z "$DISTRO" ]; then
+        DISTRO="$RELEASE"
+    fi
+    case "$DISTRO" in
+        $supported_ubuntu_dists|$supported_debian_dists)
+            echo "deb"
+        ;;
+        $supported_centos_dists|$supported_redhat_dists)
+            echo "rpm"
+        ;;
+        *)
+            fatal_error "$DISTRO isn't supported in package_type()"
+        ;;
+    esac
+}
+
+package_tool() {
+    DISTRO="$DIST"
+    if [ -z "$DISTRO" ]; then
+        DISTRO="$RELEASE"
+    fi
+    case "$DISTRO" in
+        $supported_ubuntu_dists|$supported_debian_dists)
+            echo "apt"
+        ;;
+        $supported_centos_dists|$supported_redhat_dists)
+            echo "yum"
+        ;;
+        *)
+            fatal_error "$DISTRO isn't supported in package_tool()"
+        ;;
+    esac
+}
+
+install_packages_disabled() {
+    local chroot=$1
+    shift
+    local packages=$@
+
+    case "$OS" in
+        "Debian"|"Ubuntu")
+            do_chroot ${chroot} mv /usr/sbin/update-rc.d /usr/sbin/update-rc.d.save
+            cat >> ${chroot}/usr/sbin/update-rc.d << EOF
+#!/bin/sh
+set -e
+
+for i in \$*; do
+    if echo \$i | egrep -q -v '^-'; then
+        service=\$i
+        break
+    fi
+done
+update-rc.d.save \$*
+update-rc.d.save \$service disable || exit 0
+EOF
+            chmod +x ${chroot}/usr/sbin/update-rc.d
+
+            # Saving already installed packages
+            packages_before=($(do_chroot ${chroot} dpkg --get-selections | sed '/install$/s///'))
+        ;;
+        "CentOS"|"RedHatEnterpriseServer")
+            do_chroot ${chroot} mv /sbin/chkconfig /sbin/chkconfig.save
+            cat >> ${chroot}/sbin/chkconfig << EOF
+#!/bin/bash
+for i in \$*; do
+    arg2=\$arg1
+    arg1=\$i
+done
+
+if echo \$arg1 | egrep -q '^(on|off|reset|resetpriorities)$'; then
+    service=\$arg2
+else
+    service=\$arg1
+fi
+
+chkconfig.save \$* || exit 1
+chkconfig.save \$service off || exit 0
+EOF
+            chmod +x ${chroot}/sbin/chkconfig
+        ;;
+        *)
+            fatal_error "$OS is not supported yet by install_packages_disabled()"
+        ;;
+    esac
+    install_packages $chroot $packages
+
+    case "$OS" in
+        "Debian"|"Ubuntu")
+            do_chroot ${chroot} mv /usr/sbin/update-rc.d.save /usr/sbin/update-rc.d
+
+            # Saving installed packages by "install_packages $chroot $packages"
+            packages_after=($(do_chroot ${chroot} dpkg --get-selections | sed '/install$/s///'))
+
+            # Computing the list of installed packages
+            packages_new=($(array_diff packages_before[@] packages_after[@]))
+
+            # For each installed package, let's disable the service
+            for pkg in ${packages_new[@]}; do
+                disable_upstart_service ${chroot} ${pkg}
+            done
+        ;;
+        "CentOS"|"RedHatEnterpriseServer")
+            do_chroot ${chroot} mv /sbin/chkconfig.save /sbin/chkconfig
+        ;;
+    esac
+}
+
+install_packages() {
+    local chroot=$1
+    shift
+    local packages=$@
+    case "$(package_tool)" in
+        apt)
+            do_chroot $chroot apt-get install $INSTALL_OPTIONS -y --force-yes $packages
+        ;;
+        yum)
+            do_chroot $chroot yum $INSTALL_OPTIONS install -y $packages
+        ;;
+        *)
+            fatal_error "$(package_tool) isn't supported in install_packages()"
+        ;;
+    esac
+}
+
+disable_upstart_service() {
+    local chroot=$1
+    local package=$2
+    for initscript in $(do_chroot $chroot dpkg -L ${package}|grep '/etc/init/'); do
+        override=${initscript%%.conf}
+        echo "manual" > ${chroot}/${override}.override
+    done
+}
+
+remove_packages() {
+    local chroot=$1
+    shift
+    local packages=$@
+    case "$(package_tool)" in
+        apt)
+            do_chroot $chroot apt-get remove $packages
+        ;;
+        yum)
+            do_chroot $chroot yum remove $packages --assumeyes
+        ;;
+        *)
+            fatal_error "$(package_tool) isn't supported in install_packages()"
+        ;;
+    esac
+}
+
+update_system() {
+    case "$(package_tool)" in
+        apt)
+            do_chroot ${dir} apt-get upgrade -y
+        ;;
+        yum)
+            do_chroot ${dir} yum update -y
+        ;;
+        *)
+            fatal_error "$(package_tool) isn't supported in update_system()"
+        ;;
+    esac
+}
+
+upgrade_system() {
+    case "$(package_tool)" in
+        apt)
+            do_chroot ${dir} apt-get dist-upgrade -y
+        ;;
+        yum)
+            # didn't really found something equivalent
+            # Let's do a yum update so
+            do_chroot ${dir} yum update -y
+        ;;
+        *)
+            fatal_error "$(package_tool) isn't supported in update_system()"
+        ;;
+    esac
+}
+
+clear_packages_cache() {
+    case "$(package_tool)" in
+        apt)
+            do_chroot ${dir} apt-get clean
+        ;;
+        yum)
+            do_chroot ${dir} yum clean all
+        ;;
+        *)
+            fatal_error "$(package_tool) isn't supported in clear_packages_cache()"
+        ;;
+    esac
+}
+
+is_package_installed() {
+    CHROOT=$1
+    PACKAGE=$2
+    set +e
+    case "$(package_tool)" in
+        apt)
+            do_chroot $CHROOT dpkg -l $PACKAGE &>/dev/null
+            return $?
+        ;;
+        yum)
+            do_chroot $CHROOT rpm -qi $PACKAGE &>/dev/null
+            return $?
+        ;;
+        *)
+            fatal_error "$(package_tool) isn't supported in is_package_installed()"
+        ;;
+    esac
+    set -e
+}
+
+rebuild_db_with_local() {
+    CHROOT=$1
+    case "$(package_tool)" in
+        apt)
+        ;;
+        yum)
+            rpm --root=$CHROOT --rebuilddb
+        ;;
+        *)
+            fatal_error "$(package_tool) isn't supported in rebuild_db_with_local()"
+        ;;
+    esac
+
+}
+
+rebuild_db() {
+    CHROOT=$1
+    case "$(package_tool)" in
+        apt)
+        ;;
+        yum)
+            do_chroot $CHROOT rpm --rebuilddb
+        ;;
+        *)
+            fatal_error "$(package_tool) isn't supported in rebuild_db()"
+        ;;
+    esac
+
+}
