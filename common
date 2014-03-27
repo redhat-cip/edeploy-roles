@@ -1,0 +1,400 @@
+# -*- shell-script -*-
+
+if [ -z "$ORIG" ]; then
+    echo "ORIG env variable must be set to the top dir of the sources" 1>&2
+    exit 1
+fi
+
+if [ -z "$dir" ]; then
+    echo "dir env variable must be set to the top dir of your destination directory" 1>&2
+    exit 1
+fi
+
+. $ORIG/distributions
+. $ORIG/packages
+
+fatal_error() {
+    echo "$*" 1>&2
+    clean_mount_points
+    exit 1
+}
+
+check_variables() {
+    echo $TOP | grep -q '^/' || fatal_error "TOP variable ($TOP) shall be absolute, not relative"
+    echo $TOP | grep -q '/$' && fatal_error "TOP variable ($TOP) shall not have a trailing slash ('/')"
+}
+
+check_binary() {
+    type -p $1 || fatal_error "$1 is missing"
+}
+
+compress() {
+    COMPRESS=gzip
+    if [ ! -z $(which pigz 2>/dev/null) ]; then
+        COMPRESS=pigz
+    fi
+    $COMPRESS $@
+}
+
+check_usage() {
+    if [ "$1" -ne "$2" ]; then
+	shift 2
+	fatal_error "Usage: $*"
+    fi
+}
+
+install_mellanox() {
+    RELEASE=$1
+    CHROOT=$2
+    URL=http://www.mellanox.com/downloads/ofed/MLNX_OFED-2.0-3.0.0/
+    FILE=
+    KVER=
+    KVER_TO_REMOVE=
+    PACKAGES=
+    case $RELEASE in
+    precise)
+        KVER=3.5.0-42-generic
+        KVER_TO_REMOVE=3.8.0-32
+        FILE="MLNX_OFED_LINUX-2.0-3.0.0-ubuntu12.04-x86_64.tgz"
+        URL="$URL/$FILE"
+        # Thoses packages will be installed by mellanox but one by one ....
+        # Let's install them at once to save time
+        PACKAGES="autotools-dev autoconf libtool automake1.10 automake debhelper tcl tcl8.4 chrpath swig graphviz tcl-dev tcl8.4-dev tk-dev tk8.4-dev bison flex dpatch libcurl4-gnutls-dev python-libxml2 libvirt-bin"
+        PACKAGES="$PACKAGES linux-image-$KVER linux-headers-$KVER"
+        # We shall only keep the final kernel unless kernel-mft-dkms fails at compiling
+        PACKAGES_TO_REMOVE="linux-image-$KVER_TO_REMOVE-generic linux-headers-$KVER_TO_REMOVE-generic linux-headers-$KVER_TO_REMOVE"
+        ;;
+    *)
+        return
+        ;;
+    esac
+
+    for mydir in /proc /dev /sys /dev/pts /run; do
+        mount $mydir $CHROOT/$mydir -o bind || echo "Failed at binding $mydir"
+    done
+    chroot $CHROOT apt-get  -y --force-yes purge $PACKAGES_TO_REMOVE
+    chroot $CHROOT apt-get -y --force-yes install $PACKAGES
+
+    wget -q -N $URL
+    cp $FILE $CHROOT
+    cd $CHROOT
+    tar -xf $FILE
+    cd -
+
+    # We need to perform many task in the chroot, let's make a script for that
+    cat > $CHROOT/doit.sh << EOF
+#!/bin/bash
+
+# To avoid dkms from failing, let's insure we have the headers well installed
+cd /lib/modules/
+ln -sf $KVER `uname -r`
+rm -rf $KVER_TO_REMOVE*
+
+#Mellanox is installing dkms drivers but they do conflict
+#with the existing ones. So let's get them out of the tree.
+mkdir -p $KVER-obsolete/kernel/drivers/net/ethernet/mellanox
+mv $KVER/kernel/drivers/infiniband $KVER-obsolete/kernel/drivers
+mv $KVER/kernel/drivers/net/ethernet/mellanox/ $KVER-obsolete/kernel/drivers/net/ethernet/mellanox/
+cd -
+
+cd /lib/modules/$KVER
+ln -sf build source
+ln -sf x86 build/arch/amd64
+cd -
+
+DIRNAME=$(echo $FILE | sed -e 's/\.tgz//g')
+cd \$DIRNAME
+# Avoid any failure as we are not interactive
+export DEBIAN_FRONTEND=noninteractive
+export LANG=en_US.UTF-8
+export LC_ALL=C
+unset ARCH
+
+# Disable uninstall to ease debugging
+#sed -i 's|.*ex "/usr/sbin/ofed_uninstall.sh --force"*|#ex "/usr/sbin/ofed_uninstall.sh --force";|g' ./mlnxofedinstall
+
+# Let's install mellanox stuff
+echo y | ./mlnxofedinstall --basic -vvv
+cd -
+
+rm -rf \$DIRNAME*
+# we dont' need to keep this hack persistent
+rm -f /lib/modules/`uname -r`
+# Be sure that the modules dependencies are well computed
+depmod -a $KVER
+EOF
+
+    chmod +x $CHROOT/doit.sh
+    chroot "$CHROOT" /doit.sh
+
+    #Let's tweak the grub setup to boot the proper kernel with intel_iommu for SR_IOV
+    #Grub will be updates/installed when eDeploy will install it on the real server
+    sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT=.*/GRUB_CMDLINE_LINUX_DEFAULT="intel_iommu=on"/g' $CHROOT/etc/default/grub
+
+    for mydir in /proc /sys /run; do
+        umount $CHROOT/$mydir
+    done
+
+    rm -f $CHROOT/doit.sh
+}
+
+
+install_ib_if_needed() {
+    ORIG=$1
+    CHROOT=$2
+    if [ "$ENABLE_IB" = "y" ]; then
+        if [ "$ENABLE_MELLANOX" = "y" ]; then
+            case $RELEASE in
+                precise)
+                    install_mellanox $RELEASE $CHROOT
+                ;;
+                *)
+                echo "Mellanox configuration is not available yet for $RELEASE"
+                return
+                ;;
+            esac
+        else
+            bash ${ORIG}/infiniband $CHROOT
+            install_packages $CHROOT "infiniband-diags"
+            if [ "$RELEASE" = "precise" ]; then
+                # as per https://bugs.launchpad.net/ubuntu/+source/libmlx4/+bug/1037107
+                # ubuntu precise needs a package to be backported
+                LIBMLX=libmlx4-1_1.0.4-1_amd64.deb
+                cd $CHROOT;
+                    wget --no-verbose http://us.archive.ubuntu.com/ubuntu/ubuntu/pool/universe/libm/libmlx4/$LIBMLX
+                cd -
+                chroot "$CHROOT" dpkg -i /$LIBMLX
+                rm -rf $CHROOT/$LIBMLX
+            fi
+        fi
+    fi
+}
+
+do_chroot() {
+    local chdir="$1"
+    shift
+    PATH=/bin/:/sbin:$PATH LANG=C LC_ALL=C LC_CTYPE=C LANGUAGE=C chroot "$chdir" "$@"
+}
+
+clean_chroot() {
+    for log in $(find $dir/var/log -type f || :); do
+	> $log
+    done
+}
+
+clean_mount_points() {
+    if [ ! -d "${dir}" ]; then
+        return
+    fi
+
+    # Since /dev is a copy, we shall clean it as it will be reconstructed at boot time
+    rm -rf ${dir}/dev
+    mkdir -p ${dir}/dev
+
+    a=10
+    local lazy=""
+
+    while (grep -qi " ${dir}" /proc/mounts); do
+        # After 8 tries, let's try the lazy umount
+        # As we are on virtual fs, this is not an issue
+        if [ $a -eq 8 ]; then
+            lazy="-l"
+        fi
+
+        # Let's umount all mounted dir by taking the longest path first
+        grep -i " ${dir}" /proc/mounts | awk '{print $2}' | sort -u -r | xargs umount $lazy && a=10 && lazy=""
+
+        a=$(($a - 1))
+        if [ $a -eq 0 ]; then
+            echo "clean_mount_points() FAILED!"
+            return 1
+        fi
+    done
+
+    return 0
+}
+
+prevent_ctrl_c() {
+    case "$1" in
+        "on")
+            trap '' 2
+        ;;
+        "off")
+            trap 2
+        ;;
+    esac
+}
+
+# Called to clean packages, temporary files and to create the compressed archive
+# usually by a "trap cleanup 0" in a script
+cleanup() {
+    ret=$?
+
+    if [ "$src" = "$dir" ]; then
+	echo "Nested call, exiting"
+	exit $ret
+    fi
+    
+    # This part of the code shall never by breaked by a user
+    prevent_ctrl_c on
+
+    clear_trap
+    set +e
+    last_command=$BASH_COMMAND
+    if [ "$ret" != "0" ]; then
+        echo "################"
+        echo "TRAP TRIGGERED !"
+        echo "################"
+        echo "$last_command returned $ret"
+    fi
+    rm -f "${dir}"/etc/default/grub.d/edeploy.cfg
+
+    # Let's remove any trace of a rhn configuration
+    unregister_rhn $DIST $dir
+
+    # Let's disable apt-get and yum for normal usage
+    for pkgmngr in apt-get yum; do
+	if [ ! -f ${dir}/usr/bin/${pkgmngr}.moved -a -f ${dir}/usr/bin/${pkgmngr} ]; then
+	    mv -f ${dir}/usr/bin/${pkgmngr} ${dir}/usr/bin/${pkgmngr}.moved
+	    ln -s /bin/true ${dir}/usr/bin/${pkgmngr}
+	fi
+    done
+
+    # Remove policy for invoke-rc.d (this has side effects on puppet for exemple)
+    if [ -f ${dir}/usr/sbin/policy-rc.d ]; then
+	mv ${dir}/usr/sbin/policy-rc.d ${dir}/usr/sbin/policy-rc.d.moved
+    fi
+
+    if [ "$ret" = "0" ]; then
+        if [ -z "$STRIPPED_TARGET" ]; then
+            clear_packages_cache $dir
+            save_package_list $dir
+        fi
+
+        echo > "${dir}"/etc/resolv.conf
+        clean_chroot
+        clean_mount_points
+
+        # CURRENT_TARGET looks like /var/lib/debootstrap/install/D7-H.1.0.0/deploy.done
+        # Let's extract the target name from this variable
+        CLEAN_CURRENT_TARGET=$(basename $CURRENT_TARGET | cut -d "." -f 1)
+
+        # Did we completed the build (aka no more dependencies) ?
+        # It's useless creating virtualized images on dependencies, it takes space & time for nothing.
+        if [ "$MAKEFILE_TARGET" = "$CLEAN_CURRENT_TARGET" ]; then
+            echo "No more dependencies, considering Virtualized output"
+            if [ ! -z "$VIRTUALIZED" ]; then
+                if [ ! -f "$VIRTUALIZED" ]; then
+                    echo "VIRTUALIZED images requested but the pointed file ($VIRTUALIZED) doesn't exists"
+                else
+                    ${ORIG}/create-image.sh $dir ${INST}/${ROLE}-${version}.img $VIRTUALIZED || ret=1
+		    (cd ${INST}; md5sum ${ROLE}-${version}.img > ${ROLE}-${version}.img.md5) || ret=1
+                fi
+            fi
+        fi
+        if [ -z "$STRIPPED_TARGET" ]; then
+            rm -f ${INST}/${ROLE}-${version}.edeploy*
+            cd ${dir}
+            if [ -z "$NO_COMPRESSED_FILE" ]; then
+                tar c --numeric-owner . | compress -9v > ${INST}/${ROLE}-${version}.edeploy || ret=1
+		(cd ${INST}; md5sum ${ROLE}-${version}.edeploy > ${ROLE}-${version}.edeploy.md5) || ret=1
+            fi
+            cd -
+        fi
+    else
+        clean_mount_points
+    fi
+
+    if [ "$ret" != "0" ]; then
+        echo "###########"
+        echo "END OF TRAP"
+        echo "###########"
+    fi
+
+    prevent_ctrl_c off
+    exit $ret
+}
+
+clear_trap() {
+    trap - 0
+}
+
+mount_fs() {
+    for virtual_dir in /proc; do
+        if [ ! -d ${dir}/${virtual_dir} ]; then
+            mkdir -p ${dir}/${virtual_dir}
+        fi
+        mount -obind ${virtual_dir} ${dir}/${virtual_dir}
+    done
+
+    # Let's create a copy of the current /dev
+    mkdir -p ${dir}/dev/pts
+    rsync -a --delete-before --exclude=shm /dev/ ${dir}/dev/
+
+    # If we run with an ISO as loopback, we need to mount it
+    if [ ! -z $ISO_PATH ]; then
+        if [ ! -d ${dir}/repo ]; then
+            mkdir -p ${dir}/repo
+        fi
+        mount -o loop $ISO_PATH "${dir}/repo"
+    fi
+}
+
+common_setup() {
+    trap cleanup 0
+
+    if [ -z "${dir}" ]; then
+        fatal_error "common_setup: dir variable is not set ! Exiting"
+    fi
+
+    local git_version=$(git rev-parse HEAD 2>/dev/null || true)
+
+    if [ ! -z "$git_version" ]; then
+        echo "Running edeploy on top of git $git_version"
+    fi
+
+    export LC_ALL=C
+
+    mount_fs
+
+    # export these variables to let them be used by upgrade-from sub-scripts
+    export OS=$(do_chroot ${dir} lsb_release -i -s)
+    export RELEASE=$(do_chroot ${dir} lsb_release -c -s)
+    export CODENAME=$(do_chroot ${dir} lsb_release -r -s)
+
+    # Resolv.conf got setup during the initial deboostrap
+    # But since, you might have change your host to another network (office vs home vs mobile vs ...)
+    # In such case, the resolv.conf is wrong and prevents apt (and all networking-depedent stuff from working)
+    # So let's copy the current one to insure the setup is good
+    cp -f /etc/resolv.conf "$dir/etc/"
+
+    set -x
+
+    echo -e "\nRole ${ROLE}\nVersion ${version}\n" > ${dir}/etc/motd
+
+    if [ ! -d ${dir}/var/lib/edeploy ]; then
+        mkdir -p ${dir}/var/lib/edeploy
+    fi
+    echo -e "VERS=${version}\nROLE=${ROLE}\n" > ${dir}/var/lib/edeploy/conf
+
+    export DEBIAN_FRONTEND=noninteractive
+
+    # magical stuff to let kernel upgrade work
+    mkdir -p "${dir}"/etc/default/grub.d
+    echo 'exit 0' > "${dir}"/etc/default/grub.d/edeploy.cfg
+
+    # let apt-get and yum work in build scripts
+    for pkgmngr in apt-get yum; do
+	if [ -f ${dir}/usr/bin/${pkgmngr}.moved ]; then
+	    mv -f ${dir}/usr/bin/${pkgmngr}.moved ${dir}/usr/bin/${pkgmngr}
+	fi
+    done
+
+    # put in place a policy for invoke-rc.d
+    if [ -f ${dir}/usr/sbin/policy-rc.d.moved ]; then
+	mv ${dir}/usr/sbin/policy-rc.d.moved ${dir}/usr/sbin/policy-rc.d
+    fi
+
+    add_rhn_repository $DIST
+
+}
