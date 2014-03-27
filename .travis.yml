@@ -8,3 +8,7 @@ script:
     - export ROLES="openstack-common openstack-full puppet-master install-server ceph"
     - sudo make TOP=build ARCHIVE=archive DIST=precise DVER=U12.04 openstack-full
     - sudo make TOP=build ARCHIVE=archive DIST=wheezy DVER=D7 openstack-full
+
+notifications:
+  email: false
+
