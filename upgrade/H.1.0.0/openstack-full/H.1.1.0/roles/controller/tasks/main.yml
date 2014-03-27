@@ -34,3 +34,6 @@
 - name: be sure cinder-volume is running
   service: name=cinder-volume state=started
   tags: spof
+
+- name: restart rabbitmq
+  service: name=rabbitmq-server state=restarted
