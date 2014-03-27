@@ -37,3 +37,9 @@
 
 - name: restart rabbitmq
   service: name=rabbitmq-server state=restarted
+
+- name: restart glance api
+  service: name=glance-api state=restarted
+
+- name: restart glance registry
+  service: name=glance-registry state=restarted
