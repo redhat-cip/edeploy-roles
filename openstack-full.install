@@ -46,6 +46,7 @@ function build_dkms() {
         do_chroot $dir dkms add -m "$name" -v "$version"
     fi
 
+    unset ARCH
     do_chroot $dir dkms build -m "$name" -v "$version" -k "$kernel"
     if [ $? -ne 0 ]; then
         fatal_error "Failed at building dkms $name version $version for kernel $kernel"
