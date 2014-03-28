@@ -42,17 +42,18 @@ EOF
             update_repositories $dir
 	    install_packages ${dir} "cloud-init"
 	    ;;
-	"Ubuntu")
-            update_repositories $dir
+    "Ubuntu")
+        update_repositories $dir
+        install_packages ${dir} "cloud-init"
 	    # Todo(EmilienM): Move cloud-init into backports repo to have last release properly
-	    do_chroot ${dir} wget --no-verbose http://security.ubuntu.com/ubuntu/pool/main/c/cloud-init/cloud-init_0.7.3-0ubuntu2_all.deb
-	    do_chroot ${dir} wget --no-verbose http://security.ubuntu.com/ubuntu/pool/main/p/python-json-patch/python-json-patch_1.0-2_all.deb
-	    do_chroot ${dir} wget --no-verbose http://security.ubuntu.com/ubuntu/pool/main/p/python-json-pointer/python-json-pointer_1.0-1ubuntu2_all.deb
-	    do_chroot ${dir} dpkg -i cloud-init_0.7.3-0ubuntu2_all.deb  || true
-	    do_chroot ${dir} dpkg -i python-json-patch_1.0-2_all.deb  || true
-	    do_chroot ${dir} dpkg -i python-json-pointer_1.0-1ubuntu2_all.deb  || true
-	    do_chroot ${dir} apt-get -f install -y -o Dpkg::Options::="--force-confold"
-	    do_chroot ${dir} rm cloud-init_0.7.3-0ubuntu2_all.deb python-json-patch_1.0-2_all.deb python-json-pointer_1.0-1ubuntu2_all.deb
+        do_chroot ${dir} wget --no-verbose http://security.ubuntu.com/ubuntu/pool/main/c/cloud-init/cloud-init_0.7.3-0ubuntu2_all.deb
+        do_chroot ${dir} wget --no-verbose http://security.ubuntu.com/ubuntu/pool/main/p/python-json-patch/python-json-patch_1.0-2_all.deb
+        do_chroot ${dir} wget --no-verbose http://security.ubuntu.com/ubuntu/pool/main/p/python-json-pointer/python-json-pointer_1.0-1ubuntu2_all.deb
+        do_chroot ${dir} dpkg -i cloud-init_0.7.3-0ubuntu2_all.deb  || true
+        do_chroot ${dir} dpkg -i python-json-patch_1.0-2_all.deb  || true
+        do_chroot ${dir} dpkg -i python-json-pointer_1.0-1ubuntu2_all.deb  || true
+        do_chroot ${dir} apt-get -f install -y -o Dpkg::Options::="--force-confold"
+        do_chroot ${dir} rm cloud-init_0.7.3-0ubuntu2_all.deb python-json-patch_1.0-2_all.deb python-json-pointer_1.0-1ubuntu2_all.deb
 	    ;;
 	"RedHatEnterpriseServer")
 	    # cloud-init is in Red Hat Common for RHEL Server (v. 6)
