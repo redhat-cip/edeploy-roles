@@ -56,4 +56,9 @@
 # to avoid any token error in services
 - name: restart memcached
   service: name=memcached state=restarted
-  tag: api
+  tag: cache
+
+# In this release, Neutron L3 Agent is updated, we need to restart it. 
+- name: restart neutron-l3-agent
+  service: name=neutron-l3-agent state=restarted
+  tag: network
