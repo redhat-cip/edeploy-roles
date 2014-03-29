@@ -48,11 +48,7 @@ function build_dkms() {
 
     unset ARCH
     do_chroot $dir dkms build -m "$name" -v "$version" -k "$kernel"
-    if [ $? -ne 0 ]; then
-        fatal_error "Failed at building dkms $name version $version for kernel $kernel"
-    else
-        do_chroot $dir dkms install -m "$name" -v "$version" -k "$kernel"
-    fi
+    do_chroot $dir dkms install -m "$name" -v "$version" -k "$kernel"
 }
 
 case "$OS" in
@@ -165,7 +161,7 @@ EOF
 esac
 
 if [ "$OS" = Debian ]; then
-    headers=linux-headers-3.12-0.bpo.1-amd64
+    headers=linux-headers-3.2.0-4-amd64
 else
     headers=
 fi
@@ -314,9 +310,8 @@ case "$OS" in
     ;;&
     "Debian"|"Ubuntu")
         install_packages_disabled $dir ${packages[$(package_type)]}
-	# try to build the dkms module but do not care if it fails (it'll built at boot time)
-	for kernel in $(echo $dir/boot/vmlinuz-* |sed "s@$dir/boot/vmlinuz-@@"); do
-	    build_dkms openvswitch-datapath-dkms openvswitch $kernel || :
+	for kernel in $(ls $dir/boot/vmlinuz-* |sed "s@$dir/boot/vmlinuz-@@"|fgrep -v 3.12); do
+	    build_dkms openvswitch-datapath-dkms openvswitch $kernel
 	done
     ;;
     "RedHatEnterpriseServer")
