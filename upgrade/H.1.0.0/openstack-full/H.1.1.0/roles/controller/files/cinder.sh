@@ -33,7 +33,7 @@ OS_AUTH_URL=$4
 
 VOLUME_TYPE_ID=$(cinder --os-username $OS_USERNAME --os-tenant-name $OSE_TENANT_NAME --os-password $OS_PASSWORD --os-auth-url $OS_AUTH_URL extra-specs-list | awk '/ ceph /{print $2}')
 
-echo "update volumes set volume_type_id='$VOLUME_TYPE_ID' where volume_type_id is NULL;">cinder.sql
+echo "update volumes set volume_type_id='$VOLUME_TYPE_ID' where volume_type_id='';">cinder.sql
 
 # Where cinder-volume used to run
 for i in 3 8 12;
