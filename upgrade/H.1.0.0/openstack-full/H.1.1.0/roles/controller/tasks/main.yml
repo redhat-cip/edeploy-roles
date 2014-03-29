@@ -42,10 +42,18 @@
   service: name=rabbitmq-server state=restarted
   tag: messaging
 
+# We need to restart Glance because we upgrade RabbitMQ, and we have a small
+# downtime not handled by Glance, since it does not use Oslo messaging and HA queues.
 - name: restart glance api
   service: name=glance-api state=restarted
   tag: image
 
 - name: restart glance registry
   service: name=glance-registry state=restarted
+  tag: api
+
+# In this release, we switch token backend to SQL, so we need to flush the memcache
+# to avoid any token error in services
+- name: restart memcached
+  service: name=memcached state=restarted
   tag: api
