@@ -1,64 +1,70 @@
 ---
 # file: roles/common/tasks/main.yml
 
-- name: be sure cinder-api is not running
-  service: name=cinder-api state=stopped
-  tags: api
-
-- name: be sure cinder-scheduler is not running
-  service: name=cinder-scheduler state=stopped
-  tags: scheduler
-
-- name: be sure cinder-volume is not running
-  service: name=cinder-volume state=stopped
-  tags: spof
+- name: be sure cinder is not running
+  service: name={{ item }} state=stopped
+  with_items:
+    - cinder-api
+    - cinder-scheduler
+    - cinder-volume
+  tags: before_config
 
 - name: edeploy upgrade
   edeploy: command=upgrade version={{ version }}
-  tags: edeploy
+  tags: before_config
 
 # This action should be realised on one node, since database is replicated
 - name: migrate database to multi-backend
   script: cinder.sh {{ os_username }} {{ os_tenant_name }} {{ os_password }} {{ os_auth_url }}
-  tags: db
+  tags: before_config
   when: inventory_hostname == groups['controllers'][0]
 
-- name: be sure cinder-api is running
-  service: name=cinder-api state=started
-  tags: api
-
-- name: be sure cinder-scheduler is running
-  service: name=cinder-scheduler state=started
-  tags: scheduler
-
-- name: be sure cinder-volume is running
-  service: name=cinder-volume state=started
-  tags: spof
+- name: be sure cinder is running
+  service: name={{ item }} state=started
+  with_items:
+    - cinder-api
+    - cinder-scheduler
+    - cinder-volume
+  tags: before_config
 
 - name: purge cinder config
   command: mv /etc/cinder/cinder.conf /etc/cinder/cinder.conf.1.0.0
+  tags: before_config
 
 - name: restart rabbitmq
   service: name=rabbitmq-server state=restarted
-  tag: messaging
+  tags: before_config
 
 # We need to restart Glance because we upgrade RabbitMQ, and we have a small
 # downtime not handled by Glance, since it does not use Oslo messaging and HA queues.
 - name: restart glance api
-  service: name=glance-api state=restarted
-  tag: image
-
-- name: restart glance registry
-  service: name=glance-registry state=restarted
-  tag: api
-
-# In this release, we switch token backend to SQL, so we need to flush the memcache
-# to avoid any token error in services
-- name: restart memcached
-  service: name=memcached state=restarted
-  tag: cache
+  service: name={{ item }} state=restarted
+  with_items:
+    - glance-api
+    - glance-registry
+  tags: before_config
 
 # In this release, Neutron L3 Agent is updated, we need to restart it. 
 - name: restart neutron-l3-agent
   service: name=neutron-l3-agent state=restarted
-  tag: network
+  tags: before_config
+
+# In this release, we switch token backend to SQL, so we need to flush the memcache
+# to avoid any token error in services and also
+- name: restart memcached
+  service: name=memcached state=restarted
+  tags: after_config
+
+# We restart keystone after the config to ensure tokens are stored in MySQL and not
+# in memcached backend.
+- name: restart keystone
+  service: name=keystone state=restarted
+  tags: after_config
+
+ # Due to RabbitMQ eventual update, we need to restatr some nova services
+- name: restart nova
+  service: name={{ item }} state=restarted
+  with_items:
+    - nova-conductor
+    - nova-cert
+  tags: after_config
