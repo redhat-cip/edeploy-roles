@@ -36,7 +36,7 @@
   tags: spof
 
 - name: purge cinder config
-  script: mv /etc/cinder/cinder.conf /etc/cinder/cinder.conf.1.0.0
+  command: mv /etc/cinder/cinder.conf /etc/cinder/cinder.conf.1.0.0
 
 - name: restart rabbitmq
   service: name=rabbitmq-server state=restarted
