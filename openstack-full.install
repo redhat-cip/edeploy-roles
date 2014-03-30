@@ -51,6 +51,13 @@ function build_dkms() {
     do_chroot $dir dkms install -m "$name" -v "$version" -k "$kernel"
 }
 
+function add_rabbitmq_deb_repo() {
+    do_chroot $dir wget -O- ${RABBITMQ_URL:=http://www.rabbitmq.com/}rabbitmq-signing-key-public.asc | do_chroot $dir apt-key add -
+    cat > ${dir}/etc/apt/sources.list.d/rabbitmq.list <<EOF
+    deb ${RABBITMQ_URL:=http://www.rabbitmq.com/}debian/ testing main
+EOF
+}
+
 case "$OS" in
     "Debian")
      do_chroot $dir apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
@@ -75,12 +82,7 @@ Package: *
 Pin: origin ftp.igh.cnrs.fr
 Pin-Priority: 900
 EOF
-    do_chroot $dir wget http://www.rabbitmq.com/rabbitmq-signing-key-public.asc
-    do_chroot $dir apt-key add rabbitmq-signing-key-public.asc
-    do_chroot $dir rm rabbitmq-signing-key-public.asc
-    cat > ${dir}/etc/apt/sources.list.d/rabbitmq.list <<EOF
-deb http://www.rabbitmq.com/debian/ testing main
-EOF
+     add_rabbitmq_deb_repo
     ;;
     "Ubuntu")
      do_chroot $dir apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
@@ -95,12 +97,7 @@ EOF
      cat > ${dir}/etc/apt/sources.list.d/ceph.list <<EOF
 deb http://ceph.com/debian $DIST main
 EOF
-    do_chroot $dir wget http://www.rabbitmq.com/rabbitmq-signing-key-public.asc
-    do_chroot $dir apt-key add rabbitmq-signing-key-public.asc
-    do_chroot $dir rm rabbitmq-signing-key-public.asc
-    cat > ${dir}/etc/apt/sources.list.d/rabbitmq.list <<EOF
-deb http://www.rabbitmq.com/debian/ testing main
-EOF
+    add_rabbitmq_deb_repo
     ;;
     "CentOS"|"RedHatEnterpriseServer")
       if [ "$(get_redhat_major_version $CODENAME)" == "6" ]; then
