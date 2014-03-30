@@ -9,8 +9,17 @@
     - cinder-volume
   tags: before_config
 
+# We upgrade RabbitMQ to a major release, we need to stop the service.
+- name: be sure rabbitmq is not running
+  service: name=rabbitmq-server state=stopped
+  tags: before_config
+
 - name: edeploy upgrade
   edeploy: command=upgrade version={{ version }}
+  tags: before_config
+
+- name: be sure rabbitmq is running
+  service: name=rabbitmq-server state=started
   tags: before_config
 
 # This action should be realised on one node, since database is replicated
@@ -29,10 +38,6 @@
 
 - name: purge cinder config
   command: mv /etc/cinder/cinder.conf /etc/cinder/cinder.conf.1.0.0
-  tags: before_config
-
-- name: restart rabbitmq
-  service: name=rabbitmq-server state=restarted
   tags: before_config
 
 # We need to restart Glance because we upgrade RabbitMQ, and we have a small
