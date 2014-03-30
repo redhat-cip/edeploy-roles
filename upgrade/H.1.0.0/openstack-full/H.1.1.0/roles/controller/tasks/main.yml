@@ -21,6 +21,8 @@
 - name: be sure rabbitmq is running
   service: name=rabbitmq-server state=started
   tags: before_config
+  async: 20
+  poll: 5
 
 # This action should be realised on one node, since database is replicated
 - name: migrate database to multi-backend
