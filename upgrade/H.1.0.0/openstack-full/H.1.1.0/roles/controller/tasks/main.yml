@@ -73,4 +73,5 @@
   with_items:
     - nova-conductor
     - nova-cert
+    - nova-api
   tags: after_config
