@@ -58,6 +58,7 @@ EOF
 		add_puppet_repository $DIST
 		add_epel_repository $DIST
 		install_packages $dir puppet-server git augeas ntp httpd puppetdb puppetdb-terminus rubygem-kwalify
+		remove_epel_repository $DIST
 		remove_puppet_repository $DIST
 	    fi
 	    ;;
