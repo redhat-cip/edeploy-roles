@@ -18,6 +18,11 @@
   edeploy: command=upgrade version={{ version }}
   tags: before_config
 
+- name: be sure the rabbitmq lock file does not exist
+  shell: rm -f /var/lib/rabbitmq/mnesia/*/nodes_running_at_shutdown
+  tags: before_config
+  when: inventory_hostname == groups['controllers'][-1]
+
 - name: be sure rabbitmq is running
   service: name=rabbitmq-server state=started
   tags: before_config
