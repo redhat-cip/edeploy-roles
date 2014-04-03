@@ -5,4 +5,15 @@
   user: jenkins
   sudo: true
 
-- include: controllers.yml
+- hosts: controllers
+  roles:
+    - controller
+
+- hosts: loadbalancers
+  roles:
+    - loadbalancer
+
+- hosts: computes
+  roles:
+    - compute
+

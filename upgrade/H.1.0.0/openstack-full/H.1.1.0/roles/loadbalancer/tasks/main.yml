@@ -1,0 +1,6 @@
+---
+# file: main.yml
+
+- name: edeploy upgrade
+  edeploy: command=upgrade version={{ version }}
+  tags: before_config

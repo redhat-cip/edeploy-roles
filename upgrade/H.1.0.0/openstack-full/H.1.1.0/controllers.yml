@@ -1,7 +1,0 @@
----
-# file: controllers.yml
-
-- hosts: controllers
-  roles:
-    - common
-    - controller
