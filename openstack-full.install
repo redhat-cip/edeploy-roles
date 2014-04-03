@@ -168,6 +168,7 @@ packages=(
         ceilometer-alarm-notifier \
         ceilometer-api \
         ceilometer-collector \
+        ceilometer-agent-notification \
         ceph \
         ceph-mds \
         cinder-api \
