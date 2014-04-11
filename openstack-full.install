@@ -294,6 +294,7 @@ packages=(
         rabbitmq-server \
         rsync \
         sysfsutils \
+        tuned \
         xfsprogs \
         xinetd"
 )
