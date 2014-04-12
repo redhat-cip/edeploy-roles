@@ -293,6 +293,8 @@ packages=(
         python-swiftclient \
         rabbitmq-server \
         rsync \
+        rubygems \
+        rubygem-json \
         sysfsutils \
         xfsprogs \
         xinetd"
