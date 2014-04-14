@@ -134,6 +134,28 @@ enabled=1
 gpgcheck=1
 type=rpm-md
 gpgkey=https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc
+
+[ceph-qemu]
+name=Ceph Packages for QEMU
+baseurl=http://ceph.com/packages/ceph-extras/rpm/rhel6/x86_64/
+enabled=1
+priority=2
+gpgcheck=1
+type=rpm-md
+gpgkey=https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc
+
+[ceph-qemu-noarch]
+name=Ceph QEMU noarch
+baseurl=http://ceph.com/packages/ceph-extras/rpm/rhel6/noarch/
+enabled=1
+priority=2
+gpgcheck=1
+type=rpm-md
+gpgkey=https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc
+EOF
+            cat > ${dir}/etc/yum/pluginconf.d/priorities.conf <<EOF
+[main]
+enabled = 1
 EOF
             if [ "$OS" = "RedHatEnterpriseServer" ]; then
 		cat > ${dir}/etc/yum.repos.d/osp4.repo <<EOF
@@ -329,14 +351,7 @@ case "$OS" in
         # pacemaker is in RHEL Server High Availability (v. 6 for 64-bit x86_64)
         add_rhn_channel rhel-x86_64-server-ha-6
 
-        # qemu-kvm-rhev provides a kvm that supersedes the standard qemu-kvm.
-        # This package is not yet available in CentOS. So we have to take care
-        # of that.
-        install_packages $dir qemu-kvm-rhev
     ;;& # → means "continue"
-    "CentOS")
-        install_packages $dir qemu-kvm
-    ;;&
     "CentOS"|"RedHatEnterpriseServer")
 
         # We want to use rabbitmq on Redhat instead of QPID
@@ -349,6 +364,9 @@ case "$OS" in
         # while they updating it, we use pip to install the last one required by OpenStack
         do_chroot $dir pip install --upgrade kombu
  
+        # Install Virtualization for Block Device with RBD support (Ceph)
+        install_packages $dir qemu-kvm qemu-kvm-tools qemu-img
+
         do_chroot $dir chkconfig puppet on
 
         do_chroot $dir rpm -qv ${packages[$(package_type)]} || fatal_error "Some packages are not installed"
