@@ -291,6 +291,7 @@ packages=(
         python-kombu \
         python-lesscpy \
         python-memcached \
+        python-pip \
         python-swiftclient \
         rabbitmq-server \
         rsync \
@@ -343,6 +344,10 @@ case "$OS" in
         install_packages_disabled $dir ${packages[$(package_type)]}
         install_packages_disabled $dir ${packages[$(package_type)]}
 
+        # python-kombu is outdated for now in Red Hat.
+        # while they updating it, we use pip to install the last one required by OpenStack
+        do_chroot $dir pip install --upgrade kombu
+ 
         do_chroot $dir chkconfig puppet on
 
         do_chroot $dir rpm -qv ${packages[$(package_type)]} || fatal_error "Some packages are not installed"
