@@ -239,6 +239,7 @@ packages=(
 "
 
     ["rpm"]="
+        git \
         MariaDB-Galera-server \
         MariaDB-client \
         MySQL-python \
