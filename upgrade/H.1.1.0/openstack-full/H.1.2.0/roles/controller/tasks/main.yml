@@ -1,0 +1,43 @@
+---
+# file: roles/common/tasks/main.yml
+
+- name: edeploy upgrade
+  edeploy: command=upgrade version={{ version }}
+  tags: before_config
+
+# This release upgrades Havana 2 to Havana 3
+# Some services need to be restarted
+- name: restart openstack
+  service: name={{ item }} state=restarted
+  with_items:
+    - ceilometer-api
+    - ceilometer-collector
+    - ceilometer-alarm-evaluator
+    - ceilometer-alarm-notifier
+    - cinder-api
+    - cinder-scheduler
+    - cinder-volume
+    - cinder-backup
+    - glance-api
+    - glance-registry
+    - apache2
+    - heat-api
+    - heat-api-cfn
+    - heat-api-cloudwatch
+    - keystone
+    - neutron-server
+    - nova-api
+    - nova-cert
+    - nova-conductor
+    - nova-consoleauth
+    - nova-scheduler
+    - nova-spicehtml5proxy
+  tags: before_config
+
+- name: restart services managed by Corosync
+  shell: crm resource restart {{ item }}
+  with_items:
+    - heat-engine
+    - ceilometer-agent-central
+  tags: before_config
+  when: inventory_hostname == groups['controllers'][-1]
