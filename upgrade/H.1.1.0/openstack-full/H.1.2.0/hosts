@@ -1,0 +1,11 @@
+# file: hosts
+
+[controllers]
+controller.enovance.com
+
+[computes]
+compute.enovance.com
+
+[networks]
+network.enovance.com
+

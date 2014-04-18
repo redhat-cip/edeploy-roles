@@ -1,0 +1,16 @@
+---
+# file: roles/common/tasks/main.yml
+
+- name: edeploy upgrade
+  edeploy: command=upgrade version={{ version }}
+  tags: before_config
+
+# This release upgrades Havana 2 to Havana 3
+# Some services need to be restarted
+- name: restart openstack
+  service: name={{ item }} state=restarted
+  with_items:
+    - nova-compute
+    - ceilometer-agent-compute
+    - neutron-plugin-openvswitch-agent
+  tags: before_config
