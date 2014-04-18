@@ -35,7 +35,7 @@
   tags: before_config
 
 - name: restart services managed by Corosync
-  shell: crm resource restart {{ item }}
+  shell: crm resource cleanup {{ item }}
   with_items:
     - heat-engine
     - ceilometer-agent-central
