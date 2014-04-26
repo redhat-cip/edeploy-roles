@@ -1,0 +1,13 @@
+---
+# file: roles/common/tasks/main.yml
+
+- name: edeploy upgrade
+  edeploy: command=upgrade version={{ version }}
+  tags: before_config
+
+# This release upgrades Keystone
+- name: restart openstack
+  service: name={{ item }} state=restarted
+  with_items:
+    - keystone
+  tags: before_config
