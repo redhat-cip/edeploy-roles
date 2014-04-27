@@ -11,12 +11,12 @@
 
 - hosts: loadbalancers
   roles:
-    - loadbalancer
+    - common
 
 - hosts: computes
   roles:
-    - compute
+    - common
 
 - hosts: networks
   roles:
-    - network
+    - common
