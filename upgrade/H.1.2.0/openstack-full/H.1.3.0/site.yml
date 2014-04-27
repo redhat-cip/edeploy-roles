@@ -1,0 +1,22 @@
+---
+# file: site.yml
+
+- hosts: all
+  user: jenkins
+  sudo: true
+
+- hosts: controllers
+  roles:
+    - controller
+
+- hosts: loadbalancers
+  roles:
+    - common
+
+- hosts: computes
+  roles:
+    - common
+
+- hosts: networks
+  roles:
+    - common
