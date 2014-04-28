@@ -40,7 +40,7 @@ export CURRENT_TARGET
 INST=$(TOP)/install/$(VERS)
 META=$(TOP)/metadata/$(VERS)
 
-ROLES = cloud devstack openstack-common openstack-full mysql ceph puppet-master install-server
+ROLES = cloud devstack openstack-common openstack-full mysql puppet-master install-server
 
 all: $(ROLES)
 
@@ -73,11 +73,6 @@ mysql: $(INST)/mysql.done
 $(INST)/mysql.done: mysql.install $(INST)/base.done
 	./mysql.install $(INST)/base $(INST)/mysql $(VERS)
 	touch $(INST)/mysql.done
-
-ceph: $(INST)/ceph.done
-$(INST)/ceph.done: ceph.install $(INST)/base.done
-	./ceph.install $(INST)/base $(INST)/ceph $(VERS)
-	touch $(INST)/ceph.done
 
 docker: $(INST)/docker.done
 $(INST)/docker.done: docker.install $(INST)/base.done
@@ -116,5 +111,5 @@ distclean: clean
 version:
 	@echo "$(VERS)"
 
-.PHONY: cloud devstack openstack-common openstack-full mysql ceph docker puppet-master\
+.PHONY: cloud devstack openstack-common openstack-full mysql docker puppet-master\
 	chef-server dist clean distclean version
