@@ -62,5 +62,6 @@ case "$OS" in
 esac
 
 do_chroot $dir gem install --no-ri --no-rdoc --no-prerelease serverspec r10k rspec-extra-formatters
+cp $SRC/files/backend.rb ${dir}/usr/lib/ruby/vendor_ruby/hiera/backend.rb
 
 # install-server.install ends here
