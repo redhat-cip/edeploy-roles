@@ -186,6 +186,7 @@ packages=(
         keepalived \
         keystone \
         libdbd-mysql-perl \
+        lsof \
         mariadb-client \
         mariadb-galera-server \
         memcached \
@@ -244,6 +245,7 @@ packages=(
         hdparm \
         httpd \
         keepalived \
+        lsof \
         memcached \
         mongo-10gen \
         mongo-10gen-server \
