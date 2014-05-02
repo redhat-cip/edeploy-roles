@@ -36,7 +36,6 @@ case "$OS" in
     "Debian"|"Ubuntu")
 	install_packages $dir python-jinja2 python-paramiko
 	do_chroot $dir pip install ansible
-        cp $SRC/files/backend.rb ${dir}/usr/lib/ruby/vendor_ruby/hiera/backend.rb
 	;;
     "CentOS"|"RedHatEnterpriseServer")
 	echo "Ansible not supported yet on RH"
