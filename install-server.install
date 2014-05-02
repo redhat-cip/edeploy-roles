@@ -36,6 +36,7 @@ case "$OS" in
     "Debian"|"Ubuntu")
 	install_packages $dir python-jinja2 python-paramiko
 	do_chroot $dir pip install ansible
+        cp $SRC/files/backend.rb ${dir}/usr/lib/ruby/vendor_ruby/hiera/backend.rb
 	;;
     "CentOS"|"RedHatEnterpriseServer")
 	echo "Ansible not supported yet on RH"
@@ -62,6 +63,5 @@ case "$OS" in
 esac
 
 do_chroot $dir gem install --no-ri --no-rdoc --no-prerelease serverspec r10k rspec-extra-formatters
-cp $SRC/files/backend.rb ${dir}/usr/lib/ruby/vendor_ruby/hiera/backend.rb
 
 # install-server.install ends here
