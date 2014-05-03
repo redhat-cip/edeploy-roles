@@ -5,6 +5,13 @@
   edeploy: command=upgrade version={{ version }}
   tags: before_config
 
+# This release upgrades MariaDB-galera-server
+- name: restart mysql
+  service: name={{ item }} state=restarted
+  with_items:
+    - mysql
+  tags: before_config
+
 # This release upgrades Keystone
 - name: restart openstack
   service: name={{ item }} state=restarted
