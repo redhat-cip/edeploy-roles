@@ -247,8 +247,8 @@ packages=(
         keepalived \
         lsof \
         memcached \
-        mongo-10gen \
-        mongo-10gen-server \
+        mongodb-org \
+        mongodb-org-server \
         nfs-utils \
         novnc \
         ntp \
