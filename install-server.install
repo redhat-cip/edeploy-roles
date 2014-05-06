@@ -38,7 +38,7 @@ case "$OS" in
 	do_chroot $dir pip install ansible
 	;;
     "Ubuntu")
-	install_packages $dir python-jinja2 python-paramiko build-essential
+	install_packages $dir python-jinja2 python-paramiko build-essential python-dev
 	do_chroot $dir pip install ansible
 	;;
     "CentOS"|"RedHatEnterpriseServer")
