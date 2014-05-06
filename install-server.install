@@ -33,8 +33,12 @@ install_packages_disabled $dir dnsmasq
 # Ansible
 
 case "$OS" in
-    "Debian"|"Ubuntu")
+    "Debian")
 	install_packages $dir python-jinja2 python-paramiko
+	do_chroot $dir pip install ansible
+	;;
+    "Ubuntu")
+	install_packages $dir python-jinja2 python-paramiko build-essential
 	do_chroot $dir pip install ansible
 	;;
     "CentOS"|"RedHatEnterpriseServer")
