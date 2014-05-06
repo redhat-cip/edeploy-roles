@@ -65,7 +65,7 @@ get_openstack_repository() {
   esac
 }
 
-PUPPET_RELEASE=6-7
+PUPPET_RELEASE=6-10
 add_puppet_repository() {
     local dist=$1
 

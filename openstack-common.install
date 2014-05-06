@@ -63,9 +63,10 @@ EOF
          ;;
          "RedHatEnterpriseServer")
             # Redhat is using a channel to get openstack
-            # puppet is in Red Hat OpenStack 4.0
+            add_puppet_repository $DIST
+            install_packages $dir puppet facter hiera
+            remove_puppet_repository $DIST
             add_rhn_channel rhel-x86_64-server-6-ost-4
-            install_packages $dir puppet
          ;;
 
         *)
