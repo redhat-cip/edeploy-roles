@@ -1,0 +1,13 @@
+---
+# file: roles/loadbalancer/tasks/main.yml
+
+# Upgrade packages to Icehouse
+- name: edeploy upgrade
+  edeploy: command=upgrade version={{ version_debian }}
+  tags: before_config
+  when: ansible_distribution == 'Debian'
+
+- name: edeploy upgrade
+  edeploy: command=upgrade version={{ version_ubuntu }}
+  tags: before_config
+  when: ansible_distribution == 'Ubuntu'

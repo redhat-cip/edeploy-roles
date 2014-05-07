@@ -1,0 +1,31 @@
+---
+# file: roles/compute/tasks/main.yml
+
+# Stop Services
+- name: stop services before upgrade
+  service: name {{ item }} state=stopped
+  with_items:
+    - nova-compute
+    - ceilometer-agent-compute
+    - neutron-plugin-openvswitch-agent
+  tags: before_config
+
+# Upgrade packages to Icehouse
+- name: edeploy upgrade
+  edeploy: command=upgrade version={{ version_debian }}
+  tags: before_config
+  when: ansible_distribution == 'Debian'
+
+- name: edeploy upgrade
+  edeploy: command=upgrade version={{ version_ubuntu }}
+  tags: before_config
+  when: ansible_distribution == 'Ubuntu'
+
+# Start Services
+- name: start services after upgrade
+  service: name {{ item }} state=started
+  with_items:
+    - nova-compute
+    - ceilometer-agent-compute
+    - neutron-plugin-openvswitch-agent
+  tags: before_config
