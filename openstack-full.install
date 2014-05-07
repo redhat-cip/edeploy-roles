@@ -27,8 +27,8 @@ ORIG=$(cd $(dirname $0); pwd)
 . ${ORIG}/functions
 
 if [ -z "$OS_VERS" ]; then
-    echo "OS_VERS is not set, Havana will be built by default"
-    OS_VERS=havana
+    echo "OS_VERS is not set, Icehouse will be built by default"
+    OS_VERS=icehouse
 fi
 
 install_ib_if_needed $ORIG $dir
@@ -168,6 +168,7 @@ packages=(
         ceilometer-alarm-notifier \
         ceilometer-api \
         ceilometer-collector \
+        ceilometer-agent-notification \
         ceph \
         ceph-mds \
         cinder-api \
