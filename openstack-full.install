@@ -177,6 +177,7 @@ packages=(
         cinder-volume \
         euca2ools \
         galera \
+        git \
         glance \
         haproxy \
         hdparm \
