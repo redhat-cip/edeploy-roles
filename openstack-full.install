@@ -304,6 +304,7 @@ update_repositories $dir
 
 case "$OS" in
     "Debian")
+        install_packages_disabled $dir init-system-helpers=1.18~bpo70+1
         install_packages_disabled $dir -t wheezy-backports qemu-kvm nova-compute-kvm initramfs-tools
         install_packages_disabled $dir -t wheezy-backports linux-image-3.12-0.bpo.1-amd64
     ;;&
