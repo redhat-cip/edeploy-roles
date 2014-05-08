@@ -200,7 +200,6 @@ packages=(
         neutron-metadata-agent \
         neutron-metering-agent \
         neutron-plugin-linuxbridge-agent \
-        neutron-plugin-openvswitch \
         neutron-plugin-openvswitch-agent \
         neutron-server \
         nfs-common \
