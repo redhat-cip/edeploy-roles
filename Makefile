@@ -28,6 +28,8 @@ REL=1.0.0
 VERSION:=$(PVER).$(REL)
 VERS=$(DVER)-$(VERSION)
 DIST=wheezy
+BREL=1.4.0
+BVERS=$(DVER)-$(BREL)
 
 ARCH=amd64
 export PATH := /sbin:/bin::$(PATH)
@@ -96,7 +98,7 @@ $(INST)/install-server.done: install-server.install $(INST)/cloud.done
 
 $(INST)/base.done:
 	mkdir -p $(INST)/base
-	tar zxf $(ARCHIVE)/$(VERS)/base-$(VERS).edeploy -C $(INST)/base
+	tar zxf $(ARCHIVE)/$(BVERS)/base-$(BVERS).edeploy -C $(INST)/base
 	touch $(INST)/base.done
 
 dist:
