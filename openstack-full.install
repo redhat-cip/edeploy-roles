@@ -219,6 +219,7 @@ packages=(
         pacemaker \
         pm-utils \
         python-argparse \
+        python-dev \
         python-swiftclient \
         rabbitmq-server \
         rsync \
@@ -290,6 +291,7 @@ packages=(
         openstack-swift-proxy \
         pacemaker \
         python-cinderclient \
+        python-devel \
         python-kombu \
         python-lesscpy \
         python-memcached \
