@@ -81,11 +81,13 @@ os_install_packages () {
     case $OS in
 	"Ubuntu")
 	    softprop=python-software-properties
-      ;;&
+            ;;&
 	"Debian" | "Ubuntu")
 	    packages="$softprop puppet augeas-tools iptables build-essential"
 	    install_packages $dir "$packages"
-	    do_chroot ${dir} sed -e 's/START=yes/START=no/' -i /etc/default/puppet
+	    if [ -r ${dir}/etc/default/puppet ]; then
+		do_chroot ${dir} sed -e 's/START=yes/START=no/' -i /etc/default/puppet
+	    fi
 	    ;;
 	"CentOS"|"RedHatEnterpriseServer")
 	    if [ "$(get_redhat_major_version $CODENAME)" == "6" ]; then
