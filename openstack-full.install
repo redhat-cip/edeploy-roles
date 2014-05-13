@@ -201,7 +201,6 @@ packages=(
         neutron-metadata-agent \
         neutron-metering-agent \
         neutron-plugin-linuxbridge-agent \
-        neutron-plugin-openvswitch \
         neutron-plugin-openvswitch-agent \
         neutron-server \
         nfs-common \
@@ -275,8 +274,6 @@ packages=(
         openstack-neutron \
         openstack-neutron-linuxbridge \
         openstack-neutron-ml2 \
-        openstack-neutron-ml2 \
-        openstack-neutron-openvswitch \
         openstack-neutron-openvswitch \
         openstack-nova-api \
         openstack-nova-cert \
