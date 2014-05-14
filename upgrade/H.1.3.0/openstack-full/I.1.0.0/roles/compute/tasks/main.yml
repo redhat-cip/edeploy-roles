@@ -1,0 +1,46 @@
+---
+# file: roles/compute/tasks/main.yml
+
+# Stop Services
+- name: stop services before upgrade
+  service: name {{ item }} state=stopped
+  with_items:
+    - nova-compute
+    - ceilometer-agent-compute
+    - neutron-plugin-openvswitch-agent
+  tags: before_config
+
+# Upgrade packages to Icehouse
+- name: edeploy upgrade
+  edeploy: command=upgrade version={{ version_debian }}
+  tags: before_config
+  when: ansible_distribution == 'Debian'
+
+- name: edeploy upgrade
+  edeploy: command=upgrade version={{ version_ubuntu }}
+  tags: before_config
+  when: ansible_distribution == 'Ubuntu'
+
+# Upgrade to Trusty requires complete reboot
+- name: Restart the server
+  shell: sleep 2s && reboot & executable=/bin/bash
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Wait until the virtual machine stop ie: ssh port stop responding
+  local_action: wait_for host={{ansible_ssh_host}} port={{ansible_ssh_port}} state=stopped
+  when: ansible_distribution == 'Ubuntu'
+  sudo: false
+
+- name: Wait for server to come up
+  local_action: wait_for host={{ansible_ssh_host}} port={{ansible_ssh_port}} delay=60
+  when: ansible_distribution == 'Ubuntu'
+  sudo: false
+
+# Start Services
+- name: start services after upgrade
+  service: name {{ item }} state=started
+  with_items:
+    - nova-compute
+    - ceilometer-agent-compute
+    - neutron-plugin-openvswitch-agent
+  tags: before_config
