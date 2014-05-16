@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2013 eNovance SAS <licensing@enovance.com>
+# Copyright (C) 2013-2014 eNovance SAS <licensing@enovance.com>
 #
 # Author: Frederic Lepied <frederic.lepied@enovance.com>
 #
@@ -21,7 +21,7 @@
 MAKEFILE_DIR=$(shell pwd)
 SDIR=/srv/edeploy
 TOP=/var/lib/debootstrap
-ARCHIVE=/var/cache/edeploy-roles
+ARCHIVE=$(TOP)/install
 DVER=D7
 PVER=I
 REL=1.0.0
@@ -96,7 +96,8 @@ $(INST)/install-server.done: install-server.install $(INST)/cloud.done
 	./install-server.install $(INST)/cloud $(INST)/install-server $(VERS)
 	touch $(INST)/install-server.done
 
-$(INST)/base.done:
+$(INST)/base.done: $(ARCHIVE)/$(BVERS)/base-$(BVERS).edeploy
+	rm -rf $(INST)/base
 	mkdir -p $(INST)/base
 	tar zxf $(ARCHIVE)/$(BVERS)/base-$(BVERS).edeploy -C $(INST)/base
 	touch $(INST)/base.done
