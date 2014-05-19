@@ -2,8 +2,7 @@
 # Variables here are applicable to all host groups NOT roles
 
 # Last product release code
-version_debian: D7-I.1.0.0
-version_ubuntu: U14.04-I.1.0.0
+version: I.1.0.0
 os_username: admin
 os_tenant_name: admin
 os_password: secrete
