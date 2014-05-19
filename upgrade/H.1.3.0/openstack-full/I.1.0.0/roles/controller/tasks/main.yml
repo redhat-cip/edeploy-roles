@@ -55,6 +55,13 @@
   when: ansible_distribution == 'Ubuntu'
   sudo: false
 
+# Prepare Keystone database
+# In Icehouse, we need to ensure "region" table is in UTF8 encoding format.
+- name: migrate keystone regiont table to UTF8
+  script: keystone.sh
+  tags: before_config
+  when: inventory_hostname == groups['controllers'][0]
+
 # Start Services
 - name: start services after upgrade
   service: name={{ item }} state=started
