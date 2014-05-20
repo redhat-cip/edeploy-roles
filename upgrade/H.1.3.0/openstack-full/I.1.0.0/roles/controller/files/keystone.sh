@@ -16,20 +16,19 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 #
-# Upgrade keystone database to have UTF8 for "region" table.
+# Upgrade keystone database to have UTF8 charset.
 #
 
 set -ex
 
 echo "### 1. Upgrade Keystone database"
-echo "#### FROM : REGION table in non-UTF8"
-echo "#### TO   : REGION table in UTF8"
+echo "#### FROM : non-UTF8"
+echo "#### TO   : UTF8"
 
-echo "ALTER TABLE region CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci;">keystone.sql
+echo "ALTER DATABASE keystone CHARACTER SET utf8 COLLATE utf8_unicode_ci;">keystone.sql
 
 # Perform table upgrade
 mysql -D keystone < keystone.sql
 
 rm keystone.sql
 # keystone.sh ends here
-
