@@ -42,14 +42,17 @@
 
 - name: Restart the server
   shell: sleep 2s && reboot & executable=/bin/bash
+  tags: before_config
 
 - name: Wait until the machine stop
   local_action: wait_for host={{ansible_ssh_host}} port={{ansible_ssh_port}} state=stopped
   sudo: false
+  tags: before_config
 
 - name: Wait for server to come up
   local_action: wait_for host={{ansible_ssh_host}} port={{ansible_ssh_port}} delay=60
   sudo: false
+  tags: before_config
 
 # Prepare Keystone database
 # In Icehouse, we need to ensure tables are in UTF8 encoding format.
