@@ -286,6 +286,7 @@ packages=(
         openstack-swift-container \
         openstack-swift-object \
         openstack-swift-proxy \
+        openvswitch-switch \
         pacemaker \
         python-cinderclient \
         python-devel \
@@ -310,13 +311,9 @@ case "$OS" in
     "Debian")
         install_packages_disabled $dir -t wheezy-backports linux-headers-3.14-0.bpo.1-amd64 linux-image-3.14-0.bpo.1-amd64
         install_packages_disabled $dir ${packages[$(package_type)]}
-	for kernel in $(ls $dir/boot/vmlinuz-* |sed "s@$dir/boot/vmlinuz-@@"|fgrep -v 3.12); do
-	    build_dkms openvswitch-datapath-dkms openvswitch $kernel
-	done
     ;;
     "Ubuntu")
         install_packages_disabled $dir ${packages[$(package_type)]}
-        install_packages_disabled $dir openvswitch-switch
     ;;
     "RedHatEnterpriseServer")
         # Red Hat OpenStack 4.0
