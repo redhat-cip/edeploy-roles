@@ -75,7 +75,6 @@ EOF
      do_chroot $dir apt-key adv --keyserver keyserver.ubuntu.com --recv 049ED9B94765572E
      cat > ${dir}/etc/apt/sources.list.d/qemu-backports.list <<EOF
 deb http://ftp.de.debian.org/debian wheezy-backports main
-deb http://people.debian.org/~goneri/debian/wheezy-backports ./
 EOF
      cat > ${dir}/etc/apt/preferences.d/mariadb <<EOF
 Package: *
@@ -206,6 +205,7 @@ packages=(
         nfs-common \
         nova-api \
         nova-cert \
+        nova-compute-kvm \
         nova-conductor \
         nova-consoleauth \
         nova-consoleproxy \
@@ -308,9 +308,7 @@ update_repositories $dir
 
 case "$OS" in
     "Debian")
-        install_packages_disabled $dir init-system-helpers=1.18~bpo70+1
-        install_packages_disabled $dir -t wheezy-backports qemu-kvm nova-compute-kvm initramfs-tools
-        install_packages_disabled $dir -t wheezy-backports linux-image-3.12-0.bpo.1-amd64
+        install_packages_disabled $dir -t wheezy-backports linux-headers-3.14-0.bpo.1-amd64 linux-image-3.14-0.bpo.1-amd64
         install_packages_disabled $dir ${packages[$(package_type)]}
 	for kernel in $(ls $dir/boot/vmlinuz-* |sed "s@$dir/boot/vmlinuz-@@"|fgrep -v 3.12); do
 	    build_dkms openvswitch-datapath-dkms openvswitch $kernel
