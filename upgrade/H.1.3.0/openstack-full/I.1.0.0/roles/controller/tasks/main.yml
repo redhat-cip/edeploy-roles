@@ -56,9 +56,16 @@
   sudo: false
 
 # Prepare Keystone database
-# In Icehouse, we need to ensure "region" table is in UTF8 encoding format.
-- name: migrate keystone regiont table to UTF8
+# In Icehouse, we need to ensure tables are in UTF8 encoding format.
+- name: migrate keystone DB to UTF8
   script: keystone.sh
+  tags: before_config
+  when: inventory_hostname == groups['controllers'][0]
+
+# Prepare Glance database
+# In Icehouse, we need to ensure tables are in UTF8 encoding format.
+- name: migrate Glance DB to UTF8
+  script: glance.sh
   tags: before_config
   when: inventory_hostname == groups['controllers'][0]
 

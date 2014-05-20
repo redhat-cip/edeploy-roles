@@ -21,16 +21,22 @@
 
 set -ex
 
-echo "### 1. Upgrade Keystone database"
+echo "### 1. Upgrade Glance database"
 echo "#### FROM : non-UTF8"
 echo "#### TO   : UTF8"
 
-cat > keystone.sql <<EOF
-ALTER DATABASE keystone CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+cat > glance.sql <<EOF
+ALTER DATABASE glance CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+ALTER TABLE migrate_version CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+ALTER TABLE image_locations CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+ALTER TABLE image_members CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+ALTER TABLE image_properties CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+ALTER TABLE image_tags CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+ALTER TABLE images CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 EOF
 
 # Perform table upgrade
-mysql -D keystone < keystone.sql
+mysql -D glance < glance.sql
 
-rm keystone.sql
-# keystone.sh ends here
+rm glance.sql
+# glance.sh ends here
