@@ -27,12 +27,14 @@ echo "#### TO   : UTF8"
 
 cat > glance.sql <<EOF
 ALTER DATABASE glance CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+SET FOREIGN_KEY_CHECKS=0;
 ALTER TABLE migrate_version CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 ALTER TABLE image_locations CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 ALTER TABLE image_members CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 ALTER TABLE image_properties CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 ALTER TABLE image_tags CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 ALTER TABLE images CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+SET FOREIGN_KEY_CHECKS=1;
 EOF
 
 # Perform table upgrade
