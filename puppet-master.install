@@ -49,7 +49,7 @@ EOF
 	    do_chroot ${dir} dpkg -i puppetlabs-release-$RELEASE.deb
 	    do_chroot ${dir} rm puppetlabs-release-$RELEASE.deb
 	    do_chroot ${dir} apt-get update
-	    PACKAGES="puppetmaster puppetmaster-passenger puppet augeas-tools git ntp puppetdb puppetdb-terminus kwalify"
+	    PACKAGES="puppetmaster puppetmaster-passenger puppet augeas-tools git ntp kwalify"
 	    install_packages $dir $PACKAGES
 	    do_chroot ${dir} a2dissite puppetmaster
             cp $SRC/files/backend.rb ${dir}/usr/lib/ruby/vendor_ruby/hiera/backend.rb
