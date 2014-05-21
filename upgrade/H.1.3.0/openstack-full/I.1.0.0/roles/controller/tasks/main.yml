@@ -49,13 +49,17 @@
   tags: before_config
 
 # Ensure some services are running after the reboot
-- name: ensure some services is running
+- name: ensure keepalived & MySQL are running
   service: name={{ item }} state=started
   tags: before_config
   with_items:
     - mysql
     - keepalived
-    - haproxy
+
+- name: ensure HAproxy is running somewhere
+  shell: haproxy -f /etc/haproxy/haproxy.cfg
+  tags: before_config
+  ignore_errors: yes
 
 # Prepare Keystone database
 # In Icehouse, we need to ensure tables are in UTF8 encoding format.
