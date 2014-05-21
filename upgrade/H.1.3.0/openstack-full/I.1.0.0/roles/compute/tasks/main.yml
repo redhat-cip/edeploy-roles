@@ -1,6 +1,11 @@
 ---
 # file: roles/compute/tasks/main.yml
 
+# migrate instances
+- name: migrate instances
+  script: migrate.sh {{ ansible_hostname }} {{ os_username }} {{ os_tenant_name }} {{ os_password }} {{ os_auth_url }}
+  tags: before_config
+
 # Stop Services
 - name: stop services before upgrade
   service: name={{ item }} state=stopped
