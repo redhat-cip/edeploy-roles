@@ -55,6 +55,13 @@
   tags: before_config
   when: inventory_hostname == groups['controllers'][0]
 
+# Prepare Neutron database
+# In Icehouse, we need to ensure tables are in UTF8 encoding format.
+- name: migrate neutron DB to UTF8
+  script: neutron.sh
+  tags: before_config
+  when: inventory_hostname == groups['controllers'][0]
+
 # Prepare Glance database
 # In Icehouse, we need to ensure tables are in UTF8 encoding format.
 - name: migrate Glance DB to UTF8
