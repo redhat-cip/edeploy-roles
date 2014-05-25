@@ -52,7 +52,9 @@ EOF
 	    PACKAGES="puppetmaster puppetmaster-passenger puppet augeas-tools git ntp puppetdb puppetdb-terminus kwalify"
 	    install_packages $dir $PACKAGES
 	    do_chroot ${dir} a2dissite puppetmaster
-            cp $SRC/files/backend.rb ${dir}/usr/lib/ruby/vendor_ruby/hiera/backend.rb
+            cd ${dir}/usr/lib/ruby/vendor_ruby/hiera
+            patch -p0 < $SRC/files/backend.rb.patch
+            cd -
 	    ;;
 	"CentOS"|"RedHatEnterpriseServer")
 	    if [ "$(get_redhat_major_version $CODENAME)" == "6" ]; then
