@@ -19,7 +19,7 @@
   tags: before_config
 
 # Ensure some services are running after the reboot
-- name: ensure keepalived & Keepalived are running
+- name: ensure HAproxy & Keepalived are running
   service: name={{ item }} state=started
   tags: before_config
   ignore_errors: yes
