@@ -15,15 +15,13 @@
   edeploy: command=upgrade version=D7-{{ version }}
   tags: before_config
   when: ansible_distribution == 'Debian'
+  notify: reboot
 
 - name: edeploy upgrade
   edeploy: command=upgrade version=U14.04-{{ version }}
   tags: before_config
   when: ansible_distribution == 'Ubuntu'
-
-- name: Restart the server
-  shell: reboot
-  tags: before_config
+  notify: reboot
 
 - name: Wait for server to come up
   local_action: wait_for host={{ ansible_fqdn }} port=22 delay=120 timeout=900 state=started
