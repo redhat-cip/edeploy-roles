@@ -2,4 +2,4 @@
 # handlers
 
 - name: reboot
-  shell: reboot
+  command: reboot
