@@ -2,4 +2,4 @@
 # handlers
 
 - name: reboot
-  command: reboot
+  shell: /sbin/reboot &
