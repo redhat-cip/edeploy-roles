@@ -62,7 +62,7 @@
 # In Icehouse, we need to ensure tables are in UTF8 encoding format.
 - name: migrate neutron DB to UTF8
   script: neutron.sh
-  tags: before_config
+  tags: after_config
   when: inventory_hostname == groups['controllers'][-1]
 
 # Prepare Glance database
@@ -123,7 +123,7 @@
 
 - name: update neutron database
   command: neutron-db-manage --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade head
-  tags: before_config
+  tags: after_config
   when: inventory_hostname == groups['controllers'][-1]
 
 - name: update heat database
