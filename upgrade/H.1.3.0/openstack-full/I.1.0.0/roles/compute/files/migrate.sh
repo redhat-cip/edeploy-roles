@@ -32,7 +32,7 @@ if [ -z "$COMPUTE" ]; then
 fi
 
 # Extract all VMs hosted on this compute node
-VMS=$(nova-manage --nodebug vm list | grep $COMPUTE | awk '{print $1')
+VMS=$(nova-manage --nodebug vm list | grep $COMPUTE | awk '{print $1}')
 
 # Migrate all VM on another compute node
 for VM in $VMS; do
@@ -52,5 +52,5 @@ for VM in $VMS; do
 done
 
 echo "All the instances have been migrated from $COMPUTE server."
-nova-manage service disable nova-compute $COMPUTE
+nova-manage service disable --service nova-compute --host $COMPUTE
 echo "This compute is now not able to host a VM"
