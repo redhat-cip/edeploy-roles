@@ -63,6 +63,11 @@
   tags: after_config
   when: inventory_hostname == groups['controllers'][-1]
 
+- name: migrate heat DB to UTF8
+  script: heat.sh
+  tags: after_config
+  when: inventory_hostname == groups['controllers'][-1]
+
 # Prepare Glance database
 # In Icehouse, we need to ensure tables are in UTF8 encoding format.
 - name: migrate Glance DB to UTF8
@@ -126,7 +131,7 @@
 
 - name: update heat database
   command: heat-manage --config-file /etc/heat/heat.conf db_sync
-  tags: before_config
+  tags: heat_config
   when: inventory_hostname == groups['controllers'][-1]
 
 # After Databases updates, we restart the services.
