@@ -157,3 +157,11 @@
     - nova-conductor
     - nova-scheduler
   tags: after_config
+
+- name: restart services managed by pacemaker
+  command: crm resource cleanup {{ item }}
+  with_items:
+    - ceilometer-agent-central
+    - heat-engine
+  tags: after_config
+  when: inventory_hostname == groups['controllers'][-1]
