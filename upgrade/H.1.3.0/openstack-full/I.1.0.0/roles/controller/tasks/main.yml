@@ -165,3 +165,11 @@
     - heat-engine
   tags: after_config
   when: inventory_hostname == groups['controllers'][-1]
+
+- name: compress django horizon website
+  command: /usr/share/openstack-dashboard/manage.py compress
+  tags: after_config
+
+- name: restart apache2
+  service: name=apache2 state=restarted
+  tags: after_config
