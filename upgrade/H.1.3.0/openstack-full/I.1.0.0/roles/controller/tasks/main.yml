@@ -49,6 +49,33 @@
   service: name=mysql state=started
   tags: before_config
 
+# Start Services
+- name: start services after upgrade
+  service: name={{ item }} state=started
+  with_items:
+    - ceilometer-alarm-evaluator
+    - ceilometer-alarm-notifier
+    - ceilometer-api
+    - ceilometer-collector
+    - cinder-api
+    - cinder-scheduler
+    - cinder-volume
+    - glance-api
+    - glance-registry
+    - heat-api
+    - heat-api-cfn
+    - heat-api-cloudwatch
+    - keystone
+    - neutron-server
+    - nova-api
+    - nova-cert
+    - nova-conductor
+    - nova-consoleauth
+    - nova-scheduler
+    - nova-spicehtml5proxy
+    - apache2
+  tags: before_config
+
 # Prepare Keystone database
 # In Icehouse, we need to ensure tables are in UTF8 encoding format.
 - name: migrate keystone DB to UTF8
@@ -72,36 +99,8 @@
 # In Icehouse, we need to ensure tables are in UTF8 encoding format.
 - name: migrate Glance DB to UTF8
   script: glance.sh
-  tags: before_config
+  tags: after_config
   when: inventory_hostname == groups['controllers'][-1]
-
-# Start Services
-- name: start services after upgrade
-  service: name={{ item }} state=started
-  with_items:
-    - ceilometer-alarm-evaluator
-    - ceilometer-alarm-notifier
-    - ceilometer-api
-    - ceilometer-collector
-    - cinder-api
-    - cinder-backup
-    - cinder-scheduler
-    - cinder-volume
-    - glance-api
-    - glance-registry
-    - heat-api
-    - heat-api-cfn
-    - heat-api-cloudwatch
-    - keystone
-    - neutron-server
-    - nova-api
-    - nova-cert
-    - nova-conductor
-    - nova-consoleauth
-    - nova-scheduler
-    - nova-spicehtml5proxy
-    - apache2
-  tags: before_config
 
 # Upgrade OpenStack Databases
 - name: update keystone database
@@ -111,17 +110,17 @@
 
 - name: update glance database
   command: glance-manage db_sync
-  tags: before_config
+  tags: after_config
   when: inventory_hostname == groups['controllers'][-1]
 
 - name: update cinder database
   command: cinder-manage db sync
-  tags: before_config
+  tags: after_config
   when: inventory_hostname == groups['controllers'][-1]
 
 - name: update nova database
   command: cinder-manage db sync
-  tags: before_config
+  tags: after_config
   when: inventory_hostname == groups['controllers'][-1]
 
 - name: update neutron database
@@ -131,21 +130,20 @@
 
 - name: update heat database
   command: heat-manage --config-file /etc/heat/heat.conf db_sync
-  tags: heat_config
+  tags: after_config
   when: inventory_hostname == groups['controllers'][-1]
 
 # After Databases updates, we restart the services.
 # Since we do serialization, we don't need to restart services on other nodes.
 # They will be started after eDeploy upgrade.
 - name: restart some services after database update
-  service: name={{ item }} state=started
+  service: name={{ item }} state=restarted
   with_items:
     - ceilometer-alarm-evaluator
     - ceilometer-alarm-notifier
     - ceilometer-api
     - ceilometer-collector
     - cinder-api
-    - cinder-backup
     - cinder-scheduler
     - cinder-volume
     - glance-api
@@ -159,5 +157,4 @@
     - nova-cert
     - nova-conductor
     - nova-scheduler
-  tags: before_config
-  when: inventory_hostname == groups['controllers'][-1]
+  tags: after_config
