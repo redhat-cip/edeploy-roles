@@ -267,6 +267,7 @@ packages=(
         openstack-ceilometer-central \
         openstack-ceilometer-collector \
         openstack-ceilometer-compute \
+        openstack-ceilometer-notification \
         openstack-cinder \
         openstack-dashboard \
         openstack-glance \
@@ -276,10 +277,11 @@ packages=(
         openstack-heat-engine \
         openstack-keystone \
         openstack-neutron \
-        openstack-neutron \
         openstack-neutron-linuxbridge \
+        openstack-neutron-metering-agent \
         openstack-neutron-ml2 \
         openstack-neutron-openvswitch \
+        openstack-neutron-vpn-agent \
         openstack-nova-api \
         openstack-nova-cert \
         openstack-nova-compute \
@@ -291,7 +293,7 @@ packages=(
         openstack-swift-container \
         openstack-swift-object \
         openstack-swift-proxy \
-        openvswitch-switch \
+        openvswitch-controller \
         pacemaker \
         python-cinderclient \
         python-devel \
