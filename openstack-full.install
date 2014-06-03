@@ -141,6 +141,11 @@ name=RH6 mirror
 baseurl=http://os-ci-admin.ring.enovance.com/distrib/rhel6s-x86_64/RPMS.all
 gpgcheck=0
 enabled=1
+[icehouse]
+name=icehouse
+baseurl=http://os-ci-admin.ring.enovance.com/distrib/rhel6s-x86_64/RPMS.openstack5b
+gpgcheck=0
+enabled=1
 EOF
             fi
       fi
