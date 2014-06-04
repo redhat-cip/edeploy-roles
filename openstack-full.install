@@ -307,6 +307,7 @@ packages=(
         rubygems \
         rubygem-json \
         python-subunit \
+        spice-html5 \
         sysfsutils \
         xfsprogs \
         xinetd"
