@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (C) 2013 eNovance SAS <licensing@enovance.com>
+# Copyright (C) 2013-2014 eNovance SAS <licensing@enovance.com>
 #
 # Author: Emilien Macchi <emilien.macchi@enovance.com>
 #         Gonéri Le Bouder <goneri.lebouder@enovance.com>
@@ -217,6 +217,8 @@ packages=(
         memcached \
         mongodb-10gen \
         mysql-client \
+        nagios-plugins-basic \
+        nagios-plugins-standard \
         neutron-dhcp-agent \
         neutron-l3-agent \
         neutron-lbaas-agent \
@@ -277,6 +279,7 @@ packages=(
         memcached \
         mongodb-org \
         mongodb-org-server \
+        nagios-plugins-all \
         nfs-utils \
         novnc \
         ntp \
@@ -388,5 +391,11 @@ case "$OS" in
 esac
 
 clear_packages_cache $dir
+
+cd $dir/tmp
+
+git clone https://github.com/enovance/openstack-monitoring.git
+cp -pv openstack-monitoring/scripts/*/* $dir/usr/lib/nagios/plugins
+rm -rf $dir/tmp/openstack-monitoring
 
 # openstack-full.install ends here
