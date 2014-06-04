@@ -115,6 +115,10 @@ cloud_final_modules:
  - phone-home
  - final-message
 EOF
+
+    cat > ${dir}/etc/cloud/cloud.cfg.d/90_dpkg.cfg << EOF
+datasource_list: [ NoCloud, Ec2, OpenStack, ConfigDrive, None ]
+EOF
 }
 
 # invalidate root password
