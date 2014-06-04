@@ -52,7 +52,7 @@ $SRC/puppet-master.install $dir $dir $version
 
 # Serverspec
 
-install_packages $dir cpp rake make
+install_packages $dir rake make
 
 case "$OS" in
     "RedHatEnterpriseServer")

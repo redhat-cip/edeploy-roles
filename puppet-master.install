@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (C) 2013 eNovance SAS <licensing@enovance.com>
+# Copyright (C) 2013-2014 eNovance SAS <licensing@enovance.com>
 #
 # Author: Emilien Macchi <emilien.macchi@enovance.com>
 #
@@ -74,3 +74,64 @@ EOF
 }
 
 install_puppet
+
+# Puppet Board
+
+install_packages $dir python-pip libapache2-mod-wsgi
+do_chroot $dir pip install puppetboard
+mkdir -p $dir/var/www/puppetboard
+
+cat > $dir/var/www/puppetboard/wsgi.py <<EOF
+from __future__ import absolute_import
+import os
+
+# Needed if a settings.py file exists
+os.environ['PUPPETBOARD_SETTINGS'] = '/var/www/puppetboard/settings.py'
+from puppetboard.app import app as application
+EOF
+
+case "$OS" in
+    "Debian" | "Ubuntu")
+        cat > $dir/etc/apache2/sites-available/puppetboard <<EOF
+NameVirtualHost *:82
+Listen 82
+
+<VirtualHost *:82>
+    WSGIDaemonProcess puppetboard user=www-data group=www-data threads=5
+    WSGIScriptAlias / /var/www/puppetboard/wsgi.py
+    ErrorLog /var/log/apache2/puppetboard.error.log
+    CustomLog /var/log/apache2/puppetboard.access.log combined
+
+    Alias /static /usr/local/lib/python2.7/dist-packages/puppetboard/static
+
+    <Directory /usr/local/lib/python2.7/dist-packages/puppetboard>
+        WSGIProcessGroup puppetboard
+        WSGIApplicationGroup %{GLOBAL}
+        Order deny,allow
+        Allow from all
+    </Directory>
+</VirtualHost>
+EOF
+        ;;
+    "CentOS"|"RedHatEnterpriseServer")
+        cat > $dir/etc/httpd/sites-available/puppetboard <<EOF
+NameVirtualHost *:82
+Listen 82
+
+<VirtualHost *:82>
+    WSGIDaemonProcess puppetboard user=apache group=apache threads=5
+    WSGIScriptAlias / /var/www/puppetboard/wsgi.py
+    ErrorLog /var/log/httpd/puppetboard.error.log
+    CustomLog /var/log/httpd/puppetboard.access.log combined
+
+    Alias /static /usr/lib/python2.6/site-packages/puppetboard/static
+
+    <Directory /usr/lib/python2.6/site-packages/puppetboard>
+        WSGIProcessGroup puppetboard
+        WSGIApplicationGroup %{GLOBAL}
+        Require all granted
+    </Directory>
+</VirtualHost>
+EOF
+        ;;
+esac
