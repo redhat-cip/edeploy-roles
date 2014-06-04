@@ -295,6 +295,7 @@ packages=(
         openstack-swift-proxy \
         openvswitch-controller \
         pacemaker \
+        python-ceph \
         python-cinderclient \
         python-devel \
         python-kombu \
