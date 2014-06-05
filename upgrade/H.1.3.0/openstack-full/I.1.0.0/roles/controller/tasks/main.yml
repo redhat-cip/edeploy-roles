@@ -80,57 +80,57 @@
 - name: migrate keystone DB to UTF8
   script: keystone.sh
   tags: before_config
-  when: inventory_hostname == groups['controllers'][-1]
+  when: inventory_hostname == groups['controllers'][0]
 
 # Upgrade OpenStack Databases
 - name: update keystone database
   command: keystone-manage db_sync
   tags: before_config
-  when: inventory_hostname == groups['controllers'][-1]
+  when: inventory_hostname == groups['controllers'][0]
 
 - name: update nova database
   command: nova-manage db sync
   tags: before_config
-  when: inventory_hostname == groups['controllers'][-1]
+  when: inventory_hostname == groups['controllers'][0]
 
 # Prepare Neutron database
 # In Icehouse, we need to ensure tables are in UTF8 encoding format.
 - name: migrate neutron DB to UTF8
   script: neutron.sh
   tags: after_config
-  when: inventory_hostname == groups['controllers'][-1]
+  when: inventory_hostname == groups['controllers'][0]
 
 - name: migrate heat DB to UTF8
   script: heat.sh
   tags: after_config
-  when: inventory_hostname == groups['controllers'][-1]
+  when: inventory_hostname == groups['controllers'][0]
 
 # Prepare Glance database
 # In Icehouse, we need to ensure tables are in UTF8 encoding format.
 - name: migrate Glance DB to UTF8
   script: glance.sh
   tags: after_config
-  when: inventory_hostname == groups['controllers'][-1]
+  when: inventory_hostname == groups['controllers'][0]
 
 - name: update glance database
   command: glance-manage db_sync
   tags: after_config
-  when: inventory_hostname == groups['controllers'][-1]
+  when: inventory_hostname == groups['controllers'][0]
 
 - name: update cinder database
   command: cinder-manage db sync
   tags: after_config
-  when: inventory_hostname == groups['controllers'][-1]
+  when: inventory_hostname == groups['controllers'][0]
 
 - name: update neutron database
   command: neutron-db-manage --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade head
   tags: after_config
-  when: inventory_hostname == groups['controllers'][-1]
+  when: inventory_hostname == groups['controllers'][0]
 
 - name: update heat database
   command: heat-manage --config-file /etc/heat/heat.conf db_sync
   tags: after_config
-  when: inventory_hostname == groups['controllers'][-1]
+  when: inventory_hostname == groups['controllers'][0]
 
 # After Databases updates, we restart the services.
 # Since we do serialization, we don't need to restart services on other nodes.
@@ -164,7 +164,7 @@
     - ceilometer-agent-central
     - heat-engine
   tags: after_config
-  when: inventory_hostname == groups['controllers'][-1]
+  when: inventory_hostname == groups['controllers'][0]
 
 - name: compress django horizon website
   command: /usr/share/openstack-dashboard/manage.py compress
