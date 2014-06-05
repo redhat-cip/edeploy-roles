@@ -136,13 +136,16 @@
     - nova-conductor
     - nova-consoleauth
     - nova-scheduler
-    - nova-spicehtml5proxy
     - apache2
     - keepalived
     - neutron-l3-agent
     - neutron-lbaas-agent
     - neutron-dhcp-agent
     - neutron-metadata-agent
+
+- name: stop spice proxy
+  service: name=nova-spicehtml5proxy state=stopped
+  tags: before_config
 
 - name: restart haproxy
   service: name=haproxy state=restarted
@@ -170,7 +173,6 @@
     - nova-cert
     - nova-conductor
     - nova-scheduler
-    - nova-spicehtml5proxy
     - neutron-plugin-openvswitch-agent
     - neutron-l3-agent
     - neutron-lbaas-agent
