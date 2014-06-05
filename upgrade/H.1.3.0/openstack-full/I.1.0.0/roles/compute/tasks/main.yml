@@ -5,6 +5,7 @@
 - name: migrate instances
   script: migrate.sh {{ ansible_hostname }} {{ os_username }} {{ os_tenant_name }} {{ os_password }} {{ os_auth_url }}
   tags: before_config
+  ignore_errors: yes
 
 # Stop Services
 - name: stop services before upgrade
