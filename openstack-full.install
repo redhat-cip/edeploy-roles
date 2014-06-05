@@ -191,6 +191,7 @@ packages=(
         heat-engine \
         keepalived \
         keystone \
+        libcurl4-openssl-dev \
         libdbd-mysql-perl \
         libffi-dev \
         lsof \
@@ -228,6 +229,7 @@ packages=(
         rabbitmq-server \
         rsync \
         ruby-activerecord \
+        ruby-dev \
         ruby-sqlite3 \
         screen \
         subunit \
@@ -255,6 +257,7 @@ packages=(
         httpd \
         keepalived \
         libffi-devel \
+        libcurl4-openssl-devel \
         lsof \
         memcached \
         mongodb-org \
@@ -270,8 +273,8 @@ packages=(
         openstack-ceilometer-notification \
         openstack-cinder \
         openstack-dashboard \
-        openstack-glance \
         openstack-heat-api \
+        openstack-glance \
         openstack-heat-api-cfn \
         openstack-heat-api-cloudwatch \
         openstack-heat-engine \
@@ -306,6 +309,7 @@ packages=(
         rsync \
         rubygems \
         rubygem-json \
+        ruby-devel \
         python-subunit \
         spice-html5 \
         sysfsutils \
@@ -319,9 +323,15 @@ case "$OS" in
     "Debian")
         install_packages_disabled $dir -t wheezy-backports linux-headers-3.14-0.bpo.1-amd64 linux-image-3.14-0.bpo.1-amd64
         install_packages_disabled $dir ${packages[$(package_type)]}
+        do_chroot $dir wget --no-verbose http://toolbelt.treasuredata.com/sh/install-ubuntu-precise.sh
+        do_chroot $dir sh install-ubuntu-precise.sh
+        do_chroot $dir rm install-ubuntu-precise.sh
     ;;
     "Ubuntu")
         install_packages_disabled $dir ${packages[$(package_type)]}
+        do_chroot $dir wget --no-verbose http://toolbelt.treasuredata.com/sh/install-ubuntu-precise.sh
+        do_chroot $dir sh install-ubuntu-precise.sh
+        do_chroot $dir rm install-ubuntu-precise.sh
     ;;
     "RedHatEnterpriseServer")
         # Red Hat OpenStack 4.0
@@ -362,12 +372,17 @@ case "$OS" in
 	if [ "$OS" = RedHatEnterpriseServer ]; then
 	    do_chroot $dir rm /etc/yum.repos.d/osp4.repo
 	fi
+        do_chroot $dir wget --no-verbose http://toolbelt.treasuredata.com/sh/install-redhat.sh
+        do_chroot $dir sh install-redhat.sh
+        do_chroot $dir rm install-redhat.sh
 
     ;;
     *)
     fatal_error "OS or Release not supported"
     ;;
 esac
+
+do_chroot $dir gem install --no-ri --no-rdoc --no-prerelease fluent-plugin-elasticsearch
 
 clear_packages_cache $dir
 
