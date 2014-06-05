@@ -110,6 +110,41 @@
   tags: after_config
   when: inventory_hostname == groups['full'][-1]
 
+- name: restart services
+  service: name={{ item }} state=restarted
+  tags: before_config
+  with_items:
+    - nova-compute
+    - ceilometer-agent-compute
+    - neutron-plugin-openvswitch-agent
+    - ceilometer-alarm-evaluator
+    - ceilometer-alarm-notifier
+    - ceilometer-api
+    - ceilometer-collector
+    - cinder-api
+    - cinder-scheduler
+    - cinder-volume
+    - glance-api
+    - glance-registry
+    - heat-api
+    - heat-api-cfn
+    - heat-api-cloudwatch
+    - keystone
+    - neutron-server
+    - nova-api
+    - nova-cert
+    - nova-conductor
+    - nova-consoleauth
+    - nova-scheduler
+    - nova-spicehtml5proxy
+    - apache2
+    - haproxy
+    - keepalived
+    - neutron-l3-agent
+    - neutron-lbaas-agent
+    - neutron-dhcp-agent
+    - neutron-metadata-agent
+
 - name: restart some services after database update
   service: name={{ item }} state=restarted
   with_items:
@@ -131,6 +166,7 @@
     - nova-cert
     - nova-conductor
     - nova-scheduler
+    - nova-spicehtml5proxy
     - neutron-plugin-openvswitch-agent
     - neutron-l3-agent
     - neutron-lbaas-agent
