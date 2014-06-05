@@ -17,6 +17,8 @@
   tags: before_config
 
 # Ensure some services are running after the reboot
+# Since HAproxy needs to be run at least once in the cluster, we use ignore_errors
+# to ignore the error code return due to binding issue.
 - name: ensure HAproxy & Keepalived are running
   service: name={{ item }} state=started
   tags: before_config

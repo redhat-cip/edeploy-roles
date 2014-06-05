@@ -1,7 +1,9 @@
 ---
 # file: roles/controller/tasks/main.yml
 
-# Stop Services
+# Stop all OpenStack services before the upgrade
+# with the goal to pull out from load-balancer pool
+# and avoid any access to API & schedulers from other nodes.
 - name: stop services before upgrade
   service: name={{ item }} state=stopped
   with_items:
@@ -44,11 +46,30 @@
   tags: before_config
 
 # Ensure MySQL is running after reboot
+# Using Galera in cluster, it could happen MySQL can't start the first time.
 - name: ensure MySQL is running
   service: name=mysql state=started
   tags: before_config
 
-# Start Services
+# Prepare Keystone database
+# In Icehouse, we need to ensure tables are in UTF8 encoding format.
+- name: migrate keystone DB to UTF8
+  script: keystone.sh
+  tags: before_config
+  when: inventory_hostname == groups['controllers'][0]
+
+# Upgrade Keystone and Nova databases
+- name: update keystone database
+  command: keystone-manage db_sync
+  tags: before_config
+  when: inventory_hostname == groups['controllers'][0]
+
+- name: update nova database
+  command: nova-manage db sync
+  tags: before_config
+  when: inventory_hostname == groups['controllers'][0]
+
+# Ensure all OpenStack services are running
 - name: start services after upgrade
   service: name={{ item }} state=started
   with_items:
@@ -75,25 +96,7 @@
     - apache2
   tags: before_config
 
-# Prepare Keystone database
-# In Icehouse, we need to ensure tables are in UTF8 encoding format.
-- name: migrate keystone DB to UTF8
-  script: keystone.sh
-  tags: before_config
-  when: inventory_hostname == groups['controllers'][0]
-
-# Upgrade OpenStack Databases
-- name: update keystone database
-  command: keystone-manage db_sync
-  tags: before_config
-  when: inventory_hostname == groups['controllers'][0]
-
-- name: update nova database
-  command: nova-manage db sync
-  tags: before_config
-  when: inventory_hostname == groups['controllers'][0]
-
-# Prepare Neutron database
+# Prepare Neutron, Heat and Glance databases
 # In Icehouse, we need to ensure tables are in UTF8 encoding format.
 - name: migrate neutron DB to UTF8
   script: neutron.sh
@@ -105,13 +108,12 @@
   tags: after_config
   when: inventory_hostname == groups['controllers'][0]
 
-# Prepare Glance database
-# In Icehouse, we need to ensure tables are in UTF8 encoding format.
 - name: migrate Glance DB to UTF8
   script: glance.sh
   tags: after_config
   when: inventory_hostname == groups['controllers'][0]
 
+# Upgrade databases
 - name: update glance database
   command: glance-manage db_sync
   tags: after_config
@@ -133,8 +135,6 @@
   when: inventory_hostname == groups['controllers'][0]
 
 # After Databases updates, we restart the services.
-# Since we do serialization, we don't need to restart services on other nodes.
-# They will be started after eDeploy upgrade.
 - name: restart some services after database update
   service: name={{ item }} state=restarted
   with_items:
@@ -158,6 +158,7 @@
     - nova-scheduler
   tags: after_config
 
+# Cleanup resources managed by Pacemaker to ensure heat-engine and ceilometer central agent are started
 - name: restart services managed by pacemaker
   command: crm resource cleanup {{ item }}
   with_items:
@@ -166,10 +167,12 @@
   tags: after_config
   when: inventory_hostname == groups['controllers'][0]
 
+# Having a new horizon, we need to compress django
 - name: compress django horizon website
   command: /usr/share/openstack-dashboard/manage.py compress
   tags: after_config
 
+# Restart apache to ensure Horizon is working after upgrade
 - name: restart apache2
   service: name=apache2 state=restarted
   tags: after_config
