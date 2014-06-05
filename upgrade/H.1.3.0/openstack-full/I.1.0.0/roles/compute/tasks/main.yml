@@ -40,10 +40,6 @@
     - neutron-plugin-openvswitch-agent
   tags: before_config
 
-- name: allow instance scheduling on migrated compute
-  command: nova-manage service enable --service nova-compute --host {{ ansible_hostname }}
-  tags: before_config
-
 # Restart services after upgrade
 - name: restart services after upgrade
   service: name={{ item }} state=restarted
@@ -52,3 +48,9 @@
     - ceilometer-agent-compute
     - neutron-plugin-openvswitch-agent
   tags: after_config
+
+- name: allow instance scheduling on migrated compute
+  command: nova-manage service enable --service nova-compute --host {{ ansible_hostname }}
+  tags: after_config
+
+
