@@ -138,12 +138,16 @@
     - nova-scheduler
     - nova-spicehtml5proxy
     - apache2
-    - haproxy
     - keepalived
     - neutron-l3-agent
     - neutron-lbaas-agent
     - neutron-dhcp-agent
     - neutron-metadata-agent
+
+- name: restart haproxy
+  service: name=haproxy state=restarted
+  tags: before_config
+  ignore_errors: yes
 
 - name: restart some services after database update
   service: name={{ item }} state=restarted
