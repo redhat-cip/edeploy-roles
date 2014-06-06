@@ -133,6 +133,24 @@ enabled=1
 gpgcheck=1
 type=rpm-md
 gpgkey=https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc
+
+[ceph-extras]
+name=Ceph Extras
+baseurl=http://ceph.com/packages/ceph-extras/rpm/rhel6.5/$basearch
+enabled=1
+priority=2
+gpgcheck=1
+type=rpm-md
+gpgkey=https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc
+
+[ceph-qemu-source]
+name=Ceph Extras Sources
+baseurl=http://ceph.com/packages/ceph-extras/rpm/rhel6.5/SRPMS
+enabled=1
+priority=2
+gpgcheck=1
+type=rpm-md
+gpgkey=https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc
 EOF
             if [ "$OS" = "RedHatEnterpriseServer" ]; then
 		cat > ${dir}/etc/yum.repos.d/osp4.repo <<EOF
