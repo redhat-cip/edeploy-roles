@@ -136,7 +136,7 @@ gpgkey=https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc
 
 [ceph-extras]
 name=Ceph Extras
-baseurl=http://ceph.com/packages/ceph-extras/rpm/rhel6.5/$basearch
+baseurl=http://ceph.com/packages/ceph-extras/rpm/rhel6.5/x86_64/
 enabled=1
 priority=2
 gpgcheck=1
@@ -145,7 +145,7 @@ gpgkey=https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc
 
 [ceph-qemu-source]
 name=Ceph Extras Sources
-baseurl=http://ceph.com/packages/ceph-extras/rpm/rhel6.5/SRPMS
+baseurl=http://ceph.com/packages/ceph-extras/rpm/rhel6.5/SRPMS/
 enabled=1
 priority=2
 gpgcheck=1
