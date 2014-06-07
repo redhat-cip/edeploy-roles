@@ -77,8 +77,6 @@ install_puppet
 
 # Puppet Board
 
-install_packages $dir python-pip libapache2-mod-wsgi
-do_chroot $dir pip install puppetboard
 mkdir -p $dir/var/www/puppetboard
 
 cat > $dir/var/www/puppetboard/wsgi.py <<EOF
@@ -92,6 +90,8 @@ EOF
 
 case "$OS" in
     "Debian" | "Ubuntu")
+        install_packages $dir python-pip libapache2-mod-wsgi
+        do_chroot $dir pip install puppetboard
         cat > $dir/etc/apache2/sites-available/puppetboard <<EOF
 NameVirtualHost *:82
 Listen 82
@@ -114,6 +114,8 @@ Listen 82
 EOF
         ;;
     "CentOS"|"RedHatEnterpriseServer")
+        # TODO FL [Sat Jun  7 17:13:39 2014]
+        # need to find a way to install mod-wsgi and pip
         cat > $dir/etc/httpd/sites-available/puppetboard <<EOF
 NameVirtualHost *:82
 Listen 82
