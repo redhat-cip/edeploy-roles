@@ -92,8 +92,8 @@ $(INST)/chef-server.done: chef-server.install $(INST)/base.done
 	touch $(INST)/chef-server.done
 
 install-server: $(INST)/install-server.done
-$(INST)/install-server.done: install-server.install $(INST)/cloud.done puppet-master.install
-	./install-server.install $(INST)/cloud $(INST)/install-server $(VERS)
+$(INST)/install-server.done: install-server.install $(INST)/openstack-common.done puppet-master.install
+	./install-server.install $(INST)/openstack-common $(INST)/install-server $(VERS)
 	touch $(INST)/install-server.done
 
 $(INST)/base.done: $(ARCHIVE)/$(BVERS)/base-$(BVERS).edeploy
