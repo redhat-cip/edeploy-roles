@@ -360,7 +360,7 @@ case "$OS" in
         # qemu-kvm-rhev provides a kvm that supersedes the standard qemu-kvm.
         # This package is not yet available in CentOS. So we have to take care
         # of that.
-        install_packages $dir qemu-kvm-rhev
+        install_packages $dir qemu-kvm qemu-img
     ;;& # → means "continue"
     "CentOS")
         install_packages $dir qemu-kvm
