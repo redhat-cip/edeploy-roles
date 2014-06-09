@@ -336,6 +336,7 @@ packages=(
 
 update_repositories $dir
 
+cd $dir/tmp
 git clone https://github.com/enovance/openstack-monitoring.git
 
 case "$OS" in
@@ -404,7 +405,5 @@ esac
 
 clear_packages_cache $dir
 rm -rf $dir/tmp/openstack-monitoring
-
-cd $dir/tmp
 
 # openstack-full.install ends here
