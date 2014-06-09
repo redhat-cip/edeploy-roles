@@ -336,13 +336,17 @@ packages=(
 
 update_repositories $dir
 
+git clone https://github.com/enovance/openstack-monitoring.git
+
 case "$OS" in
     "Debian")
         install_packages_disabled $dir -t wheezy-backports linux-headers-3.14-0.bpo.1-amd64 linux-image-3.14-0.bpo.1-amd64
         install_packages_disabled $dir ${packages[$(package_type)]}
+        cp -pv openstack-monitoring/scripts/*/* $dir/usr/lib/nagios/plugins
     ;;
     "Ubuntu")
         install_packages_disabled $dir ${packages[$(package_type)]}
+        cp -pv openstack-monitoring/scripts/*/* $dir/usr/lib/nagios/plugins
     ;;
     "RedHatEnterpriseServer")
         # Red Hat OpenStack 4.0
@@ -384,6 +388,7 @@ case "$OS" in
 	    do_chroot $dir rm /etc/yum.repos.d/osp4.repo
 	fi
 
+        cp -pv openstack-monitoring/scripts/*/* $dir/usr/lib64/nagios/plugins
     ;;
     *)
     fatal_error "OS or Release not supported"
@@ -391,11 +396,8 @@ case "$OS" in
 esac
 
 clear_packages_cache $dir
+rm -rf $dir/tmp/openstack-monitoring
 
 cd $dir/tmp
-
-git clone https://github.com/enovance/openstack-monitoring.git
-cp -pv openstack-monitoring/scripts/*/* $dir/usr/lib/nagios/plugins
-rm -rf $dir/tmp/openstack-monitoring
 
 # openstack-full.install ends here
