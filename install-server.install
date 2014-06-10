@@ -71,8 +71,8 @@ do_chroot $dir gem install --no-ri --no-rdoc --no-prerelease serverspec r10k rsp
 # OpenStack clients for tempest and inception.sh
 
 install_packages $dir python-cinderclient python-glanceclient python-heatclient \
-  python-ironicclient python-keystoneclient python-neutronclient \
+  python-ironicclient python-keystoneclient python-neutronclient \ python-ceilometerclient
   python-novaclient python-saharaclient python-swiftclient python-dev libffi-dev \
-  subunit
+  subunit nova-common
 
 # install-server.install ends here
