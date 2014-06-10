@@ -34,7 +34,7 @@ install_packages_disabled $dir dnsmasq
 
 case "$OS" in
     "Debian")
-	install_packages $dir python-jinja2 python-paramiko linux-headers-3.2.0-4-amd64
+	install_packages $dir python-jinja2 python-paramiko linux-headers-3.2.0-4-amd64 python-libxml2
 	do_chroot $dir pip install ansible
 	;;
     "Ubuntu")
