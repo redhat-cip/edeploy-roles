@@ -142,6 +142,7 @@
     - neutron-lbaas-agent
     - neutron-dhcp-agent
     - neutron-metadata-agent
+    - libvirt-bin
 
 - name: stop spice proxy
   service: name=nova-spicehtml5proxy state=stopped
@@ -169,6 +170,7 @@
     - heat-api-cloudwatch
     - keystone
     - neutron-server
+    - libvirt-bin
     - nova-api
     - nova-cert
     - nova-conductor

@@ -38,6 +38,7 @@
     - nova-compute
     - ceilometer-agent-compute
     - neutron-plugin-openvswitch-agent
+    - libvirt-bin
   tags: before_config
 
 # Restart services after upgrade
@@ -47,6 +48,7 @@
     - nova-compute
     - ceilometer-agent-compute
     - neutron-plugin-openvswitch-agent
+    - libvirt-bin
   tags: after_config
 
 - name: allow instance scheduling on migrated compute
