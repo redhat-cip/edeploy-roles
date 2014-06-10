@@ -72,6 +72,7 @@ do_chroot $dir gem install --no-ri --no-rdoc --no-prerelease serverspec r10k rsp
 
 install_packages $dir python-cinderclient python-glanceclient python-heatclient \
   python-ironicclient python-keystoneclient python-neutronclient \
-  python-novaclient python-saharaclient python-swiftclient
+  python-novaclient python-saharaclient python-swiftclient python-dev libffi-dev \
+  subunit
 
 # install-server.install ends here
