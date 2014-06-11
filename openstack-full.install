@@ -211,12 +211,11 @@ declare -A packages
 packages=(
     ["deb"]="\
         $headers \
-	acpid \
         apache2 \
-	apache2-utils \
-	at \
-	bridge-utils \
-        build-essential \
+        apache2-utils \
+        at \
+        bash-completion \
+        bridge-utils \
         ceilometer-agent-central \
         ceilometer-alarm-evaluator \
         ceilometer-alarm-notifier \
@@ -229,60 +228,57 @@ packages=(
         cinder-backup \
         cinder-scheduler \
         cinder-volume \
-	crash \
-	curl \
-	dmidecode \
-	ethtool \
+        crash \
+        dnsutils \
+        ethtool \
         euca2ools \
-	e2fsprogs \
-	file \
+        e2fsprogs \
+        file \
         galera \
-	gdb \
+        gdb \
         git \
         glance \
-	grub-pc \
+        grub-pc \
         haproxy \
         hdparm \
         heat-api \
         heat-api-cfn \
         heat-api-cloudwatch \
         heat-engine \
-	htop \
-	ifenslave-2.6 \
-	iotop \
-	ifupdown \
-	kbd \
-	kdump-tools \
+        htop \
+        iotop \
+        ifupdown \
+        kbd \
+        kdump-tools \
         keepalived \
         keystone \
-	less \
-	libc-bin \
+        less \
+        libc-bin \
         libdbd-mysql-perl \
         libffi-dev \
-	libjson-perl \
-	libnagios-plugin-perl \
-	locales \
-	lsb-release \
-	lshw \
+        libjson-perl \
+        libnagios-plugin-perl \
+        locales \
+        lsb-release \
+        lshw \
         lsof \
-	ltrace \
-	lvm2 \
-	makedumpfile \
-	man-db \
-	manpages \
-	manpages-dev \
+        ltrace \
+        makedumpfile \
+        man-db \
+        manpages \
+        manpages-dev \
         mariadb-client \
         mariadb-galera-server \
         memcached \
         mongodb-10gen \
-	mtr \
+        mtr \
         mysql-client \
-	nagios-plugin-check-multi \
+        nagios-plugin-check-multi \
         nagios-plugins-basic \
-	nagios-plugins-openstack \
+        nagios-plugins-openstack \
         nagios-plugins-standard \
-	ncdu \
-	netcat \
+        ncdu \
+        netcat \
         neutron-dhcp-agent \
         neutron-l3-agent \
         neutron-lbaas-agent \
@@ -292,6 +288,7 @@ packages=(
         neutron-plugin-openvswitch-agent \
         neutron-server \
         nfs-common \
+        nmap \
         nova-api \
         nova-cert \
         nova-compute-kvm \
@@ -305,37 +302,35 @@ packages=(
         openstack-pkg-tools \
         openvswitch-datapath-dkms \
         pacemaker \
-	percona-nagios-plugins \
-	percona-toolkit \
+        percona-nagios-plugins \
+        percona-toolkit \
         pm-utils \
         python-argparse \
         python-dev \
         python-swiftclient \
         rabbitmq-server \
-        rsync \
         ruby-activerecord \
         ruby-sqlite3 \
         screen \
-	strace \
+        strace \
         subunit \
-	sysstat \
+        sysstat \
         swift-account \
         swift-container \
         swift-object \
         swift-plugin-s3 \
         swift-proxy \
         sysfsutils \
-	tcpdump \
-	td-agent \
-	tmux \
-	traceroute \
+        td-agent \
+        tmux \
+        traceroute \
         unzip \
-	vim \
-	vlan \
-	w3m \
+        vim \
+        vlan \
+        w3m \
         xfsprogs \
         xinetd \
-	xtrabackup \
+        xtrabackup \
 "
 
     ["rpm"]="
