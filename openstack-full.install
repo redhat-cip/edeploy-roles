@@ -4,6 +4,7 @@
 #
 # Author: Emilien Macchi <emilien.macchi@enovance.com>
 #         Gonéri Le Bouder <goneri.lebouder@enovance.com>
+#         Nicolas Auvray <nicolas.auvray@enovance.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may
 # not use this file except in compliance with the License. You may obtain
@@ -54,7 +55,31 @@ function build_dkms() {
 function add_rabbitmq_deb_repo() {
     do_chroot $dir wget -O- ${RABBITMQ_URL:=http://www.rabbitmq.com/}rabbitmq-signing-key-public.asc | do_chroot $dir apt-key add -
     cat > ${dir}/etc/apt/sources.list.d/rabbitmq.list <<EOF
-    deb ${RABBITMQ_URL:=http://www.rabbitmq.com/}debian/ testing main
+deb ${RABBITMQ_URL:=http://www.rabbitmq.com/}debian/ testing main
+EOF
+}
+
+function add_percona_deb_repo() {
+    do_chroot ${dir} apt-key adv --keyserver keys.gnupg.net --recv-keys 1C4CBDCDCD2EFD2A
+    cat > ${dir}/etc/apt/sources.list.d/percona.list <<EOF
+deb http://repo.percona.com/apt wheezy main
+EOF
+}
+
+function add_percona_pin_repo() {
+    cat > ${dir}/etc/apt/preferences.d/percona-pin.pref << EOF
+Explanation: : percona-pin
+Package: *
+Pin: origin "repo.percona.com"
+Pin-Priority: 100
+EOF
+}
+
+function add_fluentd_deb_repo() {
+    wget -O- http://packages.treasure-data.com/debian/RPM-GPG-KEY-td-agent | apt-key add - 
+    cat > ${dir}/etc/apt/sources.list.d/treasuredata.list << EOF
+deb http://packages.treasure-data.com/debian lucid contrib
+deb http://ftp.fr.debian.org/debian squeeze main
 EOF
 }
 
@@ -82,6 +107,9 @@ Pin: origin ftp.igh.cnrs.fr
 Pin-Priority: 900
 EOF
      add_rabbitmq_deb_repo
+     add_percona_deb_repo
+     add_percona_pin_repo
+     add_fluentd_deb_repo
     ;;
     "Ubuntu")
      do_chroot $dir apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
@@ -183,7 +211,11 @@ declare -A packages
 packages=(
     ["deb"]="\
         $headers \
+	acpid \
         apache2 \
+	apache2-utils \
+	at \
+	bridge-utils \
         build-essential \
         ceilometer-agent-central \
         ceilometer-alarm-evaluator \
@@ -197,28 +229,60 @@ packages=(
         cinder-backup \
         cinder-scheduler \
         cinder-volume \
+	crash \
+	curl \
+	dmidecode \
+	ethtool \
         euca2ools \
+	e2fsprogs \
+	file \
         galera \
+	gdb \
         git \
         glance \
+	grub-pc \
         haproxy \
         hdparm \
         heat-api \
         heat-api-cfn \
         heat-api-cloudwatch \
         heat-engine \
+	htop \
+	ifenslave-2.6 \
+	iotop \
+	ifupdown \
+	kbd \
+	kdump-tools \
         keepalived \
         keystone \
+	less \
+	libc-bin \
         libdbd-mysql-perl \
         libffi-dev \
+	libjson-perl \
+	libnagios-plugin-perl \
+	locales \
+	lsb-release \
+	lshw \
         lsof \
+	ltrace \
+	lvm2 \
+	makedumpfile \
+	man-db \
+	manpages \
+	manpages-dev \
         mariadb-client \
         mariadb-galera-server \
         memcached \
         mongodb-10gen \
+	mtr \
         mysql-client \
+	nagios-plugin-check-multi \
         nagios-plugins-basic \
+	nagios-plugins-openstack \
         nagios-plugins-standard \
+	ncdu \
+	netcat \
         neutron-dhcp-agent \
         neutron-l3-agent \
         neutron-lbaas-agent \
@@ -241,6 +305,8 @@ packages=(
         openstack-pkg-tools \
         openvswitch-datapath-dkms \
         pacemaker \
+	percona-nagios-plugins \
+	percona-toolkit \
         pm-utils \
         python-argparse \
         python-dev \
@@ -250,16 +316,26 @@ packages=(
         ruby-activerecord \
         ruby-sqlite3 \
         screen \
+	strace \
         subunit \
+	sysstat \
         swift-account \
         swift-container \
         swift-object \
         swift-plugin-s3 \
         swift-proxy \
         sysfsutils \
+	tcpdump \
+	td-agent \
+	tmux \
+	traceroute \
         unzip \
+	vim \
+	vlan \
+	w3m \
         xfsprogs \
-        xinetd
+        xinetd \
+	xtrabackup \
 "
 
     ["rpm"]="
