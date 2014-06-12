@@ -4,6 +4,7 @@
 #
 # Author: Emilien Macchi <emilien.macchi@enovance.com>
 #         Gonéri Le Bouder <goneri.lebouder@enovance.com>
+#         Nicolas Auvray <nicolas.auvray@enovance.com>
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may
 # not use this file except in compliance with the License. You may obtain
@@ -54,7 +55,28 @@ function build_dkms() {
 function add_rabbitmq_deb_repo() {
     do_chroot $dir wget -O- ${RABBITMQ_URL:=http://www.rabbitmq.com/}rabbitmq-signing-key-public.asc | do_chroot $dir apt-key add -
     cat > ${dir}/etc/apt/sources.list.d/rabbitmq.list <<EOF
-    deb ${RABBITMQ_URL:=http://www.rabbitmq.com/}debian/ testing main
+deb ${RABBITMQ_URL:=http://www.rabbitmq.com/}debian/ testing main
+EOF
+}
+
+function add_percona_deb_repo() {
+    do_chroot ${dir} apt-key adv --keyserver keys.gnupg.net --recv-keys 1C4CBDCDCD2EFD2A
+    cat > ${dir}/etc/apt/sources.list.d/percona.list <<EOF
+deb http://repo.percona.com/apt wheezy main
+EOF
+    cat > ${dir}/etc/apt/preferences.d/percona-pin.pref << EOF
+Explanation: : percona-pin
+Package: *
+Pin: origin "repo.percona.com"
+Pin-Priority: 100
+EOF
+}
+
+function add_fluentd_deb_repo() {
+    wget -O- http://packages.treasure-data.com/debian/RPM-GPG-KEY-td-agent | apt-key add -
+    cat > ${dir}/etc/apt/sources.list.d/treasuredata.list << EOF
+deb http://packages.treasure-data.com/debian lucid contrib
+deb http://ftp.fr.debian.org/debian squeeze main
 EOF
 }
 
@@ -82,6 +104,8 @@ Pin: origin ftp.igh.cnrs.fr
 Pin-Priority: 900
 EOF
      add_rabbitmq_deb_repo
+     add_percona_deb_repo
+     add_fluentd_deb_repo
     ;;
     "Ubuntu")
      do_chroot $dir apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
@@ -179,8 +203,8 @@ else
     headers=
 fi
 
-declare -A packages
-packages=(
+declare -A os_packages
+os_packages=(
     ["deb"]="\
         $headers \
         apache2 \
@@ -202,7 +226,6 @@ packages=(
         git \
         glance \
         haproxy \
-        hdparm \
         heat-api \
         heat-api-cfn \
         heat-api-cloudwatch \
@@ -217,8 +240,6 @@ packages=(
         memcached \
         mongodb-10gen \
         mysql-client \
-        nagios-plugins-basic \
-        nagios-plugins-standard \
         neutron-dhcp-agent \
         neutron-l3-agent \
         neutron-lbaas-agent \
@@ -246,7 +267,6 @@ packages=(
         python-dev \
         python-swiftclient \
         rabbitmq-server \
-        rsync \
         ruby-activerecord \
         ruby-sqlite3 \
         screen \
@@ -271,7 +291,6 @@ packages=(
         corosync \
         galera \
         haproxy \
-        hdparm \
         httpd \
         keepalived \
         libffi-devel \
@@ -279,7 +298,6 @@ packages=(
         memcached \
         mongodb-org \
         mongodb-org-server \
-        nagios-plugins-all \
         nfs-utils \
         novnc \
         ntp \
@@ -324,7 +342,6 @@ packages=(
         python-pip \
         python-swiftclient \
         rabbitmq-server \
-        rsync \
         rubygems \
         rubygem-json \
         python-subunit \
@@ -334,6 +351,59 @@ packages=(
         xinetd"
 )
 
+declare -A prod_packages
+prod_packages=(
+    ["deb"]="
+        at \
+        bash-completion \
+        crash \
+        dnsutils \
+        file \
+        iotop \
+        less \
+        ltrace \
+        manpages \
+        manpages-dev \
+        mtr \
+        ncdu \
+        nmap \
+        percona-toolkit \
+        strace \
+        sysstat \
+        telnet \
+        tmux \
+        traceroute \
+        w3m"
+)
+
+declare -A monitoring_packages
+monitoring_packages=( 
+    ["deb"]="
+        libjson-perl \
+        libnagios-plugin-perl \
+        nagios-plugin-check-multi \
+        nagios-plugins-basic \
+        nagios-plugins-openstack \
+        nagios-plugins-standard \
+        percona-nagios-plugins
+"
+
+    ["rpm"]="
+        nagios-plugins-all
+")
+
+declare -A backup_packages
+backup_packages=( 
+    ["deb"]="
+        xtrabackup
+")
+
+declare -A logging_packages
+logging_packages=( 
+    ["deb"]="
+        td-agent
+")
+
 update_repositories $dir
 
 cd $dir/tmp
@@ -342,11 +412,14 @@ git clone https://github.com/enovance/openstack-monitoring.git
 case "$OS" in
     "Debian")
         install_packages_disabled $dir -t wheezy-backports linux-headers-3.14-0.bpo.1-amd64 linux-image-3.14-0.bpo.1-amd64
-        install_packages_disabled $dir ${packages[$(package_type)]}
+        install_packages_disabled $dir ${os_packages[$(package_type)]}
+        install_packages_disabled $dir ${monitoring_packages[$(package_type)]}
+        install_packages_disabled $dir ${backup_packages[$(package_type)]}
+        install_packages_disabled $dir ${logging_packages[$(package_type)]}
         cp -pv openstack-monitoring/scripts/*/* $dir/usr/lib/nagios/plugins
     ;;
     "Ubuntu")
-        install_packages_disabled $dir ${packages[$(package_type)]}
+        install_packages_disabled $dir ${os_packages[$(package_type)]}
         cp -pv openstack-monitoring/scripts/*/* $dir/usr/lib/nagios/plugins
     ;;
     "RedHatEnterpriseServer")
@@ -382,8 +455,9 @@ case "$OS" in
         # We want to use rabbitmq on Redhat instead of QPID
         add_epel_repository $DIST
 
-        install_packages_disabled $dir ${packages[$(package_type)]}
-        install_packages_disabled $dir ${packages[$(package_type)]}
+        install_packages_disabled $dir ${os_packages[$(package_type)]}
+        install_packages_disabled $dir ${os_packages[$(package_type)]}
+        install_packages_disabled $dir ${monitoring_packages[$(package_type)]}
 
         # python-kombu is outdated for now in Red Hat.
         # while they updating it, we use pip to install the last one required by OpenStack
@@ -391,7 +465,7 @@ case "$OS" in
  
         do_chroot $dir chkconfig puppet on
 
-        do_chroot $dir rpm -qv ${packages[$(package_type)]} || fatal_error "Some packages are not installed"
+        do_chroot $dir rpm -qv ${os_packages[$(package_type)]} || fatal_error "Some packages are not installed"
 	if [ "$OS" = RedHatEnterpriseServer ]; then
 	    do_chroot $dir rm /etc/yum.repos.d/osp4.repo
 	fi
