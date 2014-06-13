@@ -120,7 +120,8 @@ EOF
      cat > ${dir}/etc/apt/sources.list.d/ceph.list <<EOF
 deb http://eu.ceph.com/debian-firefly $DIST main
 EOF
-    add_rabbitmq_deb_repo
+     add_rabbitmq_deb_repo
+     add_percona_deb_repo
     ;;
     "CentOS"|"RedHatEnterpriseServer")
       if [ "$(get_redhat_major_version $CODENAME)" == "6" ]; then
@@ -379,16 +380,17 @@ prod_packages=(
 declare -A monitoring_packages
 monitoring_packages=( 
     ["deb"]="
+        bc \
         libjson-perl \
         libnagios-plugin-perl \
         nagios-plugin-check-multi \
         nagios-plugins-basic \
-        nagios-plugins-openstack \
         nagios-plugins-standard \
         percona-nagios-plugins
 "
 
     ["rpm"]="
+        bc \
         nagios-plugins-all
 ")
 
@@ -412,14 +414,12 @@ git clone https://github.com/enovance/openstack-monitoring.git
 case "$OS" in
     "Debian")
         install_packages_disabled $dir -t wheezy-backports linux-headers-3.14-0.bpo.1-amd64 linux-image-3.14-0.bpo.1-amd64
-        install_packages_disabled $dir ${os_packages[$(package_type)]}
-        install_packages_disabled $dir ${monitoring_packages[$(package_type)]}
         install_packages_disabled $dir ${backup_packages[$(package_type)]}
         install_packages_disabled $dir ${logging_packages[$(package_type)]}
-        cp -pv openstack-monitoring/scripts/*/* $dir/usr/lib/nagios/plugins
-    ;;
+    ;;&
     "Ubuntu")
         install_packages_disabled $dir ${os_packages[$(package_type)]}
+        install_packages_disabled $dir ${monitoring_packages[$(package_type)]}
         cp -pv openstack-monitoring/scripts/*/* $dir/usr/lib/nagios/plugins
     ;;
     "RedHatEnterpriseServer")
