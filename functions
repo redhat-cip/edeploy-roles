@@ -46,6 +46,9 @@ get_openstack_repository() {
         current_rpm_release="undef"
         cloud_init_release="0.7.2-2.el6"
         case "$openstack_release" in
+            "icehouse")
+                current_rpm_release=3
+            ;;
             "havana")
                 current_rpm_release=7
             ;;
