@@ -12,6 +12,7 @@
   tags: before_config
   with_items:
     - nova-compute
+    - libvirt-bin
     - ceilometer-agent-compute
     - neutron-plugin-openvswitch-agent
     - ceilometer-alarm-evaluator
@@ -55,6 +56,40 @@
 - name: Wait for server to come up
   local_action: wait_for host={{ ansible_fqdn }} port=22 delay=120 timeout=900 state=started
   tags: before_config
+
+- name: stop services
+  service: name={{ item }} state=stopped
+  tags: before_config
+  with_items:
+    - neutron-metadata-agent
+    - nova-compute
+    - neutron-plugin-openvswitch-agent
+    - libvirt-bin
+    - ceilometer-alarm-evaluator
+    - ceilometer-alarm-notifier
+    - ceilometer-api
+    - ceilometer-collector
+    - cinder-api
+    - ceilometer-agent-compute
+    - cinder-scheduler
+    - cinder-volume
+    - glance-api
+    - glance-registry
+    - heat-api
+    - heat-api-cfn
+    - heat-api-cloudwatch
+    - keystone
+    - neutron-server
+    - nova-api
+    - nova-cert
+    - nova-conductor
+    - nova-consoleauth
+    - nova-scheduler
+    - nova-spicehtml5proxy
+    - apache2
+    - neutron-l3-agent
+    - neutron-lbaas-agent
+    - neutron-dhcp-agent
 
 - name: ensure MySQL is running
   service: name=mysql state=started
@@ -110,52 +145,23 @@
   tags: after_config
   when: inventory_hostname == groups['full'][-1]
 
-- name: restart services
-  service: name={{ item }} state=restarted
-  tags: before_config
-  with_items:
-    - nova-compute
-    - ceilometer-agent-compute
-    - neutron-plugin-openvswitch-agent
-    - ceilometer-alarm-evaluator
-    - ceilometer-alarm-notifier
-    - ceilometer-api
-    - ceilometer-collector
-    - cinder-api
-    - cinder-scheduler
-    - cinder-volume
-    - glance-api
-    - glance-registry
-    - heat-api
-    - heat-api-cfn
-    - heat-api-cloudwatch
-    - keystone
-    - neutron-server
-    - nova-api
-    - nova-cert
-    - nova-conductor
-    - nova-consoleauth
-    - nova-scheduler
-    - apache2
-    - keepalived
-    - neutron-l3-agent
-    - neutron-lbaas-agent
-    - neutron-dhcp-agent
-    - neutron-metadata-agent
-    - libvirt-bin
-
-- name: stop spice proxy
-  service: name=nova-spicehtml5proxy state=stopped
-  tags: before_config
-
 - name: restart haproxy
   service: name=haproxy state=restarted
   tags: before_config
   ignore_errors: yes
 
-- name: restart some services after database update
+- name: compress django horizon website
+  command: /usr/share/openstack-dashboard/manage.py compress
+  tags: before_config
+
+- name: restart apache2
+  service: name=apache2 state=restarted
+  tags: before_config
+
+- name: restart some services after puppet
   service: name={{ item }} state=restarted
   with_items:
+    - libvirt-bin
     - ceilometer-alarm-evaluator
     - ceilometer-alarm-notifier
     - ceilometer-api
@@ -170,7 +176,6 @@
     - heat-api-cloudwatch
     - keystone
     - neutron-server
-    - libvirt-bin
     - nova-api
     - nova-cert
     - nova-conductor
@@ -190,14 +195,6 @@
     - heat-engine
   tags: after_config
   when: inventory_hostname == groups['full'][-1]
-
-- name: compress django horizon website
-  command: /usr/share/openstack-dashboard/manage.py compress
-  tags: after_config
-
-- name: restart apache2
-  service: name=apache2 state=restarted
-  tags: after_config
 
 - name: allow instance scheduling on migrated compute
   command: nova-manage service enable --service nova-compute --host {{ ansible_hostname }}
