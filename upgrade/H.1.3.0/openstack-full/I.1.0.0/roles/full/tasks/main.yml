@@ -88,6 +88,7 @@
     - nova-spicehtml5proxy
     - apache2
     - neutron-l3-agent
+    - neutron-metering-agent
     - neutron-lbaas-agent
     - neutron-dhcp-agent
 
@@ -109,6 +110,19 @@
   command: nova-manage db sync
   tags: before_config
   when: inventory_hostname == groups['full'][-1]
+
+- name: restart haproxy
+  service: name=haproxy state=restarted
+  tags: before_config
+  ignore_errors: yes
+
+- name: compress django horizon website
+  command: /usr/share/openstack-dashboard/manage.py compress
+  tags: before_config
+
+- name: restart apache2
+  service: name=apache2 state=restarted
+  tags: before_config
 
 - name: migrate neutron DB to UTF8
   script: neutron.sh
@@ -145,19 +159,6 @@
   tags: after_config
   when: inventory_hostname == groups['full'][-1]
 
-- name: restart haproxy
-  service: name=haproxy state=restarted
-  tags: before_config
-  ignore_errors: yes
-
-- name: compress django horizon website
-  command: /usr/share/openstack-dashboard/manage.py compress
-  tags: before_config
-
-- name: restart apache2
-  service: name=apache2 state=restarted
-  tags: before_config
-
 - name: restart some services after puppet
   service: name={{ item }} state=restarted
   with_items:
@@ -182,6 +183,7 @@
     - nova-scheduler
     - neutron-plugin-openvswitch-agent
     - neutron-l3-agent
+    - neutron-metering-agent
     - neutron-lbaas-agent
     - neutron-dhcp-agent
     - neutron-metadata-agent

@@ -51,6 +51,16 @@
   service: name=mysql state=started
   tags: before_config
 
+# Having a new horizon, we need to compress django
+- name: compress django horizon website
+  command: /usr/share/openstack-dashboard/manage.py compress
+  tags: after_config
+
+# Restart apache to ensure Horizon is working after upgrade
+- name: restart apache2
+  service: name=apache2 state=restarted
+  tags: after_config
+
 # Prepare Keystone database
 # In Icehouse, we need to ensure tables are in UTF8 encoding format.
 - name: migrate keystone DB to UTF8
@@ -68,33 +78,6 @@
   command: nova-manage db sync
   tags: before_config
   when: inventory_hostname == groups['controllers'][0]
-
-# Ensure all OpenStack services are running
-- name: start services after upgrade
-  service: name={{ item }} state=started
-  with_items:
-    - ceilometer-alarm-evaluator
-    - ceilometer-alarm-notifier
-    - ceilometer-api
-    - ceilometer-collector
-    - cinder-api
-    - cinder-scheduler
-    - cinder-volume
-    - glance-api
-    - glance-registry
-    - heat-api
-    - heat-api-cfn
-    - heat-api-cloudwatch
-    - keystone
-    - neutron-server
-    - nova-api
-    - nova-cert
-    - nova-conductor
-    - nova-consoleauth
-    - nova-scheduler
-    - nova-spicehtml5proxy
-    - apache2
-  tags: before_config
 
 # Prepare Neutron, Heat and Glance databases
 # In Icehouse, we need to ensure tables are in UTF8 encoding format.
@@ -166,13 +149,3 @@
     - heat-engine
   tags: after_config
   when: inventory_hostname == groups['controllers'][0]
-
-# Having a new horizon, we need to compress django
-- name: compress django horizon website
-  command: /usr/share/openstack-dashboard/manage.py compress
-  tags: after_config
-
-# Restart apache to ensure Horizon is working after upgrade
-- name: restart apache2
-  service: name=apache2 state=restarted
-  tags: after_config

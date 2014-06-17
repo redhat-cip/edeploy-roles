@@ -7,6 +7,7 @@
   with_items:
     - neutron-l3-agent
     - neutron-lbaas-agent
+    - neutron-metering-agent
     - neutron-dhcp-agent
     - neutron-metadata-agent
     - neutron-plugin-openvswitch-agent
@@ -33,6 +34,7 @@
   with_items:
     - neutron-l3-agent
     - neutron-lbaas-agent
+    - neutron-metering-agent
     - neutron-dhcp-agent
     - neutron-metadata-agent
     - neutron-plugin-openvswitch-agent
