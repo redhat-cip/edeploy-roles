@@ -180,15 +180,6 @@ gpgcheck=1
 type=rpm-md
 gpgkey=https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc
 EOF
-            if [ "$OS" = "RedHatEnterpriseServer" ]; then
-		cat > ${dir}/etc/yum.repos.d/osp4.repo <<EOF
-[rh6]
-name=RH6 mirror
-baseurl=http://os-ci-admin.ring.enovance.com/distrib/rhel6s-x86_64/RPMS.all
-gpgcheck=0
-enabled=1
-EOF
-            fi
       fi
       ;;
     *)
@@ -196,16 +187,9 @@ EOF
     ;;
 esac
 
-if [ "$OS" = Debian ]; then
-    headers=linux-headers-3.2.0-4-amd64
-else
-    headers=
-fi
-
 declare -A os_packages
 os_packages=(
     ["deb"]="\
-        $headers \
         apache2 \
         build-essential \
         ceilometer-agent-central \
