@@ -98,6 +98,9 @@ EOF
      cat > ${dir}/etc/apt/sources.list.d/qemu-backports.list <<EOF
 deb http://ftp.de.debian.org/debian wheezy-backports main
 EOF
+     cat > ${dir}/etc/apt/sources.list.d/haproxy-wheezy.list <<EOF
+deb http://archive.gplhost.com/debian haproxy-wheezy main
+EOF
      cat > ${dir}/etc/apt/preferences.d/mariadb <<EOF
 Package: *
 Pin: origin ftp.igh.cnrs.fr
