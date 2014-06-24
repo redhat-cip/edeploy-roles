@@ -66,7 +66,7 @@ EOF
             add_puppet_repository $DIST
             install_packages $dir puppet facter hiera
             remove_puppet_repository $DIST
-            add_rhn_channel rhel-x86_64-server-6-ost-4
+            add_rhn_channel rhel-x86_64-server-6-ost-beta
          ;;
 
         *)
