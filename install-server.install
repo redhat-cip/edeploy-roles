@@ -28,6 +28,8 @@ ORIG=$(cd $(dirname $0); pwd)
 # Jenkins
 
 $SRC/jenkins.install $dir $dir $version
+# do not use the same port as the puppetdb
+sed -i 's/HTTP_PORT=8080/HTTP_PORT=8282/' $dir/etc/default/jenkins
 
 # eDeploy
 
