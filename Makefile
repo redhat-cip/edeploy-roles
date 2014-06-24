@@ -96,6 +96,11 @@ $(INST)/install-server.done: install-server.install $(INST)/openstack-common.don
 	./install-server.install $(INST)/openstack-common $(INST)/install-server $(VERS)
 	touch $(INST)/install-server.done
 
+jenkins: $(INST)/jenkins.done
+$(INST)/jenkins.done: jenkins.install $(INST)/base.done
+	./jenkins.install $(INST)/base $(INST)/jenkins $(VERS)
+	touch $(INST)/jenkins.done
+
 $(INST)/base.done: $(ARCHIVE)/$(BVERS)/base-$(BVERS).edeploy
 	rm -rf $(INST)/base
 	mkdir -p $(INST)/base

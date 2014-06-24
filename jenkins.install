@@ -1,0 +1,99 @@
+#!/bin/bash
+#
+# Copyright (C) 2014 eNovance SAS <licensing@enovance.com>
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+
+src="$1"
+dir="$2"
+version="$3"
+ROLE=jenkins
+
+ORIG=$(cd $(dirname $0); pwd)
+
+. ${ORIG}/functions
+
+#
+# Jenkins
+#
+JENKINS_PACKAGES="jenkins puppet git python-pip sloccount rubygems rake puppet-lint"
+JENKINS_PLUGINS="http://ftp.nluug.nl/programming/jenkins/plugins/ssh-agent/1.4.1/ssh-agent.hpi \
+                 http://ftp.nluug.nl/programming/jenkins/plugins/gearman-plugin/0.0.6/gearman-plugin.hpi \
+                 http://ftp.nluug.nl/programming/jenkins/plugins/promoted-builds/2.17/promoted-builds.hpi \
+                 http://ftp.nluug.nl/programming/jenkins/plugins/git-client/1.9.0/git-client.hpi \
+                 http://ftp.nluug.nl/programming/jenkins/plugins/scm-api/0.2/scm-api.hpi \
+                 http://ftp.nluug.nl/programming/jenkins/plugins/parameterized-trigger/2.24/parameterized-trigger.hpi \
+                 http://ftp.nluug.nl/programming/jenkins/plugins/token-macro/1.10/token-macro.hpi \
+                 http://ftp.nluug.nl/programming/jenkins/plugins/multiple-scms/0.3/multiple-scms.hpi \
+                 http://ftp.nluug.nl/programming/jenkins/plugins/git/2.2.1/git.hpi"
+
+update_repositories $dir
+install_ib_if_needed $ORIG $dir
+
+case "$(package_tool)" in
+    "apt")
+        #
+        # Jenkins
+        #
+        [ -f "jenkins-ci.org.key" ] || wget -q http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key -O jenkins-ci.org.key
+        do_chroot $dir apt-key add - < jenkins-ci.org.key
+        # Comment that right know (as not so sure it works correclty) - pkg.jenkins-ci.org seems to be more stable now ...
+        #    JREPO="$dir/var/lib/repo-jenkins/debs" 
+        #    [ ! -d $JREPO ] && mkdir -p $JREPO
+        #    JCWD=`pwd`
+        #    cd $JREPO
+        #    # Jenkins debs repo fails almost always this time
+        #    # So we set up a local mirror
+        #    while [ ! -f jenkins_1.560_all.deb ]; do
+        #        wget http://mirrors.jenkins-ci.org/debian/jenkins_1.560_all.deb
+        #    done
+        #    cd ..
+        #    dpkg-scanpackages -m debs > Packages
+        #    chmod -R o+r .
+        #    cd $JCWD
+        # deb file:/var/lib/ repo-jenkins/
+        cat > ${dir}/etc/apt/sources.list.d/jenkins.list <<EOF
+    deb http://pkg.jenkins-ci.org/debian binary/
+EOF
+        update_repositories $dir
+
+        install_packages $dir "$JENKINS_PACKAGES"
+
+        ;;
+    *)
+        fatal_error "$package_tool isn't supported for $ROLE role"
+        ;;
+esac
+
+#
+# Jenkins Post Inst
+#
+mkdir -p ${dir}/var/lib/jenkins/plugins
+do_chroot $dir chown jenkins /var/lib/jenkins /var/lib/jenkins/plugins
+for plugin in ${JENKINS_PLUGINS}; do
+    plugin_name=$(basename ${plugin})
+    echo "Installing plugin ${plugin_name}"
+    wget -q -O - "${plugin}" > ${dir}/var/lib/jenkins/plugins/${plugin_name}
+done
+
+#
+# jjb
+#
+mkdir -p ${dir}/opt/
+git clone 'https://git.openstack.org/openstack-infra/jenkins-job-builder' ${dir}/opt/jenkins-job-builder
+do_chroot ${dir} pip install /opt/jenkins-job-builder
+mkdir -p ${dir}/etc/jenkins_jobs
+#Install some addons required for testing
+HOME=/root do_chroot ${dir} gem install --no-rdoc --no-ri rspec-puppet
+
+# jenkins.install ends here

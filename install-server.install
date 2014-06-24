@@ -25,6 +25,10 @@ ORIG=$(cd $(dirname $0); pwd)
 
 . ${ORIG}/functions
 
+# Jenkins
+
+$SRC/jenkins.install $dir $dir $version
+
 # eDeploy
 
 $ORIG/deploy.install $dir $dir $version
