@@ -457,9 +457,6 @@ case "$OS" in
         do_chroot $dir chkconfig puppet on
 
         do_chroot $dir rpm -qv ${os_packages[$(package_type)]} || fatal_error "Some packages are not installed"
-	if [ "$OS" = RedHatEnterpriseServer ]; then
-	    do_chroot $dir rm /etc/yum.repos.d/osp4.repo
-	fi
 
         cp -pv openstack-monitoring/scripts/*/* $dir/usr/lib64/nagios/plugins
     ;;
