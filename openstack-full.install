@@ -73,7 +73,7 @@ EOF
 }
 
 function add_fluentd_deb_repo() {
-    wget -O- http://packages.treasure-data.com/debian/RPM-GPG-KEY-td-agent | apt-key add -
+    do_chroot ${dir} wget -O- http://packages.treasure-data.com/debian/RPM-GPG-KEY-td-agent | do_chroot $dir apt-key add -
     cat > ${dir}/etc/apt/sources.list.d/treasuredata.list << EOF
 deb http://packages.treasure-data.com/debian lucid contrib
 deb http://ftp.fr.debian.org/debian squeeze main
@@ -98,8 +98,16 @@ EOF
      cat > ${dir}/etc/apt/sources.list.d/qemu-backports.list <<EOF
 deb http://ftp.de.debian.org/debian wheezy-backports main
 EOF
+     do_chroot $dir apt-key adv --keyserver keyserver.ubuntu.com --recv 049ED9B94765572E
      cat > ${dir}/etc/apt/sources.list.d/haproxy-wheezy.list <<EOF
 deb http://41.apt-proxy.gplhost.com/debian haproxy-wheezy main
+EOF
+     do_chroot ${dir} wget -O- http://41.apt-proxy.gplhost.com/debian/repository_key.asc | do_chroot $dir apt-key add -
+     cat > ${dir}/etc/apt/preferences.d/haproxy <<EOF
+Package: *
+Pin: release a=stable,n=haproxy-wheezy,c=main
+Pin: origin 41.apt-proxy.gplhost.com
+Pin-Priority: 1002
 EOF
      cat > ${dir}/etc/apt/preferences.d/mariadb <<EOF
 Package: *
