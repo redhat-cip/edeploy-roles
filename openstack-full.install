@@ -413,7 +413,8 @@ case "$OS" in
         cp -pv openstack-monitoring/scripts/*/* $dir/usr/lib/nagios/plugins
     ;;
     "RedHatEnterpriseServer")
-        # Red Hat OpenStack 4.0
+        # Red Hat OpenStack 4.0 and 5b
+        add_rhn_channel rhel-x86_64-server-6-ost-4
         add_rhn_channel rhel-x86_64-server-6-ost-beta
 
         # xfsprogs is in Red Hat Common for RHEL Server (v. 6)
