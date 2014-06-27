@@ -35,6 +35,7 @@ JENKINS_PLUGINS="http://ftp.nluug.nl/programming/jenkins/plugins/ssh-agent/1.4.1
                  http://ftp.nluug.nl/programming/jenkins/plugins/parameterized-trigger/2.24/parameterized-trigger.hpi \
                  http://ftp.nluug.nl/programming/jenkins/plugins/token-macro/1.10/token-macro.hpi \
                  http://ftp.nluug.nl/programming/jenkins/plugins/multiple-scms/0.3/multiple-scms.hpi \
+                 http://ftp.nluug.nl/programming/jenkins/plugins/ansicolor/0.4.0/ansicolor.hpi \
                  http://ftp.nluug.nl/programming/jenkins/plugins/git/2.2.1/git.hpi"
 
 update_repositories $dir
