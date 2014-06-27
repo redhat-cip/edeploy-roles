@@ -279,7 +279,9 @@ os_packages=(
         MariaDB-client \
         MySQL-python \
         ceph \
+        cman \
         corosync \
+        fence-agents \
         galera \
         haproxy \
         httpd \
@@ -325,6 +327,7 @@ os_packages=(
         openstack-swift-proxy \
         openvswitch-controller \
         pacemaker \
+        pcs \
         python-cinderclient \
         python-devel \
         python-kombu \
