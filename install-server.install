@@ -75,7 +75,7 @@ case "$OS" in
         ;;
 esac
 
-do_chroot $dir gem install --no-ri --no-rdoc --no-prerelease serverspec r10k rspec-extra-formatters
+do_chroot $dir gem install --no-ri --no-rdoc --no-prerelease serverspec rspec-puppet r10k rspec-extra-formatters
 
 # OpenStack clients for tempest and inception.sh
 
