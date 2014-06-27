@@ -410,6 +410,7 @@ case "$OS" in
         install_packages_disabled $dir -t wheezy-backports linux-headers-3.14-0.bpo.1-amd64 linux-image-3.14-0.bpo.1-amd64
         install_packages_disabled $dir ${backup_packages[$(package_type)]}
         install_packages_disabled $dir ${logging_packages[$(package_type)]}
+        install_packages_disabled $dir ${prod_packages[$(package_type)]}
     ;&
     "Ubuntu")
         install_packages_disabled $dir ${os_packages[$(package_type)]}
