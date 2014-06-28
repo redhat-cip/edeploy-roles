@@ -66,23 +66,16 @@ case "$OS" in
 	add_epel_repository $DIST
 	install_packages $dir rubygems
 	remove_epel_repository $DIST
-        do_chroot $dir gem install --no-ri --no-rdoc -v '< 2.99' rspec
 	;;
     "CentOS")
 	install_packages $dir rubygems
-        do_chroot $dir gem install --no-ri --no-rdoc -v '< 2.99' rspec
 	;;
-    "Debian"|"Ubuntu")
-        do_chroot $dir gem install --no-ri --no-rdoc -v '2.14.1' rspec
-        do_chroot $dir gem install --no-ri --no-rdoc -v '2.14.8' rspec-core
-        do_chroot $dir gem install --no-ri --no-rdoc -v '2.14.5' rspec-expectations
-        do_chroot $dir gem install --no-ri --no-rdoc -v '1.0.0' rspec-extra-formatters
-        do_chroot $dir gem install --no-ri --no-rdoc -v '2.14.6' rspec-mocks
-        do_chroot $dir gem install --no-ri --no-rdoc -v '1.3.0' serverspec
-        ;;
 esac
 
-do_chroot $dir gem install --no-ri --no-rdoc --no-prerelease r10k
+# Pin the good dependencies for having rspec (< 3) & serverspec
+do_chroot $dir gem install --no-ri --no-rdoc bundler
+cp files/Gemfile-install-server $dir/tmp/Gemfile
+do_chroot $dir bundle install --gemfile=/tmp/Gemfile
 
 # OpenStack clients for tempest and inception.sh
 
