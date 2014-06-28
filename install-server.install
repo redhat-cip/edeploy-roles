@@ -73,11 +73,16 @@ case "$OS" in
         do_chroot $dir gem install --no-ri --no-rdoc -v '< 2.99' rspec
 	;;
     "Debian"|"Ubuntu")
-        do_chroot $dir gem install --no-ri --no-rdoc -v '< 2.99' rspec
+        do_chroot $dir gem install --no-ri --no-rdoc -v '2.14.1' rspec
+        do_chroot $dir gem install --no-ri --no-rdoc -v '2.14.8' rspec-core
+        do_chroot $dir gem install --no-ri --no-rdoc -v '2.14.5' rspec-expectations
+        do_chroot $dir gem install --no-ri --no-rdoc -v '1.0.0' rspec-extra-formatters
+        do_chroot $dir gem install --no-ri --no-rdoc -v '2.14.6' rspec-mocks
+        do_chroot $dir gem install --no-ri --no-rdoc -v '1.3.0' serverspec
         ;;
 esac
 
-do_chroot $dir gem install --no-ri --no-rdoc --no-prerelease serverspec rspec-puppet r10k rspec-extra-formatters
+do_chroot $dir gem install --no-ri --no-rdoc --no-prerelease rspec-puppet r10k
 
 # OpenStack clients for tempest and inception.sh
 
