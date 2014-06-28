@@ -25,6 +25,8 @@ ORIG=$(cd $(dirname $0); pwd)
 
 . ${ORIG}/functions
 
+update_repositories $dir
+
 # eDeploy
 
 $ORIG/deploy.install $dir $dir $version
