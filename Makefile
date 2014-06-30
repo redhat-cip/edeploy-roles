@@ -42,7 +42,7 @@ export CURRENT_TARGET
 INST=$(TOP)/install/$(VERS)
 META=$(TOP)/metadata/$(VERS)
 
-ROLES = cloud devstack openstack-common openstack-full mysql puppet-master install-server
+ROLES = cloud devstack openstack-common openstack-full mysql puppet-master install-server logcollector
 
 all: $(ROLES)
 
@@ -60,6 +60,11 @@ devstack: $(INST)/devstack.done
 $(INST)/devstack.done: devstack.install $(INST)/cloud.done
 	./devstack.install $(INST)/cloud $(INST)/devstack $(DIST) $(VERS)
 	touch $(INST)/devstack.done
+
+logcollector: $(INST)/logcollector.done
+$(INST)/logcollector.done: logcollector.install $(INST)/cloud.done
+	./logcollector.install $(INST)/cloud $(INST)/logcollector $(DIST) $(VERS)
+	touch $(INST)/logcollector.done
 
 openstack-common: $(INST)/openstack-common.done
 $(INST)/openstack-common.done: openstack-common.install $(INST)/cloud.done
@@ -120,4 +125,4 @@ version:
 	@echo "$(VERS)"
 
 .PHONY: cloud devstack openstack-common openstack-full mysql docker puppet-master\
-	chef-server dist clean distclean version
+	chef-server logcollector dist clean distclean version
