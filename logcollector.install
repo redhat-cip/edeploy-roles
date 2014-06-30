@@ -1,0 +1,48 @@
+#!/bin/bash
+#
+# Copyright (C) 2014 eNovance SAS <licensing@enovance.com>
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+
+src="$1"
+dir="$2"
+version="$3"
+
+ROLE=logcollector
+
+ORIG=$(cd $(dirname $0); pwd)
+
+. ${ORIG}/functions
+. ./repositories
+
+declare -A packages
+packages=(
+    ["deb"]="elasticsearch openjdk-7-jdk td-agent git puppet facter hiera ntp"
+    ["rpm"]="elasticsearch java-1.7.0-openjdk td-agent git puppet facter hiera ntp libcurl-devel"
+)
+
+install_ib_if_needed $ORIG $dir
+
+# Install repositories
+add_puppet_repo
+add_fluentd_repo
+add_elasticsearch_repo
+update_repositories $dir
+
+# Install packages
+install_packages $dir ${packages[$(package_type)]}
+
+# Install Kibana3
+do_chroot ${dir} git clone https://github.com/elasticsearch/kibana.git /opt/kibana3
+
+clear_packages_cache $dir
