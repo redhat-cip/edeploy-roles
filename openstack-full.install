@@ -471,7 +471,7 @@ case "$OS" in
 esac
 
 # add galera-status script to validate MySQL Galera cluster sanity
-cp $ORIG/files/galera-status $dir/usr/sbin
+cp $SRC/files/galera-status $dir/usr/sbin
 
 clear_packages_cache $dir
 rm -rf $dir/tmp/openstack-monitoring
