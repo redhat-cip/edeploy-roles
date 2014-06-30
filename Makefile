@@ -63,7 +63,7 @@ $(INST)/devstack.done: devstack.install $(INST)/cloud.done
 
 logcollector: $(INST)/logcollector.done
 $(INST)/logcollector.done: logcollector.install $(INST)/cloud.done
-	./logcollector.install $(INST)/cloud $(INST)/logcollector $(DIST) $(VERS)
+	./logcollector.install $(INST)/cloud $(INST)/logcollector $(VERS)
 	touch $(INST)/logcollector.done
 
 openstack-common: $(INST)/openstack-common.done
