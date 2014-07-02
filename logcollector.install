@@ -27,8 +27,8 @@ ORIG=$(cd $(dirname $0); pwd)
 
 declare -A packages
 packages=(
-    ["deb"]="elasticsearch openjdk-7-jdk td-agent git puppet facter hiera ntp"
-    ["rpm"]="elasticsearch java-1.7.0-openjdk td-agent git puppet facter hiera ntp libcurl-devel"
+    ["deb"]="elasticsearch openjdk-7-jdk td-agent git puppet facter hiera ntp ruby-dev build-essential libcurl4-openssl-dev"
+    ["rpm"]="elasticsearch java-1.7.0-openjdk td-agent git puppet facter hiera ntp libcurl-openssl-devel ruby-devel"
 )
 
 install_ib_if_needed $ORIG $dir
@@ -44,5 +44,8 @@ install_packages $dir ${packages[$(package_type)]}
 
 # Install Kibana3
 do_chroot ${dir} git clone https://github.com/elasticsearch/kibana.git /opt/kibana3
+
+# Install fluentd-elasticsearch plugin
+do_chroot ${dir} gem install --no-ri --no-rdoc --no-prerelease fluent-plugin-elasticsearch
 
 clear_packages_cache $dir
