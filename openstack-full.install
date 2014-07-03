@@ -398,6 +398,9 @@ declare -A logging_packages
 logging_packages=( 
     ["deb"]="
         td-agent
+"
+    ["rpm"]="
+        td-agent
 ")
 
 add_fluentd_repo
