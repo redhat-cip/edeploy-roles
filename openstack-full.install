@@ -26,6 +26,7 @@ ROLE=openstack-full
 ORIG=$(cd $(dirname $0); pwd)
 
 . ${ORIG}/functions
+. ./repositories
 
 if [ -z "$OS_VERS" ]; then
     echo "OS_VERS is not set, Icehouse will be built by default"
@@ -72,14 +73,6 @@ Pin-Priority: 100
 EOF
 }
 
-function add_fluentd_deb_repo() {
-    do_chroot ${dir} wget -O- http://packages.treasure-data.com/debian/RPM-GPG-KEY-td-agent | do_chroot $dir apt-key add -
-    cat > ${dir}/etc/apt/sources.list.d/treasuredata.list << EOF
-deb http://packages.treasure-data.com/debian lucid contrib
-deb http://ftp.fr.debian.org/debian squeeze main
-EOF
-}
-
 case "$OS" in
     "Debian")
      do_chroot $dir apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
@@ -116,7 +109,6 @@ Pin-Priority: 900
 EOF
      add_rabbitmq_deb_repo
      add_percona_deb_repo
-     add_fluentd_deb_repo
     ;;
     "Ubuntu")
      do_chroot $dir apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
@@ -408,6 +400,7 @@ logging_packages=(
         td-agent
 ")
 
+add_fluentd_repo
 update_repositories $dir
 
 cd $dir/tmp
@@ -462,8 +455,8 @@ case "$OS" in
         add_epel_repository $DIST
 
         install_packages_disabled $dir ${os_packages[$(package_type)]}
-        install_packages_disabled $dir ${os_packages[$(package_type)]}
         install_packages_disabled $dir ${monitoring_packages[$(package_type)]}
+        install_packages_disabled $dir ${logging_packages[$(package_type)]}
 
         # python-kombu is outdated for now in Red Hat.
         # while they updating it, we use pip to install the last one required by OpenStack
