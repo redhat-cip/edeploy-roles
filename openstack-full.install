@@ -271,6 +271,7 @@ os_packages=(
         swift-proxy \
         sysfsutils \
         trove-api \
+        trove-conductor \
         trove-guestagent \
         trove-taskmanager \
         unzip \
