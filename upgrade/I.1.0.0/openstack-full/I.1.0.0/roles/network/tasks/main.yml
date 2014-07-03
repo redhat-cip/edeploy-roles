@@ -1,0 +1,8 @@
+---
+# file: roles/network/tasks/main.yml
+
+# Upgrade packages to Icehouse
+- name: edeploy upgrade
+  edeploy: command=upgrade version=D7-{{ version }}
+  tags: before_config
+  when: ansible_distribution == 'Debian'
