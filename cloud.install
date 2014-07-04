@@ -35,7 +35,7 @@ configure_cloudinit () {
 
     case "$OS" in
 	"Debian")
-	    local repository=$(add_main_repository $DIST)
+	    local repository=$(add_main_repository $DIST $DVER)
 	    cat > ${dir}/etc/apt/sources.list.d/$RELEASE-backport.list <<EOF
 deb $repository ${RELEASE}-backports main
 EOF
