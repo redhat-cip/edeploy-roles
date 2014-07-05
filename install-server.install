@@ -82,7 +82,7 @@ do_chroot $dir bundle install --gemfile=/tmp/Gemfile
 install_packages $dir python-cinderclient python-glanceclient python-heatclient \
   python-ironicclient python-keystoneclient python-neutronclient \
   python-novaclient python-saharaclient python-swiftclient python-dev libffi-dev \
-  subunit nova-common python-ceilometerclient
+  subunit nova-common python-ceilometerclient python-troveclient
 
 # Jenkins
 
