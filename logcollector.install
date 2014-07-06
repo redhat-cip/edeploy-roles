@@ -49,3 +49,55 @@ do_chroot ${dir} git clone https://github.com/elasticsearch/kibana.git /opt/kiba
 do_chroot ${dir} gem install --no-ri --no-rdoc --no-prerelease fluent-plugin-elasticsearch
 
 clear_packages_cache $dir
+
+# TODO (spredzy) : This is specific for the CI and the current
+# way it is deployed. (Using kibana3 in the puppet module will overwrite
+# puppetmaster and puppetdashboard configuration) resulting in a non
+# fonctional system
+case "$OS" in
+    "Debian" | "Ubuntu")
+        cat > $dir/etc/apache2/sites-available/kibana3 <<EOF
+NameVirtualHost *:83
+Listen 83
+
+<VirtualHost *:83>
+    ## Vhost docroot
+    DocumentRoot "/opt/kibana3/src"
+    ## Directories, there should at least be a declaration for /opt/kibana3/src
+    <Directory "/opt/kibana3/src">
+      Options Indexes FollowSymLinks MultiViews
+      AllowOverride None
+      Order allow,deny
+      Allow from all
+    </Directory>
+    ## Logging
+    ErrorLog "/var/log/httpd/kibana3_error.log"
+    ServerSignature Off
+    CustomLog "/var/log/httpd/kibana3_access.log" combined
+</VirtualHost>
+EOF
+        a2ensite kibana3
+        ;;
+    "CentOS"|"RedHatEnterpriseServer")
+        cat > $dir/etc/httpd/conf.d/25-kibana.conf <<EOF
+NameVirtualHost *:83
+Listen 83
+
+<VirtualHost *:83>
+    ## Vhost docroot
+    DocumentRoot "/opt/kibana3/src"
+    ## Directories, there should at least be a declaration for /opt/kibana3/src
+    <Directory "/opt/kibana3/src">
+      Options Indexes FollowSymLinks MultiViews
+      AllowOverride None
+      Order allow,deny
+      Allow from all
+    </Directory>
+    ## Logging
+    ErrorLog "/var/log/httpd/kibana3_error.log"
+    ServerSignature Off
+    CustomLog "/var/log/httpd/kibana3_access.log" combined
+</VirtualHost>
+EOF
+        ;;
+esac
