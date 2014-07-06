@@ -76,7 +76,7 @@ Listen 83
     CustomLog "/var/log/httpd/kibana3_access.log" combined
 </VirtualHost>
 EOF
-        a2ensite kibana3
+        do_chroot ${dir} a2ensite kibana3
         ;;
     "CentOS"|"RedHatEnterpriseServer")
         cat > $dir/etc/httpd/conf.d/25-kibana.conf <<EOF
