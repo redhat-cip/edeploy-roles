@@ -5,6 +5,11 @@
   user: jenkins
   sudo: true
 
+- hosts: installer
+  serial: 1
+  roles:
+    - install
+
 - hosts: controllers
   serial: 1
   roles:

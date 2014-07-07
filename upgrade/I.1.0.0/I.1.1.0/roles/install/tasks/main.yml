@@ -1,0 +1,17 @@
+---
+# file: roles/install/tasks/main.yml
+
+- name: edeploy upgrade
+  edeploy: command=upgrade version=D7-{{ version }}
+  tags: install_server
+
+- name: restart Apache2 and Jenkins
+  service: name={{ item }} state=restarted
+  tags: install_server
+  with_items:
+    - jenkins
+    - apache2
+
+- name: wait jenkins is up and running
+  script: jenkins-wait.sh
+  tags: install_server

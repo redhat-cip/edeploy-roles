@@ -7,3 +7,4 @@ os_username: admin
 os_tenant_name: admin
 os_password: secrete
 os_auth_url: "http://controller.enovance.com:5000/v2.0"
+install_server: install.enovance.com
