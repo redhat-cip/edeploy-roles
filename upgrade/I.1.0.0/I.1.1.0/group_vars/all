@@ -3,8 +3,14 @@
 
 # Last product release code
 version: I.1.1.0
+
+# Previous product release code
+stable: I.1.0.0
+
 os_username: admin
 os_tenant_name: admin
 os_password: secrete
 os_auth_url: "http://controller.enovance.com:5000/v2.0"
-install_server: install.enovance.com
+
+# Upstream eDeploy server
+edeploy_master: edeploy.enovance.com
