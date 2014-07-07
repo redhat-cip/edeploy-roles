@@ -90,8 +90,10 @@ $SRC/jenkins.install $dir $dir $version
 # do not use the same port as the puppetdb
 sed -i 's/HTTP_PORT=8080/HTTP_PORT=8282/' $dir/etc/default/jenkins
 
-# Disabled for debug
 # Log Collector (ElasticSearch + Kibana)
 $SRC/logcollector.install $dir $dir $version
+
+# Tempest
+$SRC/tempest.install $dir $dir $version
 
 # install-server.install ends here
