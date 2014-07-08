@@ -93,8 +93,7 @@ sed -i 's/HTTP_PORT=8080/HTTP_PORT=8282/' $dir/etc/default/jenkins
 # Log Collector (ElasticSearch + Kibana)
 $SRC/logcollector.install $dir $dir $version
 
-# TODO spredzy: Commenting as it breaks the CI (#500)
 # Tempest
-#$SRC/tempest.install $dir $dir $version
+$SRC/tempest.install $dir $dir $version
 
 # install-server.install ends here
