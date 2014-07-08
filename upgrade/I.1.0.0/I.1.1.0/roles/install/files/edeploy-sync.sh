@@ -23,23 +23,14 @@ set -x
 
 edeploymaster="$1"
 release="$2"
-distro="$3"
 
-rsync -av $edeploymaster::ci/all-$distro/install/$release/{openstack-full,install-server}*.edeploy* .
-
-# Check that we have the right roles and we are not building new ones
+# Download and Extract .edeploy files from upstream to downstream eDeploy server
 for role in openstack-full install-server; do
-    if ! md5sum -c $role-$release.edeploy.md5; then
-	echo "eDeploy roles (at least $role) are beeing built, exiting"
-	exit 1
-    fi
-done
-
-# Extract .edeploy files from upstream to downstream eDeploy server
-for role in openstack-full install-server; do
+    wget http://$edeploymaster/edeploy-roles/$release/$role-$release.edeploy
     rm -rf /var/lib/debootstrap/install/$release/$role
     mkdir -p /var/lib/debootstrap/install/$release/$role
     tar zx -C /var/lib/debootstrap/install/$release/$role < $role-$release.edeploy
+    rm -rf $role-$release.edeploy
 done
 
 # Synchronize eDeploy metadata with upstream
