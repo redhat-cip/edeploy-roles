@@ -5,10 +5,6 @@
   script: edeploy-sync.sh {{ edeploy_master }} {{ version }}
   tags: edeploy_sync
 
-- name: wait jenkins is up and running
-  script: jenkins-wait.sh
-  tags: install_server_tmp
-
 - name: edeploy upgrade
   edeploy: command=upgrade version=D7-{{ version }}
   tags: install_server_tmp
@@ -22,4 +18,4 @@
 
 - name: wait jenkins is up and running
   script: jenkins-wait.sh
-  tags: install_server
+  tags: install_server_tmp
