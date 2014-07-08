@@ -25,7 +25,7 @@ edeploymaster="$1"
 release="$2"
 
 #TODO(EmilienM) need to be improved to rsync with the real OS running in deployment
-rsync -av $edeploymaster::ci/all-$distro/install/$release/{openstack-full,install-server}*.edeploy* .
+rsync -av $edeploymaster::ci/all-debian/install/$release/{openstack-full,install-server}*.edeploy* .
 
 # Check that we have the right roles and we are not building new ones
 for role in openstack-full install-server; do
