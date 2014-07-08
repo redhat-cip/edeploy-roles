@@ -15,6 +15,6 @@
 
 # In this release, heat-engine is no more SPOF
 - name: remove heat-engine from pacemaker
-command: crm configure delete heat-engine
+  command: crm configure delete heat-engine
   tags: after_config
   when: inventory_hostname == groups['full'][-1]
