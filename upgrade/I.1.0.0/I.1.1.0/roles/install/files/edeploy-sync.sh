@@ -24,12 +24,8 @@ set -x
 edeploymaster="$1"
 release="$2"
 
-# TODO(EmilienM) need to be improved to copy only the OS we need
-# Synchronize the eDeploy roles with eNovance upstream CI by getting
-# last chroot builds
-for distro in debian redhat; do
-  rsync -av $edeploymaster::ci/all-$distro/install/$release/{openstack-full,install-server}*.edeploy* .
-done
+#TODO(EmilienM) need to be improved to rsync with the real OS running in deployment
+rsync -av $edeploymaster::ci/all-$distro/install/$release/{openstack-full,install-server}*.edeploy* .
 
 # Check that we have the right roles and we are not building new ones
 for role in openstack-full install-server; do
