@@ -49,6 +49,6 @@ esac
 mkdir -p ${dir}/opt/
 git clone 'https://github.com/enovance/tempest-report' ${dir}/opt/tempest-report
 do_chroot ${dir} pip install /opt/tempest-report -r /opt/tempest-report/requirements.txt
-do_chroot ${dir} python /opt/tempest-report/setup.py install
+do_chroot ${dir} bash -c 'cd /opt/tempest-report; python ./setup.py install'
 
 # tempest.install ends here
