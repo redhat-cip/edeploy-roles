@@ -4,10 +4,12 @@
 - name: synchronize eDeploy roles & metadata with upstream
   script: edeploy-sync.sh {{ edeploy_master }} D7-{{ version }}
   tags: edeploy_sync
+  when: ansible_distribution == 'Debian'
 
 - name: edeploy upgrade
   edeploy: command=upgrade version=D7-{{ version }}
   tags: install_server_tmp
+  when: ansible_distribution == 'Debian'
 
 - name: restart Apache2 and Jenkins
   service: name={{ item }} state=restarted
