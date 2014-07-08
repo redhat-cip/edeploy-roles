@@ -27,8 +27,8 @@ ORIG=$(cd $(dirname $0); pwd)
 
 declare -A packages
 packages=(
-    ["deb"]="elasticsearch openjdk-7-jdk td-agent git puppet facter hiera ntp ruby-dev build-essential libcurl4-openssl-dev"
-    ["rpm"]="elasticsearch java-1.7.0-openjdk td-agent git puppet facter hiera ntp libcurl-openssl-devel ruby-devel"
+    ["deb"]="elasticsearch openjdk-7-jdk td-agent git puppet facter hiera ntp ruby-dev build-essential libcurl4-openssl-dev apache2"
+    ["rpm"]="elasticsearch java-1.7.0-openjdk td-agent git puppet facter hiera ntp libcurl-openssl-devel ruby-devel httpd"
 )
 
 install_ib_if_needed $ORIG $dir
@@ -50,6 +50,18 @@ do_chroot ${dir} gem install --no-ri --no-rdoc --no-prerelease fluent-plugin-ela
 
 clear_packages_cache $dir
 
+# TODO (spredzy) : Elasticsearch is not started at boot
+# Puppet module should make it happen, but currently it does not
+case "$OS" in
+    "Debian" | "Ubuntu")
+      do_chroot ${dir} update-rc.d elasticsearch defaults 95 10
+    ;;
+    "CentOS"|"RedHatEnterpriseServer")
+      do_chroot ${dir} chkconfig --add elasticsearch
+    ;;
+esac
+
+
 # TODO (spredzy) : This is specific for the CI and the current
 # way it is deployed. (Using kibana3 in the puppet module will overwrite
 # puppetmaster and puppetdashboard configuration) resulting in a non
@@ -57,10 +69,10 @@ clear_packages_cache $dir
 case "$OS" in
     "Debian" | "Ubuntu")
         cat > $dir/etc/apache2/sites-available/kibana3 <<EOF
-NameVirtualHost *:83
-Listen 83
+NameVirtualHost *:8300
+Listen 8300
 
-<VirtualHost *:83>
+<VirtualHost *:8300>
     ## Vhost docroot
     DocumentRoot "/opt/kibana3/src"
     ## Directories, there should at least be a declaration for /opt/kibana3/src
@@ -71,19 +83,19 @@ Listen 83
       Allow from all
     </Directory>
     ## Logging
-    ErrorLog "/var/log/httpd/kibana3_error.log"
+    ErrorLog "/var/log/apache2/kibana3_error.log"
     ServerSignature Off
-    CustomLog "/var/log/httpd/kibana3_access.log" combined
+    CustomLog "/var/log/apache2/kibana3_access.log" combined
 </VirtualHost>
 EOF
         do_chroot ${dir} a2ensite kibana3
         ;;
     "CentOS"|"RedHatEnterpriseServer")
         cat > $dir/etc/httpd/conf.d/25-kibana.conf <<EOF
-NameVirtualHost *:83
-Listen 83
+NameVirtualHost *:8300
+Listen 8300
 
-<VirtualHost *:83>
+<VirtualHost *:8300>
     ## Vhost docroot
     DocumentRoot "/opt/kibana3/src"
     ## Directories, there should at least be a declaration for /opt/kibana3/src
