@@ -27,8 +27,8 @@ ORIG=$(cd $(dirname $0); pwd)
 
 declare -A packages
 packages=(
-    ["deb"]="elasticsearch openjdk-7-jdk td-agent git puppet facter hiera ntp ruby-dev build-essential libcurl4-openssl-dev apache2 libcurl4-gnutls-dev"
-    ["rpm"]="elasticsearch java-1.7.0-openjdk td-agent git puppet facter hiera ntp libcurl-openssl-devel ruby-devel httpd gnutls-devel"
+    ["deb"]="elasticsearch openjdk-7-jdk td-agent git puppet facter hiera ntp ruby-dev build-essential apache2 libcurl4-gnutls-dev"
+    ["rpm"]="elasticsearch java-1.7.0-openjdk td-agent git puppet facter hiera ntp libcurl-openssl-devel ruby-devel httpd"
 )
 
 install_ib_if_needed $ORIG $dir
