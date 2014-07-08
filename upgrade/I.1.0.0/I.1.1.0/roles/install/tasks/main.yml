@@ -2,7 +2,7 @@
 # file: roles/install/tasks/main.yml
 
 - name: synchronize eDeploy roles & metadata with upstream
-  script: edeploy-sync.sh {{ edeploy_master }} D7-{{ version }}
+  script: edeploy-sync.sh {{ edeploy_master }} D7-{{ version }} debian
   tags: edeploy_sync
   when: ansible_distribution == 'Debian'
 
