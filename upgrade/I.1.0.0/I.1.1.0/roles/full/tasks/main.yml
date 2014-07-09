@@ -2,14 +2,18 @@
 # file: roles/full/tasks/main.yml
 # this role is used when all services are running on the same node.
 
-- name: edeploy upgrade
-  edeploy: command=upgrade version=D7-{{ version }}
+# In this release, we upgrade HAproxy from 1.4 to 1.5 to support SSL termination.
+# So we need to trigger a failover.
+- name: Pull out the node from the HAproxy cluster
+  service: name={{ item }} state=stop
   tags: before_config
   when: ansible_distribution == 'Debian'
+  with_items:
+    - keepalived
+    - haproxy
 
-# In this release, we upgrade HAproxy from 1.4 to 1.5 to support SSL termination.
-- name: restart HAproxy
-  service: name=haproxy state=restarted
+- name: edeploy upgrade
+  edeploy: command=upgrade version=D7-{{ version }}
   tags: before_config
   when: ansible_distribution == 'Debian'
 
