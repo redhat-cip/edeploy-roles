@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (C) 2013 eNovance SAS <licensing@enovance.com>
+# Copyright (C) 2013-2014 eNovance SAS <licensing@enovance.com>
 #
 # Author: Frederic Lepied <frederic.lepied@enovance.com>
 #
@@ -33,19 +33,19 @@ echo "Preparing package sources for $dist"
 
 case "$dist" in
     "wheezy")
-    cat > ${dir}/etc/apt/sources.list.d/openstack.list <<EOF
+        cat > ${dir}/etc/apt/sources.list.d/openstack.list <<EOF
 deb [trusted=1] http://archive.gplhost.com/debian grizzly main
 deb [trusted=1] http://archive.gplhost.com/debian/ grizzly-backports main
 EOF
-    PKGS=""
-    ;;
+        PKGS=""
+        ;;
 
-    "precise")
-    cat > ${dir}/etc/apt/sources.list.d/openstack.list <<EOF
+    precise|trusty)
+        cat > ${dir}/etc/apt/sources.list.d/openstack.list <<EOF
 deb [trusted=1 arch=amd64] http://archive.gplhost.com/debian precise-grizzly-backports main
 EOF
-    repository=$(add_main_repository $DIST)
-    cat >> ${dir}/etc/apt/sources.list <<EOF
+        repository=$(add_main_repository $DIST)
+        cat >> ${dir}/etc/apt/sources.list <<EOF
 deb-src $repository precise main
 deb-src $repository precise-updates main
 deb-src $repository precise universe
@@ -53,11 +53,12 @@ deb-src $repository precise-updates universe
 deb-src http://security.ubuntu.com/ubuntu precise-security main
 deb-src http://security.ubuntu.com/ubuntu precise-security universe
 EOF
-    PKGS="open-iscsi-utils"
-    ;;
+        PKGS="open-iscsi-utils"
+        ;;
+
     *)
-    fatal_error "$dist distro are not yet supported in this role"
-    ;;
+        fatal_error "$dist distro are not yet supported in this role"
+        ;;
 esac
 
 PACKAGES="bridge-utils curl dnsmasq-base dnsmasq-utils ebtables euca2ools gawk gcc genisoimage git iptables iputils-arping iputils-ping kpartx libjs-jquery-tablesorter libldap2-dev libsasl2-dev libxml2-dev locate lsof lvm2 msgpack-python nbd-client nodejs open-iscsi openssh-server openssl parted psmisc pylint python-anyjson python-beautifulsoup python-boto python-carrot python-cheetah python-cherrypy3 python-cmd2 python-coverage python-dateutil python-dev python-eventlet python-feedparser python-gflags python-greenlet python-iso8601 python-kombu python-libxml2 python-lockfile python-lxml python-m2crypto python-migrate python-mox python-mysqldb python-netaddr python-nose python-numpy python-paste python-pastedeploy python-pastescript python-pip python-pysqlite2 python-qpid python-routes python-setuptools python-sphinx python-sqlalchemy python-suds python-tempita python-unittest2 python-virtualenv python-webob python-wsgiref python-xattr qemu-utils screen sg3-utils socat sqlite3 sudo sysfsutils tar tcpdump tgt unzip vim-nox vlan wget $PKGS"
@@ -82,7 +83,8 @@ echo SERVICE_PASSWORD=password >> localrc
 echo SERVICE_TOKEN=tokentoken >> localrc
 EOF
 chmod a+x ${dir}/tmp/script
-do_chroot ${dir} useradd -G sudo -s /bin/bash $USER
+do_chroot ${dir} groupadd $USER
+do_chroot ${dir} useradd -g $USER -G sudo -s /bin/bash $USER
 mkdir -p ${dir}/home/$USER
 do_chroot ${dir} chown $USER:$USER /home/$USER
 do_chroot ${dir} su - $USER -c "/tmp/script"
