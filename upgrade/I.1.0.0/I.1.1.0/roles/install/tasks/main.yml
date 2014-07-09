@@ -11,6 +11,11 @@
   tags: install_server_tmp
   when: ansible_distribution == 'Debian'
 
+- name: move jenkins ssh files to /var/lib/jenkins
+  command: cp -R /home/jenkins/.ssh /var/lib/jenkins
+  tags: install_server_tmp
+  when: ansible_distribution == 'Debian'
+
 - name: restart Apache2 and Jenkins
   service: name={{ item }} state=restarted
   tags: install_server_tmp
