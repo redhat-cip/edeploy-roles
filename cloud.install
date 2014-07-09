@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (C) 2013 eNovance SAS <licensing@enovance.com>
+# Copyright (C) 2013-2014 eNovance SAS <licensing@enovance.com>
 #
 # Author: Frederic Lepied <frederic.lepied@enovance.com>
 #
@@ -55,15 +55,21 @@ EOF
 	    ;;
 	"RedHatEnterpriseServer")
 	    # cloud-init is in Red Hat Common for RHEL Server (v. 6)
-	    add_rhn_channel rhel-x86_64-server-rh-common-6
+	    add_rhn_channel rhel-x86_64-server-rh-common-$CODENAME_MAJOR
             install_packages $dir "cloud-init"
 	    ;;
 	"CentOS")
-	    add_epel_repository $DIST
-	    if [ "$(get_redhat_major_version $CODENAME)" == "6" ]; then
-		install_packages $dir "cloud-init"
-	    fi
-	    remove_epel_repository $DIST
+            # install from source on C7 while waiting for the EPEL package
+            if [ ${CODENAME_MAJOR} = 7 ]; then
+                install_packages $dir python-setuptools
+                chroot $dir wget -q -O/usr/src/cloud-init-0.7.5.tar.gz https://launchpad.net/cloud-init/trunk/0.7.5/+download/cloud-init-0.7.5.tar.gz
+                chroot $dir tar xvf /usr/src/cloud-init-0.7.5.tar.gz -C /usr/src
+                chroot $dir bash -c "cd /usr/src/cloud-init-0.7.5; python setup.py install"
+            else
+	        add_epel_repository $DIST
+	        install_packages $dir "cloud-init"
+	        remove_epel_repository $DIST
+            fi
 	    ;;
 	*)
 	    fatal_error "OS ($OS) or Release ($RELEASE) not supported"
