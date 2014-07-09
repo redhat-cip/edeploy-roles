@@ -16,6 +16,11 @@
   tags: install_server_tmp
   when: ansible_distribution == 'Debian'
 
+- name: ensure we have the right permissions for ssh folder
+  command: chown -R jenkins:jenkins /var/lib/jenkins/.ssh
+  tags: install_server_tmp
+  when: ansible_distribution == 'Debian'
+
 - name: restart Apache2 and Jenkins
   service: name={{ item }} state=restarted
   tags: install_server_tmp
