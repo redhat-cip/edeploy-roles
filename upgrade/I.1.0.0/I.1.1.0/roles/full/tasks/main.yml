@@ -13,6 +13,13 @@
   tags: before_config
   when: ansible_distribution == 'Debian'
 
+# This release upgrades MariaDB-galera-server
+- name: restart mysql
+  service: name={{ item }} state=restarted
+  with_items:
+    - mysql
+  tags: before_config
+
 # In this release, heat-engine is no more SPOF
 - name: remove heat-engine from pacemaker
   command: crm configure delete heat-engine
