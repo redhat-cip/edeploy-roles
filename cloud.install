@@ -59,17 +59,9 @@ EOF
             install_packages $dir "cloud-init"
 	    ;;
 	"CentOS")
-            # install from source on C7 while waiting for the EPEL package
-            if [ ${CODENAME_MAJOR} = 7 ]; then
-                install_packages $dir python-setuptools
-                chroot $dir wget -q -O/usr/src/cloud-init-0.7.5.tar.gz https://launchpad.net/cloud-init/trunk/0.7.5/+download/cloud-init-0.7.5.tar.gz
-                chroot $dir tar xvf /usr/src/cloud-init-0.7.5.tar.gz -C /usr/src
-                chroot $dir bash -c "cd /usr/src/cloud-init-0.7.5; python setup.py install"
-            else
-	        add_epel_repository $DIST
-	        install_packages $dir "cloud-init"
-	        remove_epel_repository $DIST
-            fi
+	    add_epel_repository $DIST
+	    install_packages $dir "cloud-init"
+	    remove_epel_repository $DIST
 	    ;;
 	*)
 	    fatal_error "OS ($OS) or Release ($RELEASE) not supported"
