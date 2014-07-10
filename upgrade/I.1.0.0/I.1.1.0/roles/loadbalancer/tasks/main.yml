@@ -16,3 +16,19 @@
   edeploy: command=upgrade version=D7-{{ version }}
   tags: before_config
   when: ansible_distribution == 'Debian'
+
+# Fix HAproxy options
+- name: fix heat_cfn binding
+  command: sed '/heat_api_cfn_dead/d' /etc/haproxy/haproxy.cfg
+  tags: before_config
+- name: fix heat_cloudwatch binding
+  command: sed '/heat_api_cloudwatch_dead/d' /etc/haproxy/haproxy.cfg
+  tags: before_config
+
+- name: start HAproxy & keepalived after upgrade
+  service: name={{ item }} state=started
+  tags: before_config
+  when: ansible_distribution == 'Debian'
+  with_items:
+    - keepalived
+    - haproxy
