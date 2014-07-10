@@ -50,6 +50,15 @@ do_chroot ${dir} /opt/td-agent/embedded/bin/fluent-gem install fluent-plugin-ela
 
 clear_packages_cache $dir
 
+# TODO (spredzy) : Current 2.0.3 td-agent is broken
+# require 'uri' is missing. Should be solved in next release.
+# https://github.com/fluent/fluentd/pull/375
+case "$OS" in
+  "Debian")
+    do_chroot ${dir} sed -i "19irequire 'uri'" /opt/td-agent/embedded/lib/ruby/gems/2.1.0/gems/fluentd-0.10.51/lib/fluent/config/v1_parser.rb
+  ;;
+esac
+
 # TODO (spredzy) : Elasticsearch is not started at boot
 # Puppet module should make it happen, but currently it does not
 case "$OS" in
