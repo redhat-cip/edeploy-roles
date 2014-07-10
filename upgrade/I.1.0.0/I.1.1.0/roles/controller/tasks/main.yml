@@ -16,10 +16,10 @@
 # In this release, heat-engine is no more SPOF
 - name: stop heat-engine from pacemaker
   command: crm resource stop heat-engine
-  tags: after_config
+  tags: before_config
   when: inventory_hostname == groups['full'][-1]
 
 - name: remove heat-engine from pacemaker
   command: crm configure delete heat-engine
-  tags: after_config
+  tags: before_config
   when: inventory_hostname == groups['full'][-1]
