@@ -60,7 +60,7 @@ EOF
 	    ;;
 	"CentOS")
 	    add_epel_repository $DIST
-	    if [ "$CODENAME" == "6" ]; then
+	    if [ "$CODENAME_MAJOR" == "6" ]; then
 		install_packages $dir "cloud-init"
 	    fi
 	    remove_epel_repository $DIST

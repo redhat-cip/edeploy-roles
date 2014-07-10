@@ -127,7 +127,7 @@ EOF
      add_percona_deb_repo
     ;;
     "CentOS"|"RedHatEnterpriseServer")
-      if [ "$CODENAME" == "6" ]; then
+      if [ "$CODENAME_MAJOR" == "6" ]; then
           cat > ${dir}/etc/yum.repos.d/mariadb.repo <<EOF
 # MariaDB 5.5 RedHat repository list - created 2013-12-17 16:18 UTC
 # http://mariadb.org/mariadb/repositories/
