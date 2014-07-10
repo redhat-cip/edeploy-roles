@@ -60,7 +60,7 @@ EOF
 	    ;;
 	"CentOS")
 	    add_epel_repository $DIST
-	    if [ "$(get_redhat_major_version $CODENAME)" == "6" ]; then
+	    if [ "$CODENAME" == "6" ]; then
 		install_packages $dir "cloud-init"
 	    fi
 	    remove_epel_repository $DIST
