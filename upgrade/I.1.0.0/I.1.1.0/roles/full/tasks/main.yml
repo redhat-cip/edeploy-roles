@@ -70,6 +70,7 @@
 # Wait a bit that the resource is really deleted
 - name: Wait some time that Pacemaker resource is deleted
   command: /bin/sleep 5
+  tags: before_config
   async: 45
   poll: 5
 
