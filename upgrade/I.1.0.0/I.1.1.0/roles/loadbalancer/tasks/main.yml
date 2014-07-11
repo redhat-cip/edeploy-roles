@@ -19,10 +19,10 @@
 
 # Fix HAproxy options
 - name: fix heat_cfn binding
-command: sed '/heat_api_cfn_dead/d' -i /etc/haproxy/haproxy.cfg
+  command: sed '/heat_api_cfn_dead/d' -i /etc/haproxy/haproxy.cfg
   tags: before_config
 - name: fix heat_cloudwatch binding
-command: sed '/heat_api_cloudwatch_dead/d' -i /etc/haproxy/haproxy.cfg
+  command: sed '/heat_api_cloudwatch_dead/d' -i /etc/haproxy/haproxy.cfg
   tags: before_config
 
 - name: start HAproxy & keepalived after upgrade
