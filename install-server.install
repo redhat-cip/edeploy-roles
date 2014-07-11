@@ -40,12 +40,12 @@ case "$OS" in
         cat > ${dir}/etc/apt/sources.list.d/wheezy-backports.list <<EOF
 deb http://ftp.de.debian.org/debian wheezy-backports main
 EOF
-	install_packages $dir python-jinja2 python-paramiko python-libxml2 libmysqlclient-dev libxml2-dev libxslt-dev libpq-dev python-dev python-virtualenv libffi-dev
+	install_packages $dir python-pandas python-jinja2 python-paramiko python-libxml2 libmysqlclient-dev libxml2-dev libxslt-dev libpq-dev python-dev python-virtualenv libffi-dev
 	install_packages $dir -t wheezy-backports linux-headers-3.14-0.bpo.1-amd64 linux-image-3.14-0.bpo.1-amd64
 	do_chroot $dir pip install ansible
 	;;
     "Ubuntu")
-	install_packages $dir python-jinja2 python-paramiko build-essential python-dev
+	install_packages $dir python-pandas python-jinja2 python-paramiko build-essential python-dev
 	do_chroot $dir pip install ansible
 	;;
     "CentOS"|"RedHatEnterpriseServer")
@@ -82,7 +82,7 @@ do_chroot $dir bundle install --gemfile=/tmp/Gemfile
 install_packages $dir python-cinderclient python-glanceclient python-heatclient \
   python-ironicclient python-keystoneclient python-neutronclient \
   python-novaclient python-saharaclient python-swiftclient python-dev libffi-dev \
-  subunit nova-common python-ceilometerclient
+  subunit nova-common python-ceilometerclient python-troveclient
 
 # Jenkins
 
@@ -90,8 +90,10 @@ $SRC/jenkins.install $dir $dir $version
 # do not use the same port as the puppetdb
 sed -i 's/HTTP_PORT=8080/HTTP_PORT=8282/' $dir/etc/default/jenkins
 
-# Disabled for debug
 # Log Collector (ElasticSearch + Kibana)
 $SRC/logcollector.install $dir $dir $version
+
+# Tempest
+$SRC/tempest.install $dir $dir $version
 
 # install-server.install ends here

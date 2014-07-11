@@ -106,6 +106,11 @@ $(INST)/jenkins.done: jenkins.install $(INST)/base.done
 	./jenkins.install $(INST)/base $(INST)/jenkins $(VERS)
 	touch $(INST)/jenkins.done
 
+tempest: $(INST)/tempest.done
+$(INST)/tempest.done: tempest.install $(INST)/base.done
+	./tempest.install $(INST)/base $(INST)/tempest $(VERS)
+	touch $(INST)/tempest.done
+
 $(INST)/base.done: $(ARCHIVE)/$(BVERS)/base-$(BVERS).edeploy
 	rm -rf $(INST)/base
 	mkdir -p $(INST)/base

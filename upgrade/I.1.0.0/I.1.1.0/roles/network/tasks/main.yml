@@ -1,0 +1,16 @@
+---
+# file: roles/network/tasks/main.yml
+
+- name: edeploy upgrade
+  edeploy: command=upgrade version=D7-{{ version }}
+  tags: before_config
+  when: ansible_distribution == 'Debian'
+
+# Restart some services after upgrade
+- name: restart some services after eDeploy upgrade
+  service: name={{ item }} state=restarted
+  with_items:
+    - neutron-l3-agent
+    - neutron-dhcp-agent
+    - neutron-plugin-openvswitch-agent
+  tags: before_config

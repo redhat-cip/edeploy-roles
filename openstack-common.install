@@ -90,10 +90,7 @@ os_install_packages () {
 	    fi
 	    ;;
 	"CentOS"|"RedHatEnterpriseServer")
-	    if [ "$CODENAME_MAJOR" == 6 ]; then
-		packages="augeas"
-		install_packages $dir "$packages"
-	    fi
+	    install_packages $dir augeas
 	    ;;
 	*)
 	    fatal_error "OS ($OS) or Release ($RELEASE) not supported"

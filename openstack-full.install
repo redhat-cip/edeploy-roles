@@ -127,6 +127,16 @@ EOF
      add_percona_deb_repo
     ;;
     "CentOS"|"RedHatEnterpriseServer")
+        cat > ${dir}/etc/yum.repos.d/mariadb.repo <<EOF
+# MariaDB 5.5 RedHat repository list - created 2013-12-17 16:18 UTC
+# http://mariadb.org/mariadb/repositories/
+[mariadb]
+name = MariaDB
+baseurl = http://yum.mariadb.org/5.5/rhel6-amd64
+          http://os-ci-admin.ring.enovance.com/distrib/mariadb/rhel6-amd64
+gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
+gpgcheck=1
+EOF
         cat > ${dir}/etc/yum.repos.d/mongodb.repo <<EOF
 [mongodb]
 name=MongoDB Repository
@@ -152,7 +162,7 @@ type=rpm-md
 gpgkey=https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc
 EOF
         if [ "$CODENAME_MAJOR" == "6" ]; then
-        cat > ${dir}/etc/yum.repos.d/mariadb.repo <<EOF
+            cat > ${dir}/etc/yum.repos.d/mariadb.repo <<EOF
 # MariaDB 5.5 RedHat repository list - created 2013-12-17 16:18 UTC
 # http://mariadb.org/mariadb/repositories/
 [mariadb]

@@ -27,8 +27,8 @@ ORIG=$(cd $(dirname $0); pwd)
 
 declare -A packages
 packages=(
-    ["deb"]="elasticsearch openjdk-7-jdk td-agent git puppet facter hiera ntp ruby-dev build-essential libcurl4-openssl-dev"
-    ["rpm"]="elasticsearch java-1.7.0-openjdk td-agent git puppet facter hiera ntp libcurl-openssl-devel ruby-devel"
+    ["deb"]="elasticsearch openjdk-7-jdk td-agent git puppet facter hiera ntp ruby-dev build-essential apache2 libcurl4-gnutls-dev"
+    ["rpm"]="elasticsearch java-1.7.0-openjdk td-agent git puppet facter hiera ntp libcurl-openssl-devel ruby-devel httpd"
 )
 
 install_ib_if_needed $ORIG $dir
@@ -46,6 +46,79 @@ install_packages $dir ${packages[$(package_type)]}
 do_chroot ${dir} git clone https://github.com/elasticsearch/kibana.git /opt/kibana3
 
 # Install fluentd-elasticsearch plugin
-do_chroot ${dir} gem install --no-ri --no-rdoc --no-prerelease fluent-plugin-elasticsearch
+do_chroot ${dir} /opt/td-agent/embedded/bin/fluent-gem install fluent-plugin-elasticsearch
 
 clear_packages_cache $dir
+
+# TODO (spredzy) : Current 2.0.3 td-agent is broken
+# require 'uri' is missing. Should be solved in next release.
+# https://github.com/fluent/fluentd/pull/375
+case "$OS" in
+  "Debian")
+    do_chroot ${dir} sed -i "19irequire 'uri'" /opt/td-agent/embedded/lib/ruby/gems/2.1.0/gems/fluentd-0.10.51/lib/fluent/config/v1_parser.rb
+  ;;
+esac
+
+# TODO (spredzy) : Elasticsearch is not started at boot
+# Puppet module should make it happen, but currently it does not
+case "$OS" in
+    "Debian" | "Ubuntu")
+      do_chroot ${dir} update-rc.d elasticsearch defaults 95 10
+    ;;
+    "CentOS"|"RedHatEnterpriseServer")
+      do_chroot ${dir} chkconfig --add elasticsearch
+    ;;
+esac
+
+
+# TODO (spredzy) : This is specific for the CI and the current
+# way it is deployed. (Using kibana3 in the puppet module will overwrite
+# puppetmaster and puppetdashboard configuration) resulting in a non
+# fonctional system
+case "$OS" in
+    "Debian" | "Ubuntu")
+        cat > $dir/etc/apache2/sites-available/kibana3 <<EOF
+NameVirtualHost *:8300
+Listen 8300
+
+<VirtualHost *:8300>
+    ## Vhost docroot
+    DocumentRoot "/opt/kibana3/src"
+    ## Directories, there should at least be a declaration for /opt/kibana3/src
+    <Directory "/opt/kibana3/src">
+      Options Indexes FollowSymLinks MultiViews
+      AllowOverride None
+      Order allow,deny
+      Allow from all
+    </Directory>
+    ## Logging
+    ErrorLog "/var/log/apache2/kibana3_error.log"
+    ServerSignature Off
+    CustomLog "/var/log/apache2/kibana3_access.log" combined
+</VirtualHost>
+EOF
+        do_chroot ${dir} a2ensite kibana3
+        ;;
+    "CentOS"|"RedHatEnterpriseServer")
+        cat > $dir/etc/httpd/conf.d/25-kibana.conf <<EOF
+NameVirtualHost *:8300
+Listen 8300
+
+<VirtualHost *:8300>
+    ## Vhost docroot
+    DocumentRoot "/opt/kibana3/src"
+    ## Directories, there should at least be a declaration for /opt/kibana3/src
+    <Directory "/opt/kibana3/src">
+      Options Indexes FollowSymLinks MultiViews
+      AllowOverride None
+      Order allow,deny
+      Allow from all
+    </Directory>
+    ## Logging
+    ErrorLog "/var/log/httpd/kibana3_error.log"
+    ServerSignature Off
+    CustomLog "/var/log/httpd/kibana3_access.log" combined
+</VirtualHost>
+EOF
+        ;;
+esac

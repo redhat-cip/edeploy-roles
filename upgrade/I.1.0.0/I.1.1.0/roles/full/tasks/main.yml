@@ -1,0 +1,73 @@
+---
+# file: roles/full/tasks/main.yml
+# this role is used when all services are running on the same node.
+
+# In this release, we upgrade HAproxy from 1.4 to 1.5 to support SSL termination.
+# So we need to trigger a failover.
+- name: Pull out the node from the HAproxy cluster
+  service: name={{ item }} state=stopped
+  tags: before_config
+  when: ansible_distribution == 'Debian'
+  with_items:
+    - keepalived
+    - haproxy
+
+# Stop some upgraded services before
+- name: stop heat-api, nova-api and neutron-server
+  service: name={{ item }} state=stopped
+  with_items:
+    - nova-api
+    - neutron-server
+    - heat-api
+  tags: before_config
+
+- name: edeploy upgrade
+  edeploy: command=upgrade version=D7-{{ version }}
+  tags: before_config
+  when: ansible_distribution == 'Debian'
+
+# Restart some services after upgrade
+- name: restart some services after eDeploy upgrade
+  service: name={{ item }} state=restarted
+  with_items:
+    - nova-api
+    - neutron-server
+    - heat-api
+    - neutron-l3-agent
+    - neutron-dhcp-agent
+    - neutron-plugin-openvswitch-agent
+  tags: before_config
+
+# This release upgrades MariaDB-galera-server
+- name: restart mysql
+  service: name={{ item }} state=restarted
+  with_items:
+    - mysql
+  tags: before_config
+
+# Fix HAproxy options
+- name: fix heat_cfn binding
+  command: sed '/heat_api_cfn_dead/d' /etc/haproxy/haproxy.cfg
+  tags: before_config
+- name: fix heat_cloudwatch binding
+  command: sed '/heat_api_cloudwatch_dead/d' /etc/haproxy/haproxy.cfg
+  tags: before_config
+
+- name: start HAproxy & keepalived after upgrade
+  service: name={{ item }} state=started
+  tags: before_config
+  when: ansible_distribution == 'Debian'
+  with_items:
+    - keepalived
+    - haproxy
+
+# In this release, heat-engine is no more SPOF
+- name: stop heat-engine from pacemaker
+  command: crm resource stop heat-engine
+  tags: before_config
+  when: inventory_hostname == groups['full'][-1]
+
+- name: remove heat-engine from pacemaker
+  command: crm configure delete heat-engine
+  tags: before_config
+  when: inventory_hostname == groups['full'][-1]
