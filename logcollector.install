@@ -59,18 +59,6 @@ case "$OS" in
   ;;
 esac
 
-# TODO (spredzy) : Elasticsearch is not started at boot
-# Puppet module should make it happen, but currently it does not
-case "$OS" in
-    "Debian" | "Ubuntu")
-      do_chroot ${dir} update-rc.d elasticsearch defaults 95 10
-    ;;
-    "CentOS"|"RedHatEnterpriseServer")
-      do_chroot ${dir} chkconfig --add elasticsearch
-    ;;
-esac
-
-
 # TODO (spredzy) : This is specific for the CI and the current
 # way it is deployed. (Using kibana3 in the puppet module will overwrite
 # puppetmaster and puppetdashboard configuration) resulting in a non
