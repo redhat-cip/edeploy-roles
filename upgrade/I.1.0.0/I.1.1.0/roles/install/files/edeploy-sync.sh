@@ -26,11 +26,10 @@ release="$2"
 
 # Download and Extract .edeploy files from upstream to downstream eDeploy server
 for role in openstack-full install-server; do
-    wget http://$edeploymaster/edeploy-roles/$release/$role-$release.edeploy
+    wget http://$edeploymaster/edeploy-roles/$release/$role-$release.edeploy -P /tmp
     rm -rf /var/lib/debootstrap/install/$release/$role
     mkdir -p /var/lib/debootstrap/install/$release/$role
-    tar zx -C /var/lib/debootstrap/install/$release/$role < $role-$release.edeploy
-    rm -rf $role-$release.edeploy
+    tar zx -C /var/lib/debootstrap/install/$release/$role < /tmp/$role-$release.edeploy
 done
 
 # Synchronize eDeploy metadata with upstream
