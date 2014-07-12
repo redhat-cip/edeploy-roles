@@ -114,7 +114,7 @@ cloud_final_modules:
  - final-message
 EOF
 
-    cat > ${dir}/etc/cloud/cloud.cfg.d/90_dpkg.cfg << EOF
+    cat > ${dir}/etc/cloud/cloud.cfg.d/90_sources.cfg << EOF
 datasource_list: [ NoCloud, Ec2, OpenStack, ConfigDrive, None ]
 EOF
 }
