@@ -127,16 +127,6 @@ EOF
      add_percona_deb_repo
     ;;
     "CentOS"|"RedHatEnterpriseServer")
-        cat > ${dir}/etc/yum.repos.d/mariadb.repo <<EOF
-# MariaDB 5.5 RedHat repository list - created 2013-12-17 16:18 UTC
-# http://mariadb.org/mariadb/repositories/
-[mariadb]
-name = MariaDB
-baseurl = http://yum.mariadb.org/5.5/rhel6-amd64
-          http://os-ci-admin.ring.enovance.com/distrib/mariadb/rhel6-amd64
-gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
-gpgcheck=1
-EOF
         cat > ${dir}/etc/yum.repos.d/mongodb.repo <<EOF
 [mongodb]
 name=MongoDB Repository
@@ -284,8 +274,6 @@ os_packages=(
 "
 
     ["rpm"]="
-        MariaDB-Galera-server \
-        MariaDB-client \
         MySQL-python \
         ceph \
         corosync \
@@ -467,9 +455,9 @@ case "$OS" in
 
         if [ "$CODENAME_MAJOR" == "6" ]; then
             install_packages_disabled $dir ${logging_packages[$(package_type)]}
-            EXTRA_RPMS="fence-agents cman spice-html5 python-subunit"
+            EXTRA_RPMS="fence-agents cman spice-html5 python-subunit MariaDB-Galera-server MariaDB-client"
         else
-            EXTRA_RPMS=fence-agents-all
+            EXTRA_RPMS="fence-agents-all mariadb-galera-server"
         fi
         install_packages_disabled $dir ${os_packages[$(package_type)]} $EXTRA_RPMS
         install_packages_disabled $dir ${monitoring_packages[$(package_type)]}
