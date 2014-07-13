@@ -67,14 +67,20 @@ case "$(package_tool)" in
     deb http://pkg.jenkins-ci.org/debian binary/
 EOF
         update_repositories $dir
-
-        install_packages $dir "$JENKINS_PACKAGES"
-
+        ;;
+    "yum")
+        wget -O $dir/etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat/jenkins.repo
+        chroot $dir rpm --import http://pkg.jenkins-ci.org/redhat/jenkins-ci.org.key
+        add_epel_repository $DIST
+        install_packages $dir python-pip
+        remove_epel_repository $DIST
         ;;
     *)
         fatal_error "$package_tool isn't supported for $ROLE role"
         ;;
 esac
+
+install_packages $dir "$JENKINS_PACKAGES"
 
 #
 # Jenkins Post Inst
