@@ -26,7 +26,7 @@ ORIG=$(cd $(dirname $0); pwd)
 #
 # Dependencies
 #
-DEP_PACKAGES="python-pip git python-greenlet python-openssl python-crypto python-lxml"
+PACKAGES="python-pip git python-greenlet python-openssl python-crypto python-lxml gcc"
 
 update_repositories $dir
 install_ib_if_needed $ORIG $dir
@@ -34,8 +34,14 @@ install_ib_if_needed $ORIG $dir
 case "$(package_tool)" in
     "apt")
         update_repositories $dir
-        install_packages $dir "$DEP_PACKAGES"
+        install_packages $dir "$PACKAGES"
 
+        ;;
+    "yum")
+        add_epel_repository $DIST
+        update_repositories $dir
+        install_packages $dir "$PACKAGES libffi-devel python-devel openssl-devel"
+        remove_epel_repository $DIST
         ;;
     *)
         fatal_error "$package_tool isn't supported for $ROLE role"
