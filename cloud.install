@@ -59,7 +59,8 @@ EOF
 
             add_rh_cdn_repo rhel-7-server-rpms
             add_rh_cdn_repo rhel-7-server-rh-common-rpms
-            install_packages $dir "cloud-init"
+            # TODO(EmilienM) cloud-init is not in rhel-7-server-rh-common-rpms now
+            # install_packages $dir "cloud-init"
 	    ;;
 	"CentOS")
 	    add_epel_repository $DIST
