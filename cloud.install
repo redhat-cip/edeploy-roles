@@ -54,13 +54,21 @@ EOF
             install_packages ${dir} "cloud-init cloud-utils cloud-initramfs-growroot"
 	    ;;
 	"RedHatEnterpriseServer")
-            # Attach to the pool "Red Hat Enterprise Linux OpenStack Platform (Physical)"
-            attach_pool_rh_cdn 8a85f9873fd48f3d013fe1ad109b58ce
-
-            add_rh_cdn_repo rhel-7-server-rpms
-            add_rh_cdn_repo rhel-7-server-rh-common-rpms
-            # TODO(EmilienM) cloud-init is not in rhel-7-server-rh-common-rpms now
-            # install_packages $dir "cloud-init"
+            case "$CODENAME_MAJOR" in
+                6)
+                  # cloud-init is in Red Hat Common for RHEL Server (v.6)
+                  add_rhn_channel rhel-x86_64-server-rh-common-6
+                  ;;
+                7)
+                  # Attach to the pool "Red Hat Enterprise Linux OpenStack
+                  # Platform (Physical)"
+                  attach_pool_rh_cdn 8a85f9873fd48f3d013fe1ad109b58ce
+                  add_rh_cdn_repo rhel-7-server-rpms
+                  add_rh_cdn_repo rhel-7-server-rh-common-rpms
+                  # TODO(EmilienM) cloud-init is not in rhel-7-server-rh-common-rpms now
+                  # install_packages $dir "cloud-init"
+                  ;;
+            esac
 	    ;;
 	"CentOS")
 	    add_epel_repository $DIST
