@@ -424,18 +424,11 @@ case "$OS" in
         echo "" > $dir/etc/nova/nova-compute.conf
     ;;
     "RedHatEnterpriseServer")
-        # Red Hat OpenStack 4.0 and 5b
-        add_rhn_channel rhel-x86_64-server-6-ost-4
-        add_rhn_channel rhel-x86_64-server-6-ost-beta
+        # Red Hat OpenStack 5
+        add_rh_cdn_repo rhel-7-server-openstack-5.0-rpms
 
-        # xfsprogs is in Red Hat Common for RHEL Server (v. 6)
-        add_rhn_channel rhel-x86_64-server-sfs-6
-
-        # haproxy is in RHEL Server Load Balancer (v. 6 for 64-bit x86_64)
-        add_rhn_channel rhel-x86_64-server-lb-6
-
-        # pacemaker is in RHEL Server High Availability (v. 6 for 64-bit x86_64)
-        add_rhn_channel rhel-x86_64-server-ha-6
+        # pacemaker is in RHEL Server High Availability (v.7 for 64-bit x86_64)
+        add_rh_cdn_repo rhel-ha-for-rhel-7-server-rpms
 
         # qemu-kvm-rhev provides a kvm that supersedes the standard qemu-kvm.
         # This package is not yet available in CentOS. So we have to take care
