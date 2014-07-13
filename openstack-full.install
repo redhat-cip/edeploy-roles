@@ -456,6 +456,7 @@ case "$OS" in
         # of that.
         install_packages $dir qemu-kvm-rhev qemu-img-rhev
 
+        install_packages_disabled $dir ${monitoring_packages[$(package_type)]}
 
         case "$CODENAME_MAJOR" in
             6)
@@ -465,17 +466,17 @@ case "$OS" in
               do_chroot $dir rpm -ivh $ceph_url/qemu-img-0.12.1.2-2.415.el6.3ceph.x86_64.rpm $ceph_url/qemu-kvm-0.12.1.2-2.415.el6.3ceph.x86_64.rpm
               ;;
         esac
+
+        add_epel_repository $DIST
+
     ;;& # → means "continue"
     "CentOS")
         install_packages $dir qemu-kvm
+        add_epel_repository $DIST
+        install_packages_disabled $dir ${monitoring_packages[$(package_type)]}
     ;;&
     "CentOS"|"RedHatEnterpriseServer")
-
-        # We want to use rabbitmq on Redhat instead of QPID
-        add_epel_repository $DIST
-
         install_packages_disabled $dir ${os_packages[$(package_type)]}
-        install_packages_disabled $dir ${monitoring_packages[$(package_type)]}
         install_packages_disabled $dir ${logging_packages[$(package_type)]}
 
         # python-kombu is outdated for now in Red Hat.
