@@ -47,20 +47,3 @@ EOF
     ;;
   esac
 }
-
-add_puppet_repo() {
-  case "$OS" in
-    "Debian"|"Ubuntu")
-      do_chroot ${dir} wget --no-verbose http://apt.puppetlabs.com/puppetlabs-release-$RELEASE.deb
-      do_chroot ${dir} dpkg -i puppetlabs-release-$RELEASE.deb
-      do_chroot ${dir} rm puppetlabs-release-$RELEASE.deb
-      do_chroot ${dir} apt-key adv --recv-keys --keyserver keyserver.ubuntu.com E52660B15D964F0B
-    ;;
-    "CentOS"|"RedHatEnterpriseServer")
-      install_packages ${dir} http://yum.puppetlabs.com/puppetlabs-release-el-6.noarch.rpm
-    ;;
-    *)
-      fatal_error "OS ($OS) or Release not supported"
-    ;;
-  esac
-}

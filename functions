@@ -74,8 +74,14 @@ add_puppet_repository() {
 
     check_usage $# 1 "add_puppet_repository <dist>"
     
-    case "$dist" in
-        $supported_centos_dists|$supported_redhat_dists)
+    case "$OS" in
+        "Debian"|"Ubuntu")
+            do_chroot ${dir} wget --no-verbose http://apt.puppetlabs.com/puppetlabs-release-$RELEASE.deb
+            do_chroot ${dir} dpkg -i puppetlabs-release-$RELEASE.deb
+            do_chroot ${dir} rm puppetlabs-release-$RELEASE.deb
+            do_chroot ${dir} apt-key adv --recv-keys --keyserver keyserver.ubuntu.com E52660B15D964F0B
+            ;;
+        "CentOS"|"RedHatEnterpriseServer")
             install_packages ${dir} http://yum.puppetlabs.com/el/$CODENAME_MAJOR/products/x86_64/puppetlabs-release-$PUPPET_RELEASE.noarch.rpm
 	    ;;
     esac
