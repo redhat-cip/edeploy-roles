@@ -59,7 +59,6 @@ EOF
 
             add_rh_cdn_repo rhel-7-server-rpms
             add_rh_cdn_repo rhel-7-server-rh-common-rpms
-            add_rh_cdn_repo  rhel-7-server-openstack-5.0-rpms
             install_packages $dir "cloud-init"
 	    ;;
 	"CentOS")
