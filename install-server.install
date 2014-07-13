@@ -25,6 +25,11 @@ ORIG=$(cd $(dirname $0); pwd)
 
 . ${ORIG}/functions
 
+if [ -z "$OS_VERS" ]; then
+    echo "OS_VERS is not set, Icehouse will be built by default"
+    OS_VERS=icehouse
+fi
+
 update_repositories $dir
 
 # eDeploy
@@ -79,19 +84,37 @@ do_chroot $dir bundle install --gemfile=/tmp/Gemfile
 
 # OpenStack clients for tempest and inception.sh
 
+if [ $OS = CentOS ]; then
+    install_packages $dir $(get_openstack_repository $DIST $dir $OS_VERS)
+fi
+
+add_epel_repository $DIST
 install_packages $dir python-cinderclient python-glanceclient python-heatclient \
   python-ironicclient python-keystoneclient python-neutronclient \
   python-novaclient python-saharaclient python-swiftclient python-dev libffi-dev \
   subunit nova-common python-ceilometerclient python-troveclient
+remove_epel_repository $DIST
+
+if [ $OS = CentOS ]; then
+    remove_packages $dir $(basename $(get_openstack_repository $DIST $dir $OS_VERS) .noarch.rpm)
+fi
 
 # Jenkins
 
 $SRC/jenkins.install $dir $dir $version
-# do not use the same port as the puppetdb
-sed -i 's/HTTP_PORT=8080/HTTP_PORT=8282/' $dir/etc/default/jenkins
 
-# Log Collector (ElasticSearch + Kibana)
-$SRC/logcollector.install $dir $dir $version
+# do not use the same port as the puppetdb
+if [ -r $dir/etc/sysconfig/jenkins ]; then
+    JENKINS_CFG=$dir/etc/sysconfig/jenkins
+else
+    JENKINS_CFG=$dir/etc/default/jenkins
+fi
+sed -i 's/HTTP_PORT=8080/HTTP_PORT=8282/' $JENKINS_CFG
+
+if [ $OS != CentOS ]; then
+    # Log Collector (ElasticSearch + Kibana)
+    $SRC/logcollector.install $dir $dir $version
+fi
 
 # Tempest
 $SRC/tempest.install $dir $dir $version
