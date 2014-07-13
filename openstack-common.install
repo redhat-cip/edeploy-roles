@@ -64,11 +64,12 @@ EOF
          "RedHatEnterpriseServer")
             # Redhat is using a channel to get openstack
             add_puppet_repository $DIST
-            install_packages $dir puppet facter hiera
-            remove_puppet_repository $DIST
             # Attach to the pool "Red Hat Enterprise Linux OpenStack Platform (Physical)"
             attach_pool_rh_cdn 8a85f9873fd48f3d013fe1ad109b58ce
             add_rh_cdn_repo rhel-7-server-openstack-5.0-rpms
+            add_rh_cdn_repo rhel-7-server-rpms
+            install_packages $dir puppet facter hiera
+            remove_puppet_repository $DIST
          ;;
 
         *)
