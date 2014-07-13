@@ -57,13 +57,11 @@ EOF
             cd -
 	    ;;
 	"CentOS"|"RedHatEnterpriseServer")
-	    if [ "$CODENAME_MAJOR" == "6" ]; then
-		add_puppet_repository $DIST
-		add_epel_repository $DIST
-		install_packages_disabled $dir puppet-server git augeas ntp httpd puppetdb puppetdb-terminus rubygem-kwalify
-		remove_epel_repository $DIST
-		remove_puppet_repository $DIST
-	    fi
+	    add_puppet_repository $DIST
+	    add_epel_repository $DIST
+	    install_packages_disabled $dir puppet-server git augeas ntp httpd puppetdb puppetdb-terminus rubygem-kwalify python-pip mod_wsgi
+	    remove_epel_repository $DIST
+	    remove_puppet_repository $DIST
 	    ;;
 	*)
 	    fatal_error "OS ($OS) or Release $(RELEASE) not supported"
