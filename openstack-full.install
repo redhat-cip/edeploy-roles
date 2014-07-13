@@ -457,11 +457,14 @@ case "$OS" in
         install_packages $dir qemu-kvm-rhev qemu-img-rhev
 
 
-        # Force to download qemu-kvm and qemu-img from ceph.com
-        do_chroot $dir rpm -e qemu-kvm-rhev qemu-img-rhev --nodeps
-        ceph_url="http://ceph.com/packages/ceph-extras/rpm/rhel6.5/x86_64"
-        do_chroot $dir rpm -ivh $ceph_url/qemu-img-0.12.1.2-2.415.el6.3ceph.x86_64.rpm $ceph_url/qemu-kvm-0.12.1.2-2.415.el6.3ceph.x86_64.rpm
-
+        case "$CODENAME_MAJOR" in
+            6)
+              # Force to download qemu-kvm and qemu-img from ceph.com
+              do_chroot $dir rpm -e qemu-kvm-rhev qemu-img-rhev --nodeps
+              ceph_url="http://ceph.com/packages/ceph-extras/rpm/rhel6.5/x86_64"
+              do_chroot $dir rpm -ivh $ceph_url/qemu-img-0.12.1.2-2.415.el6.3ceph.x86_64.rpm $ceph_url/qemu-kvm-0.12.1.2-2.415.el6.3ceph.x86_64.rpm
+              ;;
+        esac
     ;;& # → means "continue"
     "CentOS")
         install_packages $dir qemu-kvm
