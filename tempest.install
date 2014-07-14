@@ -30,18 +30,7 @@ DEP_PACKAGES="python-pip git python-greenlet python-openssl python-crypto python
 
 update_repositories $dir
 install_ib_if_needed $ORIG $dir
-
-case "$(package_tool)" in
-    "apt")
-        update_repositories $dir
-        install_packages $dir "$DEP_PACKAGES"
-
-        ;;
-    *)
-        fatal_error "$package_tool isn't supported for $ROLE role"
-        ;;
-esac
-
+install_packages $dir "$DEP_PACKAGES"
 
 #
 # Tempest
