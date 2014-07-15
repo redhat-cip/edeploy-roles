@@ -35,7 +35,7 @@ configure_cloudinit () {
 
     case "$OS" in
 	"Debian")
-	    local repository=$(add_main_repository $DIST $DVER)
+	    local repository=$(add_main_repository $DIST)
 	    cat > ${dir}/etc/apt/sources.list.d/$RELEASE-backport.list <<EOF
 deb $repository ${RELEASE}-backports main
 EOF
@@ -54,9 +54,11 @@ EOF
             install_packages ${dir} "cloud-init cloud-utils cloud-initramfs-growroot"
 	    ;;
 	"RedHatEnterpriseServer")
-	    # cloud-init is in Red Hat Common for RHEL Server (v. 6)
-	    add_rhn_channel rhel-x86_64-server-rh-common-$CODENAME_MAJOR
-            install_packages $dir "cloud-init"
+            if [ $CODENAME_MAJOR = 6 ]; then
+	        # cloud-init is in Red Hat Common for RHEL Server (v. 6)
+	        add_rhn_channel rhel-x86_64-server-rh-common-$CODENAME_MAJOR
+                install_packages $dir "cloud-init"
+            fi
 	    ;;
 	"CentOS")
 	    add_epel_repository $DIST
