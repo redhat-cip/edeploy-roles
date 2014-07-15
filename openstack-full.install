@@ -441,13 +441,13 @@ case "$OS" in
               ;;
             7)
               # Attach to the pool "Red Hat Enterprise Linux OpenStack Platform (Physical)"
-              attach_pool_rh_cdn $RHN_CDN_POOL_ID
+              attach_pool_rh_cdn $dir $RHN_CDN_POOL_ID
       
               # Red Hat OpenStack 5
-              add_rh_cdn_repo rhel-7-server-openstack-5.0-rpms
+              add_rh_cdn_repo $dir rhel-7-server-openstack-5.0-rpms
       
               # pacemaker is in RHEL Server High Availability (v.7 for 64-bit x86_64)
-              add_rh_cdn_repo rhel-ha-for-rhel-7-server-rpms
+              add_rh_cdn_repo $dir rhel-ha-for-rhel-7-server-rpms
               ;;
         esac
 
