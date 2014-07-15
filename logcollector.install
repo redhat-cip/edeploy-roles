@@ -55,7 +55,7 @@ clear_packages_cache $dir
 # https://github.com/fluent/fluentd/pull/375
 case "$OS" in
   "Debian")
-    do_chroot ${dir} sed -i "19irequire 'uri'" /opt/td-agent/embedded/lib/ruby/gems/2.1.0/gems/fluentd-0.10.51/lib/fluent/config/v1_parser.rb
+    do_chroot ${dir} sed -i "19irequire 'uri'" /opt/td-agent/embedded/lib/ruby/gems/2.1.0/gems/fluentd-0.10.52/lib/fluent/config/v1_parser.rb
   ;;
 esac
 
