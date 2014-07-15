@@ -49,7 +49,12 @@ EOF
 	do_chroot $dir pip install ansible
 	;;
     "CentOS"|"RedHatEnterpriseServer")
-	echo "Ansible not supported yet on RH"
+	mv $dir/usr/bin/yum.real $dir/usr/bin/yum
+	install_packages $dir gcc autoconf python-devel libxml2-devel libxslt-devel
+	wget -O $dir/root/ez_setup.py http://codybonney.com/files/packages/python/ez_setup.py
+	do_chroot $dir python /root/ez_setup.py
+	do_chroot $dir easy_install pip
+	do_chroot $dir pip install ansible
 	;;
 esac
 
