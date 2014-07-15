@@ -116,6 +116,7 @@ EOF
     "CentOS"|"RedHatEnterpriseServer")
         # TODO FL [Sat Jun  7 17:13:39 2014]
         # need to find a way to install mod-wsgi and pip
+	mkdir -p $dir/etc/httpd/conf.d/
         cat > $dir/etc/httpd/conf.d/puppetboard <<EOF
 NameVirtualHost *:82
 Listen 82
