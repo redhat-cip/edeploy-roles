@@ -38,7 +38,7 @@ install_ib_if_needed $ORIG $dir
 prepare_packages () {
     case "$OS" in
         "Debian")
-            local repository=$(add_main_repository $DIST $DVER)
+            local repository=$(add_main_repository $DIST)
             do_chroot ${dir} wget --no-verbose http://apt.puppetlabs.com/puppetlabs-release-$RELEASE.deb
             do_chroot ${dir} dpkg -i puppetlabs-release-$RELEASE.deb
             do_chroot ${dir} rm puppetlabs-release-$RELEASE.deb
