@@ -274,13 +274,11 @@ os_packages=(
 "
 
     ["rpm"]="
-        git \
         MySQL-python \
         ceph \
-        cman \
         corosync \
-        fence-agents \
         galera \
+        git \
         haproxy \
         httpd \
         keepalived \
@@ -334,13 +332,11 @@ os_packages=(
         python-memcached \
         python-pip \
         python-swiftclient \
-        python-troveclient \
         python-trove \
+        python-troveclient \
         rabbitmq-server \
-        rubygems \
         rubygem-json \
-        python-subunit \
-        spice-html5 \
+        rubygems \
         sysfsutils \
         xfsprogs \
         xinetd"
@@ -423,6 +419,9 @@ case "$OS" in
         cp -pv openstack-monitoring/scripts/*/* $dir/usr/lib/nagios/plugins
         echo "" > $dir/etc/nova/nova-compute.conf
     ;;
+    "CentOS")
+        install_packages $dir $(get_openstack_repository $DIST $dir $OS_VERS)
+        ;;&
     "RedHatEnterpriseServer")
         case "$CODENAME_MAJOR" in
             6)
@@ -481,10 +480,13 @@ case "$OS" in
             EXTRA_RPMS="fence-agents cman spice-html5 python-subunit MariaDB-Galera-server MariaDB-client"
         else
             # TODO(EmilienM) no support for logging packages
+            # TODO(EmilienM) no support for cman, spice-html5 and python-subunit packages
             EXTRA_RPMS="fence-agents-all mariadb-galera-server"
         fi
 
-        install_packages_disabled $dir ${os_packages[$(package_type)]}
+        install_packages_disabled $dir ${os_packages[$(package_type)]} $EXTRA_RPMS
+        install_packages_disabled $dir ${monitoring_packages[$(package_type)]}
+        remove_epel_repository $DIST
 
         # python-kombu is outdated for now in Red Hat.
         # while they updating it, we use pip to install the last one required by OpenStack

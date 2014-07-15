@@ -59,7 +59,7 @@ get_openstack_repository() {
                 fatal_error "Unsupported openstack release ($openstack_release) for $dist distribution"
             ;;
         esac
-        echo "http://rdo.fedorapeople.org/openstack-${openstack_release}/rdo-release-${openstack_release}-${current_rpm_release}.noarch.rpm"
+        echo "http://rdo.fedorapeople.org/openstack-${openstack_release}/epel-$CODENAME_MAJOR/rdo-release-${openstack_release}-${current_rpm_release}.noarch.rpm"
         return 0
     ;;
     *)
@@ -68,22 +68,20 @@ get_openstack_repository() {
   esac
 }
 
-case "$CODENAME_MAJOR" in
-    6)
-      PUPPET_RELEASE=6-10
-      ;;
-    7)
-      PUPPET_RELEASE=7-10
-      ;;
-esac
-
+PUPPET_RELEASE=$CODENAME_MAJOR-10
 add_puppet_repository() {
     local dist=$1
 
     check_usage $# 1 "add_puppet_repository <dist>"
     
-    case "$dist" in
-        $supported_centos_dists|$supported_redhat_dists)
+    case "$OS" in
+        "Debian"|"Ubuntu")
+            do_chroot ${dir} wget --no-verbose http://apt.puppetlabs.com/puppetlabs-release-$RELEASE.deb
+            do_chroot ${dir} dpkg -i puppetlabs-release-$RELEASE.deb
+            do_chroot ${dir} rm puppetlabs-release-$RELEASE.deb
+            do_chroot ${dir} apt-key adv --recv-keys --keyserver keyserver.ubuntu.com E52660B15D964F0B
+            ;;
+        "CentOS"|"RedHatEnterpriseServer")
             install_packages ${dir} http://yum.puppetlabs.com/el/$CODENAME_MAJOR/products/x86_64/puppetlabs-release-$PUPPET_RELEASE.noarch.rpm
 	    ;;
     esac

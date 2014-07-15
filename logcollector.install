@@ -34,7 +34,7 @@ packages=(
 install_ib_if_needed $ORIG $dir
 
 # Install repositories
-add_puppet_repo
+add_puppet_repository $DIST
 add_fluentd_repo
 add_elasticsearch_repo
 update_repositories $dir

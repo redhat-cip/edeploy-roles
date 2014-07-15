@@ -67,7 +67,7 @@ $(INST)/logcollector.done: logcollector.install $(INST)/cloud.done
 	touch $(INST)/logcollector.done
 
 openstack-common: $(INST)/openstack-common.done
-$(INST)/openstack-common.done: openstack-common.install $(INST)/cloud.done
+$(INST)/openstack-common.done: openstack-common.install $(INST)/cloud.done functions
 	./openstack-common.install $(INST)/cloud $(INST)/openstack-common $(VERS)
 	touch $(INST)/openstack-common.done
 
@@ -87,7 +87,7 @@ $(INST)/docker.done: docker.install $(INST)/base.done
 	touch $(INST)/docker.done
 
 puppet-master: $(INST)/puppet-master.done
-$(INST)/puppet-master.done: puppet-master.install $(INST)/cloud.done
+$(INST)/puppet-master.done: puppet-master.install $(INST)/cloud.done functions
 	./puppet-master.install $(INST)/cloud $(INST)/puppet-master $(VERS)
 	touch $(INST)/puppet-master.done
 

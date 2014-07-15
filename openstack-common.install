@@ -38,7 +38,7 @@ install_ib_if_needed $ORIG $dir
 prepare_packages () {
     case "$OS" in
         "Debian")
-            local repository=$(add_main_repository $DIST)
+            local repository=$(add_main_repository $DIST $DVER)
             do_chroot ${dir} wget --no-verbose http://apt.puppetlabs.com/puppetlabs-release-$RELEASE.deb
             do_chroot ${dir} dpkg -i puppetlabs-release-$RELEASE.deb
             do_chroot ${dir} rm puppetlabs-release-$RELEASE.deb
@@ -47,42 +47,37 @@ prepare_packages () {
 deb $repository ${RELEASE}-backports main
 EOF
             get_openstack_repository $DIST $dir $OS_VERS > ${dir}/etc/apt/sources.list.d/openstack-$RELEASE-$OS_VERS.list
-        ;;
+            ;;
         "Ubuntu")
             do_chroot ${dir} wget --no-verbose http://apt.puppetlabs.com/puppetlabs-release-$RELEASE.deb
             do_chroot ${dir} dpkg -i puppetlabs-release-$RELEASE.deb
             do_chroot ${dir} rm puppetlabs-release-$RELEASE.deb
             do_chroot ${dir} apt-key adv --recv-keys --keyserver keyserver.ubuntu.com E52660B15D964F0B
             get_openstack_repository $DIST $dir $OS_VERS > ${dir}/etc/apt/sources.list.d/openstack.list
-        ;;
+            ;;
         "CentOS")
             add_puppet_repository $DIST
             install_packages $dir puppet
             remove_puppet_repository $DIST
-            install_packages $dir $(get_openstack_repository $DIST $dir $OS_VERS)
-         ;;
+            ;;
          "RedHatEnterpriseServer")
             # Redhat is using a channel to get openstack
             add_puppet_repository $DIST
-            case "$CODENAME_MAJOR" in
-                6)
-                  add_rhn_channel rhel-x86_64-server-6-ost-beta
-                  ;;
-                7)
-                  # Attach to the pool "Red Hat Enterprise Linux OpenStack Platform (Physical)"
-                  attach_pool_rh_cdn $RHN_CDN_POOL_ID
-                  add_rh_cdn_repo rhel-7-server-openstack-5.0-rpms
-                  add_rh_cdn_repo rhel-7-server-rpms
-                  ;;
-            esac
+            if [ $CODENAME_MAJOR = 6 ]; then
+                add_rhn_channel rhel-x86_64-server-6-ost-beta
+            else
+                # Attach to the pool "Red Hat Enterprise Linux OpenStack Platform (Physical)"
+                attach_pool_rh_cdn $RHN_CDN_POOL_ID
+                add_rh_cdn_repo rhel-7-server-openstack-5.0-rpms
+                add_rh_cdn_repo rhel-7-server-rpms
+            fi
             install_packages $dir puppet facter hiera
             remove_puppet_repository $DIST
-         ;;
-
+            ;;
         *)
             fatal_error "OS ($OS) or Release ($RELEASE) not supported"
-         ;;
-esac
+            ;;
+    esac
 }
 
 os_install_packages () {
@@ -100,10 +95,7 @@ os_install_packages () {
 	    fi
 	    ;;
 	"CentOS"|"RedHatEnterpriseServer")
-	    if [ "$CODENAME_MAJOR" == "6" ]; then
-		packages="augeas"
-		install_packages $dir "$packages"
-	    fi
+	    install_packages $dir augeas
 	    ;;
 	*)
 	    fatal_error "OS ($OS) or Release ($RELEASE) not supported"
