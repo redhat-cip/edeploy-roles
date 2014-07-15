@@ -441,7 +441,7 @@ case "$OS" in
               ;;
             7)
               # Attach to the pool "Red Hat Enterprise Linux OpenStack Platform (Physical)"
-              attach_pool_rh_cdn 8a85f9873fd48f3d013fe1ad109b58ce
+              attach_pool_rh_cdn $RHN_CDN_POOL_ID
       
               # Red Hat OpenStack 5
               add_rh_cdn_repo rhel-7-server-openstack-5.0-rpms
