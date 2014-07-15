@@ -59,20 +59,23 @@ EOF
             add_puppet_repository $DIST
             install_packages $dir puppet
             remove_puppet_repository $DIST
-            install_packages $dir $(get_openstack_repository $DIST $dir $OS_VERS)
          ;;
          "RedHatEnterpriseServer")
             # Redhat is using a channel to get openstack
             add_puppet_repository $DIST
             install_packages $dir puppet facter hiera
             remove_puppet_repository $DIST
-            add_rhn_channel rhel-x86_64-server-6-ost-beta
-         ;;
+            if [ $CODENAME_MAJOR = 6 ]; then
+                add_rhn_channel rhel-x86_64-server-6-ost-beta
+            else
+                do_chroot $dir subscription-manager repos --enable=rhel-7-server-openstack-5.0-rpms
+            fi
+            ;;
 
         *)
             fatal_error "OS ($OS) or Release ($RELEASE) not supported"
          ;;
-esac
+    esac
 }
 
 os_install_packages () {
