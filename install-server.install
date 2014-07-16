@@ -32,12 +32,17 @@ fi
 
 update_repositories $dir
 
-# eDeploy
+###########
+# eDeploy #
+###########
 
 $ORIG/deploy.install $dir $dir $version
 install_packages_disabled $dir dnsmasq
 
-# Ansible
+
+###########
+# Ansible #
+###########
 
 case "$OS" in
     "Debian")
@@ -45,7 +50,7 @@ case "$OS" in
         cat > ${dir}/etc/apt/sources.list.d/wheezy-backports.list <<EOF
 deb http://ftp.de.debian.org/debian wheezy-backports main
 EOF
-	install_packages $dir python-pandas python-jinja2 python-paramiko python-libxml2 libmysqlclient-dev libxml2-dev libxslt-dev libpq-dev python-dev python-virtualenv libffi-dev
+	install_packages $dir python-pandas python-jinja2 python-paramiko python-libxml2 libmysqlclient-dev libxml2-dev libxslt-dev libpq-dev python-dev python-virtualenv libffi-dev subunit
 	install_packages $dir -t wheezy-backports linux-headers-3.14-0.bpo.1-amd64 linux-image-3.14-0.bpo.1-amd64
 	do_chroot $dir pip install ansible
 	;;
@@ -54,11 +59,16 @@ EOF
 	do_chroot $dir pip install ansible
 	;;
     "CentOS"|"RedHatEnterpriseServer")
-	echo "Ansible not supported yet on RH"
+	add_epel_repository $DIST
+        install_packages $dir python-devel libffi-devel ansible python-subunit
+	remove_epel_repository $DIST
 	;;
 esac
 
-# Puppet master
+
+#################
+# Puppet master #
+#################
 
 $SRC/puppet-master.install $dir $dir $version
 
@@ -82,27 +92,82 @@ do_chroot $dir gem install --no-ri --no-rdoc bundler
 cp files/Gemfile-install-server $dir/tmp/Gemfile
 do_chroot $dir bundle install --gemfile=/tmp/Gemfile
 
-# OpenStack clients for tempest and inception.sh
 
-if [ $OS = CentOS ]; then
-    install_packages $dir $(get_openstack_repository $DIST $dir $OS_VERS)
-fi
+#####################
+# OpenStack Clients #
+#####################
 
-add_epel_repository $DIST
-install_packages $dir python-cinderclient python-glanceclient python-heatclient \
-  python-ironicclient python-keystoneclient python-neutronclient \
-  python-novaclient python-saharaclient python-swiftclient python-dev libffi-dev \
-  subunit nova-common python-ceilometerclient python-troveclient
-remove_epel_repository $DIST
+# used by tempest and inception.sh
+
+declare -A openstack_packages
+openstack_packages=(
+    ["deb"]="
+        python-cinderclient \
+        python-glanceclient \
+        python-heatclient \
+        python-ironicclient \
+        python-keystoneclient \
+        python-neutronclient \
+        python-novaclient \
+        python-saharaclient \
+        python-swiftclient \
+        python-ceilometerclient \
+        python-troveclient \
+        python-swiftclient \
+        nova-common \
+"
+
+    ["rpm"]="
+        python-cinderclient \
+        python-glanceclient \
+        python-heatclient \
+        python-ironicclient \
+        python-keystoneclient \
+        python-neutronclient \
+        python-novaclient \
+        python-saharaclient \
+        python-swiftclient \
+        python-ceilometerclient \
+        python-troveclient \
+        python-swiftclient \
+        openstack-nova-common \
+")
+
+case "$OS" in
+    "Debian"|"Ubuntu")
+        update_repositories $dir
+    ;;
+    "CentOS")
+        install_packages $dir $(get_openstack_repository $DIST $dir $OS_VERS)
+        ;;&
+    "RedHatEnterpriseServer")
+        case "$CODENAME_MAJOR" in
+            6)
+              # Red Hat OpenStack 4.0 and 5b
+              add_rhn_channel rhel-x86_64-server-6-ost-4
+              add_rhn_channel rhel-x86_64-server-6-ost-beta
+              ;;
+            7)
+              # Attach to the pool "Red Hat Enterprise Linux OpenStack Platform (Physical)"
+              attach_pool_rh_cdn $dir $RHN_CDN_POOL_ID
+
+              # Red Hat OpenStack 5
+              add_rh_cdn_repo $dir rhel-7-server-openstack-5.0-rpms
+              ;;
+        esac
+install_packages_disabled $dir ${openstack_packages[$(package_type)]}
 
 if [ $OS = CentOS ]; then
     remove_packages $dir $(basename $(get_openstack_repository $DIST $dir $OS_VERS) .noarch.rpm)
 fi
 
-# Jenkins
+###########
+# Jenkins #
+###########
 
 $SRC/jenkins.install $dir $dir $version
 
+# Running jenkins + puppetdb on the same node:
 # do not use the same port as the puppetdb
 if [ -r $dir/etc/sysconfig/jenkins ]; then
     JENKINS_CFG=$dir/etc/sysconfig/jenkins
@@ -111,12 +176,21 @@ else
 fi
 sed -i 's/HTTP_PORT=8080/HTTP_PORT=8282/' $JENKINS_CFG
 
-if [ $OS != CentOS ]; then
-    # Log Collector (ElasticSearch + Kibana)
+#################
+# Log Collector #
+#################
+
+if [ $OS = Debian ]; then
     $SRC/logcollector.install $dir $dir $version
+else
+  # TODO:
+  echo "Log Collector can't be build now on Red Hat / CentOS"
 fi
 
-# Tempest
+###########
+# Tempest #
+###########
+
 $SRC/tempest.install $dir $dir $version
 
 # install-server.install ends here
