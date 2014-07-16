@@ -130,7 +130,6 @@ openstack_packages=(
         python-saharaclient \
         python-swiftclient \
         python-ceilometerclient \
-        python-troveclient \
         python-swiftclient \
         openstack-nova-common \
 ")
