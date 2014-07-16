@@ -60,7 +60,9 @@ EOF
 	;;
     "CentOS"|"RedHatEnterpriseServer")
 	add_epel_repository $DIST
-        install_packages $dir python-devel libffi-devel ansible python-subunit
+        # TODO: missing packages in epel7: python-subunit, ansible
+        install_packages $dir python-devel libffi-devel
+        do_chroot $dir pip install ansible
 	remove_epel_repository $DIST
 	;;
 esac
