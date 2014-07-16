@@ -140,7 +140,7 @@ case "$OS" in
     ;;
     "CentOS")
         install_packages $dir $(get_openstack_repository $DIST $dir $OS_VERS)
-        ;;&
+   ;;&
     "RedHatEnterpriseServer")
         case "$CODENAME_MAJOR" in
             6)
@@ -156,6 +156,8 @@ case "$OS" in
               add_rh_cdn_repo $dir rhel-7-server-openstack-5.0-rpms
               ;;
         esac
+    ;;
+esac
 install_packages_disabled $dir ${openstack_packages[$(package_type)]}
 
 if [ $OS = CentOS ]; then
