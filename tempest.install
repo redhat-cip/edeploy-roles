@@ -40,7 +40,7 @@ case "$(package_tool)" in
     "yum")
         add_epel_repository $DIST
         update_repositories $dir
-        install_packages $dir "$PACKAGES libffi-devel python-devel openssl-devel"
+        install_packages $dir "$PACKAGES libffi-devel python-devel openssl-devel libxml2-devel libxslt-devel"
         remove_epel_repository $DIST
         ;;
     *)
