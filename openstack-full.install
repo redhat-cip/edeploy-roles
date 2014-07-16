@@ -368,6 +368,7 @@ prod_packages=(
 )
 
 declare -A monitoring_packages
+#TODO: when nagios-plugins-all is in el7, add it in rpm list
 monitoring_packages=( 
     ["deb"]="
         bc \
@@ -380,8 +381,7 @@ monitoring_packages=(
 "
 
     ["rpm"]="
-        bc \
-        nagios-plugins-all
+        bc
 ")
 
 declare -A backup_packages
@@ -496,7 +496,8 @@ case "$OS" in
 
         do_chroot $dir rpm -qv ${os_packages[$(package_type)]} || fatal_error "Some packages are not installed"
 
-        cp -pv openstack-monitoring/scripts/*/* $dir/usr/lib64/nagios/plugins
+        # TODO: wait for nagios-plugins-all land in el7
+        # cp -pv openstack-monitoring/scripts/*/* $dir/usr/lib64/nagios/plugins
     ;;
     *)
     fatal_error "OS or Release not supported"
