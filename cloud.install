@@ -59,13 +59,8 @@ EOF
                 add_rhn_channel rhel-x86_64-server-rh-common-6
                 install_packages $dir "cloud-init"
             else
-                # Attach to the pool "Red Hat Enterprise Linux OpenStack
-                # Platform (Physical)"
-                attach_pool_rh_cdn $dir $RHN_CDN_POOL_ID
-                add_rh_cdn_repo $dir rhel-7-server-rpms
-                add_rh_cdn_repo $dir rhel-7-server-rh-common-rpms
-                # TODO(EmilienM) cloud-init is not in rhel-7-server-rh-common-rpms now
-                # install_packages $dir "cloud-init"
+	        add_epel_repository $DIST
+                install_packages $dir "cloud-init"
             fi
 	    ;;
 	"CentOS")
