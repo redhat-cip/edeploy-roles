@@ -71,7 +71,7 @@ EOF
                 add_rh_cdn_repo $dir rhel-7-server-openstack-5.0-rpms
                 add_rh_cdn_repo $dir rhel-7-server-rpms
             fi
-            install_packages $dir puppet facter hiera
+            install_packages $dir puppet facter hiera augeas
             remove_puppet_repository $DIST
             ;;
         *)
@@ -93,12 +93,6 @@ os_install_packages () {
 	    if [ -r ${dir}/etc/default/puppet ]; then
 		do_chroot ${dir} sed -e 's/START=yes/START=no/' -i /etc/default/puppet
 	    fi
-	    ;;
-	"CentOS"|"RedHatEnterpriseServer")
-	    install_packages $dir augeas
-	    ;;
-	*)
-	    fatal_error "OS ($OS) or Release ($RELEASE) not supported"
 	    ;;
     esac
 
