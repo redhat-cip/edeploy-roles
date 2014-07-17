@@ -474,7 +474,7 @@ case "$OS" in
             EXTRA_RPMS="fence-agents cman spice-html5 python-subunit MariaDB-Galera-server MariaDB-client"
         else
             # TODO(EmilienM) no support for cman in 7
-            EXTRA_RPMS="fence-agents spice-html5 python-subunit mariadb-galera-server mariadb-client"
+            EXTRA_RPMS="fence-agents spice-html5 python-subunit mariadb-galera-server mariadb-galera-client"
         fi
 
         install_packages_disabled $dir ${os_packages[$(package_type)]} $EXTRA_RPMS
