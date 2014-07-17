@@ -416,9 +416,6 @@ case "$OS" in
         cp -pv openstack-monitoring/scripts/*/* $dir/usr/lib/nagios/plugins
         echo "" > $dir/etc/nova/nova-compute.conf
     ;;
-    "CentOS")
-        install_packages $dir $(get_openstack_repository $DIST $dir $OS_VERS)
-        ;;&
     "RedHatEnterpriseServer")
         case "$CODENAME_MAJOR" in
             6)
@@ -438,10 +435,10 @@ case "$OS" in
             7)
               # Attach to the pool "Red Hat Enterprise Linux OpenStack Platform (Physical)"
               attach_pool_rh_cdn $dir $RHN_CDN_POOL_ID
-      
+
               # Red Hat OpenStack 5
               add_rh_cdn_repo $dir rhel-7-server-openstack-5.0-rpms
-      
+
               # pacemaker is in RHEL Server High Availability (v.7 for 64-bit x86_64)
               add_rh_cdn_repo $dir rhel-ha-for-rhel-7-server-rpms
               ;;
@@ -451,9 +448,6 @@ case "$OS" in
         # This package is not yet available in CentOS. So we have to take care
         # of that.
         install_packages $dir qemu-kvm-rhev qemu-img-rhev
-
-        install_packages_disabled $dir ${monitoring_packages[$(package_type)]}
-
         case "$CODENAME_MAJOR" in
             6)
               # Force to download qemu-kvm and qemu-img from ceph.com
@@ -463,10 +457,12 @@ case "$OS" in
               ;;
         esac
 
+        install_packages_disabled $dir ${monitoring_packages[$(package_type)]}
         add_epel_repository $DIST
 
     ;;& # → means "continue"
     "CentOS")
+        install_packages $dir $(get_openstack_repository $DIST $dir $OS_VERS)
         install_packages $dir qemu-kvm
         add_epel_repository $DIST
         install_packages_disabled $dir ${monitoring_packages[$(package_type)]}
@@ -478,16 +474,12 @@ case "$OS" in
         else
             # TODO(EmilienM) no support for logging packages
             # TODO(EmilienM) no support for cman, spice-html5 and python-subunit packages
-            EXTRA_RPMS="fence-agents-all mariadb-galera-server"
+            EXTRA_RPMS="fence-agents-all mariadb-galera-server mariadb-galera-client"
         fi
 
         install_packages_disabled $dir ${os_packages[$(package_type)]} $EXTRA_RPMS
         install_packages_disabled $dir ${monitoring_packages[$(package_type)]}
         remove_epel_repository $DIST
-
-        # python-kombu is outdated for now in Red Hat.
-        # while they updating it, we use pip to install the last one required by OpenStack
-        do_chroot $dir pip install --upgrade kombu
  
         do_chroot $dir chkconfig puppet on
 
