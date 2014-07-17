@@ -478,12 +478,12 @@ case "$OS" in
         fi
 
         install_packages_disabled $dir ${os_packages[$(package_type)]} $EXTRA_RPMS
-        install_packages_disabled $dir ${monitoring_packages[$(package_type)]}
-        remove_epel_repository $DIST
- 
-        do_chroot $dir chkconfig puppet on
+        do_chroot $dir rpm -qv ${os_packages[$(package_type)]} || fatal_error "Some OpenStack packages are not installed"
+        do_chroot $dir rpm -qv ${monitoring_packages[$(package_type)]} || fatal_error "Some monitoring packages are not installed"
 
-        do_chroot $dir rpm -qv ${os_packages[$(package_type)]} || fatal_error "Some packages are not installed"
+        remove_epel_repository $DIST
+
+        do_chroot $dir chkconfig puppet on
 
         cp -pv openstack-monitoring/scripts/*/* $dir/usr/lib64/nagios/plugins
     ;;
