@@ -26,7 +26,15 @@ ORIG=$(cd $(dirname $0); pwd)
 #
 # Jenkins
 #
-JENKINS_PACKAGES="jenkins puppet git python-pip sloccount rubygems rake puppet-lint"
+case "$CODENAME_MAJOR" in
+  6)
+    CODENAME_MAJOR_PACKAGES="rake sloccount puppet-lint"
+    ;;
+  7)
+    CODENAME_MAJOR_PACKAGES="rubygem-rake"
+    ;;
+esac
+JENKINS_PACKAGES="jenkins puppet git python-pip rubygems" #$CODENAME_MAJOR_PACKAGES
 JENKINS_PLUGINS="http://ftp.nluug.nl/programming/jenkins/plugins/ssh-agent/1.4.1/ssh-agent.hpi \
                  http://ftp.nluug.nl/programming/jenkins/plugins/gearman-plugin/0.0.6/gearman-plugin.hpi \
                  http://ftp.nluug.nl/programming/jenkins/plugins/promoted-builds/2.17/promoted-builds.hpi \

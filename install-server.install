@@ -79,7 +79,15 @@ $SRC/puppet-master.install $dir $dir $version
 
 # Serverspec
 
-install_packages $dir rake make
+case "$CODENAME_MAJOR" in
+  6)
+    RAKE=rake
+    ;;
+  7)
+    RAKE=rubygem-rake
+    ;;
+esac
+install_packages $dir make #$RAKE
 
 case "$OS" in
     "RedHatEnterpriseServer")
