@@ -59,7 +59,16 @@ EOF
 	"CentOS"|"RedHatEnterpriseServer")
 	    add_puppet_repository $DIST
 	    add_epel_repository $DIST
-	    install_packages_disabled $dir puppet-server git augeas ntp httpd puppetdb puppetdb-terminus rubygem-kwalify python-pip mod_wsgi
+      case "$CODENAME_MAJOR" in
+          6)
+              CODENAME_MAJOR_PACKAGES="rubygem-kwalify augeas"
+          ;;
+          7)
+              CODENAME_MAJOR_PACKAGES=""
+          ;;
+      esac
+	    PACKAGES="puppet-server git ntp httpd puppetdb puppetdb-terminus python-pip mod_wsgi $CODENAME_MAJOR_PACKAGES"
+	    install_packages_disabled $dir $PACKAGES
 	    remove_epel_repository $DIST
 	    remove_puppet_repository $DIST
 	    ;;
