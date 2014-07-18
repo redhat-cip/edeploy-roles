@@ -34,13 +34,13 @@ install_ib_if_needed $ORIG $dir
 case "$(package_tool)" in
     "apt")
         update_repositories $dir
-        install_packages $dir "$PACKAGES python-openssl"
+        install_packages $dir "$PACKAGES python-openssl python-nose"
 
         ;;
     "yum")
         add_epel_repository $DIST
         update_repositories $dir
-        install_packages $dir "$PACKAGES libffi-devel python-devel openssl-devel libxml2-devel libxslt-devel"
+        install_packages $dir "$PACKAGES libffi-devel python-devel openssl-devel libxml2-devel libxslt-devel python-nose"
         remove_epel_repository $DIST
         ;;
     *)
