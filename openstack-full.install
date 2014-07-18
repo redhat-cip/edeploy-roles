@@ -468,7 +468,6 @@ case "$OS" in
         install_packages_disabled $dir ${monitoring_packages[$(package_type)]}
     ;;&
     "CentOS"|"RedHatEnterpriseServer")
-        add_epel_repository $DIST
         # TODO(EmilienM) no support for logging packages:
         if [ "$CODENAME_MAJOR" == "6" ]; then
             install_packages_disabled $dir ${logging_packages[$(package_type)]}
