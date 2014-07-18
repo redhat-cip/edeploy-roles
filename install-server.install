@@ -123,7 +123,6 @@ openstack_packages=(
         python-cinderclient \
         python-glanceclient \
         python-heatclient \
-        python-ironicclient \
         python-keystoneclient \
         python-neutronclient \
         python-novaclient \
