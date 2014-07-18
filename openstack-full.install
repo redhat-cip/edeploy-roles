@@ -485,6 +485,7 @@ case "$OS" in
 
         do_chroot $dir chkconfig puppet on
 
+        mkdir -p $dir/usr/lib64/nagios/plugins
         cp -pv openstack-monitoring/scripts/*/* $dir/usr/lib64/nagios/plugins
     ;;
     *)
