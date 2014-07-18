@@ -71,7 +71,7 @@ EOF
                 add_rh_cdn_repo $dir rhel-7-server-openstack-5.0-rpms
                 add_rh_cdn_repo $dir rhel-7-server-rpms
             fi
-            install_packages $dir puppet facter hiera augeas
+            install_packages $dir puppet facter hiera
             remove_puppet_repository $DIST
             ;;
         *)
