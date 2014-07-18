@@ -471,10 +471,10 @@ case "$OS" in
         # TODO(EmilienM) no support for logging packages:
         if [ "$CODENAME_MAJOR" == "6" ]; then
             install_packages_disabled $dir ${logging_packages[$(package_type)]}
-            EXTRA_RPMS="fence-agents cman spice-html5 MariaDB-Galera-server MariaDB-Galera-client"
+            EXTRA_RPMS="fence-agents cman spice-html5 MariaDB-Galera-server MariaDB-client"
         else
             # TODO(EmilienM) no support for cman in 7
-            EXTRA_RPMS="fence-agents spice-html5 mariadb-galera-server mariadb-galera-client"
+            EXTRA_RPMS="fence-agents spice-html5 mariadb-galera-server MariaDB-client"
         fi
 
         install_packages_disabled $dir ${os_packages[$(package_type)]} $EXTRA_RPMS
