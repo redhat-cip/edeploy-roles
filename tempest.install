@@ -26,7 +26,7 @@ ORIG=$(cd $(dirname $0); pwd)
 #
 # Dependencies
 #
-PACKAGES="python-pip git python-greenlet python-crypto python-lxml gcc"
+PACKAGES="python-pip git python-greenlet python-crypto python-lxml python-nose"
 
 update_repositories $dir
 install_ib_if_needed $ORIG $dir
@@ -34,13 +34,12 @@ install_ib_if_needed $ORIG $dir
 case "$(package_tool)" in
     "apt")
         update_repositories $dir
-        install_packages $dir "$PACKAGES python-openssl python-nose"
-
+        install_packages $dir "$PACKAGES python-openssl"
         ;;
     "yum")
         add_epel_repository $DIST
         update_repositories $dir
-        install_packages $dir "$PACKAGES libffi-devel python-devel openssl-devel libxml2-devel libxslt-devel python-nose"
+        install_packages $dir "$PACKAGES pyOpenSSL"
         remove_epel_repository $DIST
         ;;
     *)
