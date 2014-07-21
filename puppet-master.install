@@ -49,7 +49,7 @@ EOF
 	    do_chroot ${dir} dpkg -i puppetlabs-release-$RELEASE.deb
 	    do_chroot ${dir} rm puppetlabs-release-$RELEASE.deb
 	    do_chroot ${dir} apt-get update
-	    PACKAGES="puppetmaster puppetmaster-passenger puppet augeas-tools git ntp puppetdb puppetdb-terminus kwalify"
+	    PACKAGES="puppetmaster puppetmaster-passenger puppet augeas-tools git ntp puppetdb puppetdb-terminus"
 	    install_packages_disabled $dir $PACKAGES
 	    do_chroot ${dir} a2dissite puppetmaster
             cd ${dir}/usr/lib/ruby/vendor_ruby/hiera
@@ -59,16 +59,7 @@ EOF
 	"CentOS"|"RedHatEnterpriseServer")
 	    add_puppet_repository $DIST
 	    add_epel_repository $DIST
-      case "$CODENAME_MAJOR" in
-          6)
-              CODENAME_MAJOR_PACKAGES="rubygem-kwalify augeas"
-          ;;
-          7)
-              CODENAME_MAJOR_PACKAGES=""
-          ;;
-      esac
-	    PACKAGES="puppet-server git ntp httpd puppetdb puppetdb-terminus python-pip mod_wsgi $CODENAME_MAJOR_PACKAGES"
-	    install_packages_disabled $dir $PACKAGES
+	    install_packages_disabled $dir puppet-server git augeas ntp httpd puppetdb puppetdb-terminus python-pip mod_wsgi
 	    remove_epel_repository $DIST
 	    remove_puppet_repository $DIST
 	    ;;
