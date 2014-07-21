@@ -43,61 +43,33 @@ $ORIG/deploy.install $dir $dir $version
 install_packages_disabled $dir dnsmasq
 
 
-###########
-# Ansible #
-###########
-
-case "$OS" in
-    "Debian")
-        do_chroot $dir apt-key adv --keyserver keyserver.ubuntu.com --recv 049ED9B94765572E
-        cat > ${dir}/etc/apt/sources.list.d/wheezy-backports.list <<EOF
-deb http://ftp.de.debian.org/debian wheezy-backports main
-EOF
-	install_packages $dir python-pandas python-jinja2 python-paramiko python-libxml2 libmysqlclient-dev libxml2-dev libxslt-dev libpq-dev python-dev python-virtualenv libffi-dev subunit
-	install_packages $dir -t wheezy-backports linux-headers-3.14-0.bpo.1-amd64 linux-image-3.14-0.bpo.1-amd64
-	do_chroot $dir pip install ansible
-	;;
-    "Ubuntu")
-	install_packages $dir python-pandas python-jinja2 python-paramiko build-essential python-dev
-	do_chroot $dir pip install ansible
-	;;
-    "CentOS"|"RedHatEnterpriseServer")
-	add_epel_repository $DIST
-        # TODO: missing packages in epel7: python-subunit, ansible
-        install_packages $dir python-devel libffi-devel
-        do_chroot $dir pip install ansible
-	remove_epel_repository $DIST
-	;;
-esac
-
-
 #################
 # Puppet master #
 #################
 
 $SRC/puppet-master.install $dir $dir $version
 
-# Serverspec
-
-case "$CODENAME_MAJOR" in
-  6)
-    RAKE=rake
-    ;;
-  7)
-    RAKE=rubygem-rake
-    ;;
-esac
-install_packages $dir make #$RAKE
+##############
+# Serverspec #
+##############
 
 case "$OS" in
-    "RedHatEnterpriseServer")
-	add_epel_repository $DIST
-	install_packages $dir rubygems
-	remove_epel_repository $DIST
+    "RedHatEnterpriseServer"|"CentOS")
+        case "$CODENAME_MAJOR" in
+            6)
+                RAKE=rake
+                ;;
+            7)
+                RAKE=rubygem-rake
+                ;;
+        esac
+        add_epel_repository $DIST
+	install_packages $dir make rubygems $RAKE
+        remove_epel_repository $DIST
 	;;
-    "CentOS")
-	install_packages $dir rubygems
-	;;
+    *)
+        install_packages $dir rake make
+        ;;
 esac
 
 # Pin the good dependencies for having rspec (< 3) & serverspec
@@ -147,10 +119,11 @@ openstack_packages=(
 case "$OS" in
     "Debian"|"Ubuntu")
         update_repositories $dir
-    ;;
+        ;;
     "CentOS")
+        add_epel_repository $DIST
         install_packages $dir $(get_openstack_repository $DIST $dir $OS_VERS)
-   ;;&
+        ;;
     "RedHatEnterpriseServer")
         case "$CODENAME_MAJOR" in
             6)
@@ -166,9 +139,25 @@ case "$OS" in
               add_rh_cdn_repo $dir rhel-7-server-openstack-5.0-rpms
               ;;
         esac
-    ;;
+        ;;
 esac
+
+if [ $OS = "RedHatEnterpriseServer" ]; then
+    add_epel_repository $DIST
+fi
+
 install_packages_disabled $dir ${openstack_packages[$(package_type)]}
+
+case "$OS" in
+    "RedHatEnterpriseServer"|"CentOS")
+        install_packages $dir python-subunit python-devel libffi-devel
+        ;;
+    *)
+        install_packages $dir python-dev libffi-dev subunit
+        ;;
+esac
+
+remove_epel_repository $DIST
 
 if [ $OS = CentOS ]; then
     remove_packages $dir $(basename $(get_openstack_repository $DIST $dir $OS_VERS) .noarch.rpm)
