@@ -54,7 +54,7 @@ $SRC/puppet-master.install $dir $dir $version
 ##############
 
 case "$OS" in
-    "RedHatEnterpriseServer"|"CentOS")
+    "RedHatEnterpriseServer")
         case "$CODENAME_MAJOR" in
             6)
                 RAKE=rake
@@ -64,7 +64,24 @@ case "$OS" in
                 ;;
         esac
         add_epel_repository $DIST
-	install_packages $dir make rubygems $RAKE
+        do_chroot $dir subscription-manager register --force --username=$RHN_USERNAME --password=$RHN_PASSWORD
+        attach_pool_rh_cdn $dir $RHN_CDN_POOL_ID
+        add_rh_cdn_repo $dir rhel-7-server-optional-rpms
+        install_packages $dir make rubygems $RAKE
+        remove_epel_repository $DIST
+        unregister_cdn $dir
+	;;
+    "CentOS")
+        case "$CODENAME_MAJOR" in
+            6)
+                RAKE=rake
+                ;;
+            7)
+                RAKE=rubygem-rake
+                ;;
+        esac
+        add_epel_repository $DIST
+        install_packages $dir make rubygems $RAKE
         remove_epel_repository $DIST
 	;;
     *)
@@ -133,6 +150,7 @@ case "$OS" in
               ;;
             7)
               # Attach to the pool "Red Hat Enterprise Linux OpenStack Platform (Physical)"
+              do_chroot $dir subscription-manager register --force --username=$RHN_USERNAME --password=$RHN_PASSWORD
               attach_pool_rh_cdn $dir $RHN_CDN_POOL_ID
 
               # Red Hat OpenStack 5
@@ -161,6 +179,10 @@ remove_epel_repository $DIST
 
 if [ $OS = CentOS ]; then
     remove_packages $dir $(basename $(get_openstack_repository $DIST $dir $OS_VERS) .noarch.rpm)
+fi
+
+if [ $OS = RedHatEnterpriseServer ]; then
+  unregister_cdn $dir
 fi
 
 ###########
