@@ -56,7 +56,18 @@ EOF
             patch -p0 < $SRC/files/backend.rb.patch
             cd -
 	    ;;
-	"CentOS"|"RedHatEnterpriseServer")
+	"RedHatEnterpriseServer")
+	    add_puppet_repository $DIST
+	    add_epel_repository $DIST
+	    do_chroot $dir subscription-manager register --force --username=$RHN_USERNAME --password=$RHN_PASSWORD
+	    attach_pool_rh_cdn $dir $RHN_CDN_POOL_ID
+	    add_rh_cdn_repo $dir rhel-7-server-optional-rpms
+	    install_packages_disabled $dir puppet-server git augeas ntp httpd puppetdb puppetdb-terminus python-pip mod_wsgi
+	    remove_epel_repository $DIST
+	    remove_puppet_repository $DIST
+	    unregister_cdn $dir
+	    ;;
+	"CentOS")
 	    add_puppet_repository $DIST
 	    add_epel_repository $DIST
 	    install_packages_disabled $dir puppet-server git augeas ntp httpd puppetdb puppetdb-terminus python-pip mod_wsgi
