@@ -26,15 +26,25 @@ ORIG=$(cd $(dirname $0); pwd)
 #
 # Jenkins
 #
-case "$CODENAME_MAJOR" in
-  6)
-    CODENAME_MAJOR_PACKAGES="rake sloccount puppet-lint"
-    ;;
-  7)
-    CODENAME_MAJOR_PACKAGES="rubygem-rake"
-    ;;
+case $OS in
+    "CentOS"|"RedHatEnterpriseServer")
+        case "$CODENAME_MAJOR" in
+            6)
+                CODENAME_MAJOR_PACKAGES="rake sloccount puppet-lint"
+                ;;
+            7)
+                # TODO [FL Mon Jul 21 15:05:31 2014] find puppet-lint and
+                # sloccount for RHEL/CentOS
+                CODENAME_MAJOR_PACKAGES="rubygem-rake"
+                ;;
+        esac
+        JENKINS_PACKAGES="jenkins puppet git python-pip rubygems rubygem-rake $CODENAME_MAJOR_PACKAGES"
+        ;;
+    *)
+        JENKINS_PACKAGES="jenkins puppet git python-pip sloccount rubygems rake puppet-lint"
+        ;;
 esac
-JENKINS_PACKAGES="jenkins puppet git python-pip rubygems" #$CODENAME_MAJOR_PACKAGES
+
 JENKINS_PLUGINS="http://ftp.nluug.nl/programming/jenkins/plugins/ssh-agent/1.4.1/ssh-agent.hpi \
                  http://ftp.nluug.nl/programming/jenkins/plugins/gearman-plugin/0.0.6/gearman-plugin.hpi \
                  http://ftp.nluug.nl/programming/jenkins/plugins/promoted-builds/2.17/promoted-builds.hpi \
@@ -79,16 +89,15 @@ EOF
     "yum")
         wget -O $dir/etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat/jenkins.repo
         chroot $dir rpm --import http://pkg.jenkins-ci.org/redhat/jenkins-ci.org.key
-        add_epel_repository $DIST
-        install_packages $dir python-pip
-        remove_epel_repository $DIST
         ;;
     *)
         fatal_error "$package_tool isn't supported for $ROLE role"
         ;;
 esac
 
+add_epel_repository $DIST
 install_packages $dir "$JENKINS_PACKAGES"
+remove_epel_repository $DIST
 
 #
 # Jenkins Post Inst
