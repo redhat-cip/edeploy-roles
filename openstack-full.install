@@ -245,7 +245,7 @@ os_packages=(
         openstack-dashboard \
         openstack-dashboard-apache \
         openstack-pkg-tools \
-        openvswitch-switch
+        openvswitch-switch \
         pacemaker \
         pm-utils \
         python-argparse \
