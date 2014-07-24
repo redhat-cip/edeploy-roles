@@ -203,7 +203,7 @@ if [ -r $dir/etc/sysconfig/jenkins ]; then
 else
     JENKINS_CFG=$dir/etc/default/jenkins
 fi
-sed -i 's/HTTP_PORT=8080/HTTP_PORT=8282/' -e 's/JENKINS_PORT="8080"/JENKINS_PORT="8282"/' $JENKINS_CFG
+sed -i -e 's/HTTP_PORT=8080/HTTP_PORT=8282/' -e 's/JENKINS_PORT="8080"/JENKINS_PORT="8282"/' $JENKINS_CFG
 
 #################
 # Log Collector #
