@@ -102,6 +102,7 @@ remove_epel_repository $DIST
 #
 # Jenkins Post Inst
 #
+do_chroot ${dir} chsh -s /bin/bash jenkins
 mkdir -p ${dir}/var/lib/jenkins/plugins
 do_chroot $dir chown jenkins /var/lib/jenkins /var/lib/jenkins/plugins
 for plugin in ${JENKINS_PLUGINS}; do
