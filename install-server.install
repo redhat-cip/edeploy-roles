@@ -193,6 +193,9 @@ fi
 
 $SRC/jenkins.install $dir $dir $version
 
+# By default jenkins has a /bin/false shell
+do_chroot ${dir} chsh -s /bin/bash jenkins
+
 # Running jenkins + puppetdb on the same node:
 # do not use the same port as the puppetdb
 if [ -r $dir/etc/sysconfig/jenkins ]; then
