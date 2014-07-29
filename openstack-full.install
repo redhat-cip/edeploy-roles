@@ -53,13 +53,6 @@ function build_dkms() {
     do_chroot $dir dkms install -m "$name" -v "$version" -k "$kernel"
 }
 
-function add_rabbitmq_deb_repo() {
-    do_chroot $dir wget -O- ${RABBITMQ_URL:=http://www.rabbitmq.com/}rabbitmq-signing-key-public.asc | do_chroot $dir apt-key add -
-    cat > ${dir}/etc/apt/sources.list.d/rabbitmq.list <<EOF
-deb ${RABBITMQ_URL:=http://www.rabbitmq.com/}debian/ testing main
-EOF
-}
-
 function add_percona_deb_repo() {
     do_chroot ${dir} apt-key adv --keyserver keys.gnupg.net --recv-keys 1C4CBDCDCD2EFD2A
     cat > ${dir}/etc/apt/sources.list.d/percona.list <<EOF
@@ -107,7 +100,7 @@ Package: *
 Pin: origin ftp.igh.cnrs.fr
 Pin-Priority: 900
 EOF
-     add_rabbitmq_deb_repo
+     add_rabbitmq_repo
      add_percona_deb_repo
     ;;
     "Ubuntu")
@@ -123,7 +116,7 @@ EOF
      cat > ${dir}/etc/apt/sources.list.d/ceph.list <<EOF
 deb http://eu.ceph.com/debian-firefly $DIST main
 EOF
-     add_rabbitmq_deb_repo
+     add_rabbitmq_repo
      add_percona_deb_repo
     ;;
     "CentOS"|"RedHatEnterpriseServer")
