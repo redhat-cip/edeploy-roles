@@ -171,6 +171,7 @@ install_packages_disabled $dir ${openstack_packages[$(package_type)]}
 case "$OS" in
     "RedHatEnterpriseServer"|"CentOS")
         install_packages $dir python-subunit python-devel libffi-devel
+        remove_packages $dir $(basename $(get_openstack_repository centos $dir $OS_VERS) .noarch.rpm)
         ;;
     *)
         install_packages $dir python-dev libffi-dev subunit
@@ -178,10 +179,6 @@ case "$OS" in
 esac
 
 remove_epel_repository $DIST
-
-if [ $OS = CentOS ]; then
-    remove_packages $dir $(basename $(get_openstack_repository $DIST $dir $OS_VERS) .noarch.rpm)
-fi
 
 if [ $OS = RedHatEnterpriseServer ]; then
   unregister_cdn $dir
@@ -220,7 +217,8 @@ fi
 # Monitoring Server#
 ####################
 
-$SRC/monitor-server.install $dir $dir $version
+# TODO (spredzy): Packages for EL7 does not exist yet
+#$SRC/monitor-server.install $dir $dir $version
 
 ###########
 # Tempest #
