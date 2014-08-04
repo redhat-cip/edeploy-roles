@@ -216,6 +216,13 @@ else
   echo "Log Collector can't be build now on Red Hat / CentOS"
 fi
 
+####################
+# Monitoring Server#
+####################
+
+$SRC/monitor-server.install $dir $dir $version
+sed -i -e 's/"port": 8080/"port": 8383/' $dir/etc/sensu/conf.d/dashboard.json
+
 ###########
 # Tempest #
 ###########
