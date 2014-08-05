@@ -52,9 +52,7 @@ EOF
 	    PACKAGES="puppetmaster puppetmaster-passenger puppet augeas-tools git ntp puppetdb puppetdb-terminus"
 	    install_packages_disabled $dir $PACKAGES
 	    do_chroot ${dir} a2dissite puppetmaster
-            cd ${dir}/usr/lib/ruby/vendor_ruby/hiera
-            patch -p0 < $SRC/files/backend.rb.patch
-            cd -
+            hiera_dir=usr/lib/ruby/vendor_ruby/hiera
 	    ;;
 	"RedHatEnterpriseServer")
 	    add_puppet_repository $DIST
@@ -64,6 +62,7 @@ EOF
 	    install_packages_disabled $dir puppet-server git augeas ntp httpd puppetdb puppetdb-terminus python-pip mod_wsgi
 	    remove_epel_repository $DIST
 	    remove_puppet_repository $DIST
+            hiera_dir=usr/share/ruby/vendor_ruby/hiera
 	    ;;
 	"CentOS")
 	    add_puppet_repository $DIST
@@ -71,11 +70,17 @@ EOF
 	    install_packages_disabled $dir puppet-server git augeas ntp httpd puppetdb puppetdb-terminus python-pip mod_wsgi
 	    remove_epel_repository $DIST
 	    remove_puppet_repository $DIST
+            hiera_dir=usr/share/ruby/vendor_ruby/hiera
 	    ;;
 	*)
 	    fatal_error "OS ($OS) or Release $(RELEASE) not supported"
 	    ;;
     esac
+
+    # (Spredzy) Specific patch
+    cd ${dir}/$hiera_dir
+    patch -p0 < $SRC/files/backend.rb.patch
+    cd -
 
     do_chroot ${dir} rm -rf /var/lib/puppet/ssl/* || :
 }
