@@ -64,7 +64,6 @@ case "$OS" in
                 ;;
         esac
         add_epel_repository $DIST
-        attach_pool_rh_cdn $dir $RHN_CDN_POOL_ID
         add_rh_cdn_repo $dir rhel-7-server-optional-rpms
         install_packages $dir make rubygems $RAKE
         remove_epel_repository $DIST
