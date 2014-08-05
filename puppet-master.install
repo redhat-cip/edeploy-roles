@@ -35,7 +35,7 @@ rh_install_passenger () {
     do_chroot ${dir} yum -y localinstall /tmp/ruby-devel-2.0.0.353-20.el7.x86_64.rpm
 
     # Install all dependencies to run Puppet in passenger mode
-    install_packages_disabled $dir puppet-server git augeas ntp httpd puppetdb puppetdb-terminus python-pip mod_wsgi apr-util-devel apr-devel httpd-devel zlib-devel openssl-devel curl-devel gcc-c++ gcc mod_ssl
+    install_packages_disabled $dir puppet-server git augeas ntp httpd puppetdb puppetdb-terminus python-pip mod_wsgi apr-util-devel apr-devel httpd-devel zlib-devel openssl-devel libcurl-devel gcc-c++ gcc mod_ssl
 
     # passenger is not packaged in el7, let's install & configure it
     do_chroot ${dir} gem install rack passenger
