@@ -147,9 +147,6 @@ case "$OS" in
               add_rhn_channel rhel-x86_64-server-6-ost-beta
               ;;
             7)
-              # Attach to the pool "Red Hat Enterprise Linux OpenStack Platform (Physical)"
-              attach_pool_rh_cdn $dir $RHN_CDN_POOL_ID
-
               # Red Hat OpenStack 5
               add_rh_cdn_repo $dir rhel-7-server-openstack-5.0-rpms
               # python-subunit is on EPEL from rdo
