@@ -53,7 +53,8 @@ EOF
 
     passenger_version=$(do_chroot ${dir} gem list | grep passenger | awk '{print $2}' |sed 's/[)(]//g')
 
-    cat > ${dir}/etc/httpd/conf.d/puppetmaster.conf <<EOF
+    # do not enable by default as without cert it'll fail
+    cat > ${dir}/etc/httpd/conf.d/puppetmaster.conf.disabled <<EOF
 LoadModule passenger_module /usr/local/share/gems/gems/passenger-${passenger_version}/buildout/apache2/mod_passenger.so
 PassengerRoot /usr/local/share/gems/gems/passenger-${passenger_version}
 PassengerRuby /usr/bin/ruby
