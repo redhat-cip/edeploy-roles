@@ -28,6 +28,60 @@ ORIG=$(cd $(dirname $0); pwd)
 
 . ${ORIG}/functions
 
+rh_install_passenger () {
+
+    # Install missing ruby-devel package (not yet in el7)
+    cp files/ruby-devel-2.0.0.353-20.el7.x86_64.rpm ${dir}/tmp/
+    do_chroot ${dir} yum -y localinstall /tmp/ruby-devel-2.0.0.353-20.el7.x86_64.rpm
+
+    # Install all dependencies to run Puppet in passenger mode
+    install_packages_disabled $dir puppet-server git augeas ntp httpd puppetdb puppetdb-terminus python-pip mod_wsgi apr-util-devel apr-devel httpd-devel zlib-devel openssl-devel curl-devel gcc-c++ gcc mod_ssl
+
+    # passenger is not packaged in el7, let's install & configure it
+    do_chroot ${dir} gem install rack passenger
+    do_chroot ${dir} passenger-install-apache2-module -a
+    passenger_version=$(do_chroot ${dir} gem list | grep passenger | awk '{print $2}' |sed 's/[)(]//g')
+
+    cat > ${dir}/etc/httpd/conf.d/puppetmaster.conf <<EOF
+LoadModule passenger_module /usr/local/share/gems/gems/passenger-${passenger_version}/buildout/apache2/mod_passenger.so
+PassengerRoot /usr/local/share/gems/gems/passenger-${passenger_version}
+PassengerRuby /usr/bin/ruby
+PassengerHighPerformance on
+PassengerMaxPoolSize 12
+PassengerPoolIdleTime 1500
+PassengerStatThrottleRate 120
+Listen 8140
+
+<VirtualHost *:8140>
+        SSLEngine on
+        SSLProtocol             ALL -SSLv2
+        SSLCipherSuite          ALL:!aNULL:!eNULL:!DES:!3DES:!IDEA:!SEED:!DSS:!PSK:!RC4:!MD5:+HIGH:+MEDIUM:!LOW:!SSLv2:!EXP
+        SSLHonorCipherOrder     on
+
+        SSLCertificateFile      /var/lib/puppet/ssl/certs/mycert.pem
+        SSLCertificateKeyFile   /var/lib/puppet/ssl/private_keys/mycert.pem
+        SSLCertificateChainFile /var/lib/puppet/ssl/certs/ca.pem
+        SSLCACertificateFile    /var/lib/puppet/ssl/certs/ca.pem
+        SSLVerifyClient optional
+        SSLVerifyDepth  1
+        SSLOptions +StdEnvVars +ExportCertData
+        RequestHeader unset X-Forwarded-For
+        RequestHeader set X-SSL-Subject %{SSL_CLIENT_S_DN}e
+        RequestHeader set X-Client-DN %{SSL_CLIENT_S_DN}e
+        RequestHeader set X-Client-Verify %{SSL_CLIENT_VERIFY}e
+        DocumentRoot /usr/share/puppet/rack/puppetmasterd/public/
+        RackBaseURI /
+        <Directory /usr/share/puppet/rack/puppetmasterd/>
+                Options None
+                AllowOverride None
+                Order allow,deny
+                allow from all
+        </Directory>
+</VirtualHost>
+EOF
+
+}
+
 install_puppet () {
 
     case "$OS" in
@@ -59,7 +113,7 @@ EOF
 	    add_epel_repository $DIST
 	    attach_pool_rh_cdn $dir $RHN_CDN_POOL_ID
 	    add_rh_cdn_repo $dir rhel-7-server-optional-rpms
-	    install_packages_disabled $dir puppet-server git augeas ntp httpd puppetdb puppetdb-terminus python-pip mod_wsgi
+            rh_install_passenger
 	    remove_epel_repository $DIST
 	    remove_puppet_repository $DIST
             hiera_dir=usr/share/ruby/vendor_ruby/hiera
@@ -67,7 +121,7 @@ EOF
 	"CentOS")
 	    add_puppet_repository $DIST
 	    add_epel_repository $DIST
-	    install_packages_disabled $dir puppet-server git augeas ntp httpd puppetdb puppetdb-terminus python-pip mod_wsgi
+            rh_install_passenger
 	    remove_epel_repository $DIST
 	    remove_puppet_repository $DIST
             hiera_dir=usr/share/ruby/vendor_ruby/hiera
