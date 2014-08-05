@@ -46,7 +46,7 @@ rh_install_passenger () {
     do_chroot ${dir} chown puppet:puppet /usr/share/puppet/rack/puppetmasterd/config.ru
 
     # Bug https://tickets.puppetlabs.com/browse/PUP-1386
-    cat > ${dir}/usr/share/puppet/rack/puppetmasterd/config.ru <<EOF
+    cat >> ${dir}/usr/share/puppet/rack/puppetmasterd/config.ru <<EOF
 Encoding.default_external = Encoding::UTF_8
 Encoding.default_internal = Encoding::UTF_8
 EOF
