@@ -40,6 +40,17 @@ rh_install_passenger () {
     # passenger is not packaged in el7, let's install & configure it
     do_chroot ${dir} gem install rack passenger
     do_chroot ${dir} passenger-install-apache2-module -a
+    mkdir -p ${dir}/usr/share/puppet/rack/puppetmasterd
+    mkdir -p ${dir}/usr/share/puppet/rack/puppetmasterd/public ${dir}/usr/share/puppet/rack/puppetmasterd/tmp
+    cp ${dir}/usr/share/puppet/ext/rack/config.ru ${dir}/usr/share/puppet/rack/puppetmasterd/
+    do_chroot ${dir} chown puppet:puppet /usr/share/puppet/rack/puppetmasterd/config.ru
+
+    # Bug https://tickets.puppetlabs.com/browse/PUP-1386
+    cat > ${dir}/usr/share/puppet/rack/puppetmasterd/config.ru <<EOF
+Encoding.default_external = Encoding::UTF_8
+Encoding.default_internal = Encoding::UTF_8
+EOF
+
     passenger_version=$(do_chroot ${dir} gem list | grep passenger | awk '{print $2}' |sed 's/[)(]//g')
 
     cat > ${dir}/etc/httpd/conf.d/puppetmaster.conf <<EOF
