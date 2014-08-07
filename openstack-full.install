@@ -475,6 +475,9 @@ case "$OS" in
         do_chroot $dir rpm -qv ${os_packages[$(package_type)]} || fatal_error "Some OpenStack packages are not installed"
         do_chroot $dir rpm -qv ${monitoring_packages[$(package_type)]} || fatal_error "Some monitoring packages are not installed"
 
+        # Activate mariadb in systemd
+        do_chroot $dir ln -s /usr/lib/systemd/system/mariadb.service /etc/systemd/system/multi-user.target.wants/mariadb.service
+
         remove_epel_repository $DIST
 
         do_chroot $dir chkconfig puppet on
