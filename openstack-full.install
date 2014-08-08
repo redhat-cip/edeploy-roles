@@ -410,7 +410,7 @@ case "$OS" in
         cp -pv openstack-monitoring/scripts/*/* $dir/usr/lib/nagios/plugins
         echo "" > $dir/etc/nova/nova-compute.conf
         # add init script to disable TSO/GSO/GRO
-        cp files/disable-tso $dir/etc/init.d/disable-tso
+        cp files/disable-tso $dir/etc/init.d/
     ;;
     "RedHatEnterpriseServer")
         case "$CODENAME_MAJOR" in
