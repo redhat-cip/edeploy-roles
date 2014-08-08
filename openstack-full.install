@@ -409,6 +409,8 @@ case "$OS" in
         install_packages_disabled $dir ${monitoring_packages[$(package_type)]}
         cp -pv openstack-monitoring/scripts/*/* $dir/usr/lib/nagios/plugins
         echo "" > $dir/etc/nova/nova-compute.conf
+        # add init script to disable TSO/GSO/GRO
+        cp files/disable-tso $dir/etc/init.d/disable-tso
     ;;
     "RedHatEnterpriseServer")
         case "$CODENAME_MAJOR" in
