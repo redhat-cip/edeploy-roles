@@ -45,8 +45,8 @@ case $OS in
         ;;
 esac
 
-JENKINS_URL=http://ftp.nluug.nl/programming/jenkins/plugins
-JENKINS_URL2=https://updates.jenkins-ci.org/download/plugins
+JENKINS_URL=https://updates.jenkins-ci.org/download/plugins
+JENKINS_URL2=http://ftp.nluug.nl/programming/jenkins/plugins
 JENKINS_PLUGINS="ssh-agent/1.4.1/ssh-agent.hpi \
                  gearman-plugin/0.0.6/gearman-plugin.hpi \
                  promoted-builds/2.17/promoted-builds.hpi \
@@ -57,6 +57,7 @@ JENKINS_PLUGINS="ssh-agent/1.4.1/ssh-agent.hpi \
                  multiple-scms/0.3/multiple-scms.hpi \
                  ansicolor/0.4.0/ansicolor.hpi \
                  git/2.2.1/git.hpi"
+JENKINS_CACHE=${JENKINS_CACHE:=${dir}/../../jenkins-plugins-cache}
 
 update_repositories $dir
 install_ib_if_needed $ORIG $dir
@@ -109,7 +110,11 @@ do_chroot $dir chown jenkins /var/lib/jenkins /var/lib/jenkins/plugins
 for plugin in ${JENKINS_PLUGINS}; do
     plugin_name=$(basename ${plugin})
     echo "Installing plugin ${plugin_name}"
-    wget -q -O - "${JENKINS_URL}/${plugin}" > ${dir}/var/lib/jenkins/plugins/${plugin_name} || wget -q -O - "${JENKINS_URL2}/${plugin}" > ${dir}/var/lib/jenkins/plugins/${plugin_name}
+    if [ ! -r $JENKINS_CACHE/$plugin ]; then
+        mkdir -p $JENKINS_CACHE/$(dirname ${plugin})
+        wget -q -O - "${JENKINS_URL}/${plugin}" > $JENKINS_CACHE/$plugin || wget -q -O - "${JENKINS_URL2}/${plugin}" > $JENKINS_CACHE/$plugin
+    fi
+    cp $JENKINS_CACHE/$plugin ${dir}/var/lib/jenkins/plugins/${plugin_name}
 done
 
 #
