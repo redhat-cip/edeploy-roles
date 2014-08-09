@@ -45,16 +45,18 @@ case $OS in
         ;;
 esac
 
-JENKINS_PLUGINS="http://ftp.nluug.nl/programming/jenkins/plugins/ssh-agent/1.4.1/ssh-agent.hpi \
-                 http://ftp.nluug.nl/programming/jenkins/plugins/gearman-plugin/0.0.6/gearman-plugin.hpi \
-                 http://ftp.nluug.nl/programming/jenkins/plugins/promoted-builds/2.17/promoted-builds.hpi \
-                 http://ftp.nluug.nl/programming/jenkins/plugins/git-client/1.9.0/git-client.hpi \
-                 http://ftp.nluug.nl/programming/jenkins/plugins/scm-api/0.2/scm-api.hpi \
-                 http://ftp.nluug.nl/programming/jenkins/plugins/parameterized-trigger/2.24/parameterized-trigger.hpi \
-                 http://ftp.nluug.nl/programming/jenkins/plugins/token-macro/1.10/token-macro.hpi \
-                 http://ftp.nluug.nl/programming/jenkins/plugins/multiple-scms/0.3/multiple-scms.hpi \
-                 http://ftp.nluug.nl/programming/jenkins/plugins/ansicolor/0.4.0/ansicolor.hpi \
-                 http://ftp.nluug.nl/programming/jenkins/plugins/git/2.2.1/git.hpi"
+JENKINS_URL=http://ftp.nluug.nl/programming/jenkins/plugins
+JENKINS_URL2=https://updates.jenkins-ci.org/download/plugins
+JENKINS_PLUGINS="ssh-agent/1.4.1/ssh-agent.hpi \
+                 gearman-plugin/0.0.6/gearman-plugin.hpi \
+                 promoted-builds/2.17/promoted-builds.hpi \
+                 git-client/1.9.0/git-client.hpi \
+                 scm-api/0.2/scm-api.hpi \
+                 parameterized-trigger/2.24/parameterized-trigger.hpi \
+                 token-macro/1.10/token-macro.hpi \
+                 multiple-scms/0.3/multiple-scms.hpi \
+                 ansicolor/0.4.0/ansicolor.hpi \
+                 git/2.2.1/git.hpi"
 
 update_repositories $dir
 install_ib_if_needed $ORIG $dir
@@ -107,7 +109,7 @@ do_chroot $dir chown jenkins /var/lib/jenkins /var/lib/jenkins/plugins
 for plugin in ${JENKINS_PLUGINS}; do
     plugin_name=$(basename ${plugin})
     echo "Installing plugin ${plugin_name}"
-    wget -q -O - "${plugin}" > ${dir}/var/lib/jenkins/plugins/${plugin_name}
+    wget -q -O - "${JENKINS_URL}/${plugin}" > ${dir}/var/lib/jenkins/plugins/${plugin_name} || wget -q -O - "${JENKINS_URL2}/${plugin}" > ${dir}/var/lib/jenkins/plugins/${plugin_name}
 done
 
 #
