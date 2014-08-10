@@ -56,7 +56,9 @@ JENKINS_PLUGINS="ssh-agent/1.4.1/ssh-agent.hpi \
                  token-macro/1.10/token-macro.hpi \
                  multiple-scms/0.3/multiple-scms.hpi \
                  ansicolor/0.4.0/ansicolor.hpi \
-                 git/2.2.1/git.hpi"
+                 git/2.2.1/git.hpi \
+                 reverse-proxy-auth-plugin/1.4.0/reverse-proxy-auth-plugin.hpi"
+
 JENKINS_CACHE=${JENKINS_CACHE:=${dir}/../../jenkins-plugins-cache}
 
 update_repositories $dir
