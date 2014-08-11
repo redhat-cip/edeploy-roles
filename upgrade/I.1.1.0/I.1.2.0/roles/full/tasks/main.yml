@@ -1,0 +1,8 @@
+---
+# file: roles/full/tasks/main.yml
+# this role is used when all services are running on the same node.
+
+- name: edeploy upgrade
+  edeploy: command=upgrade version=D7-{{ version }}
+  tags: before_config
+  when: ansible_distribution == 'Debian'
