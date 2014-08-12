@@ -39,7 +39,7 @@ case "$(package_tool)" in
     "yum")
         add_epel_repository $DIST
         update_repositories $dir
-        install_packages $dir "$PACKAGES pyOpenSSL"
+        install_packages $dir "$PACKAGES pyOpenSSL python-virtualenv"
         remove_epel_repository $DIST
         ;;
     *)
