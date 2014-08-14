@@ -87,3 +87,30 @@ EOF
     ;;
   esac
 }
+
+function add_ceph_rpm_repo() {
+  case "$dist" in
+    $supported_redhat_dists|$supported_centos_dists)
+       cat > ${dir}/etc/yum.repos.d/ceph.repo <<EOF
+[ceph-noarch]
+name=Ceph packages for $basearch
+baseurl=http://ceph.com/rpm/rhel$CODENAME_MAJOR/noarch/
+enabled=1
+gpgcheck=1
+type=rpm-md
+gpgkey=https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc
+
+[ceph]
+name=Ceph packages for $basearch
+baseurl=http://ceph.com/rpm/rhel$CODENAME_MAJOR/x86_64/
+enabled=1
+gpgcheck=1
+type=rpm-md
+gpgkey=https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc
+EOF
+    ;;
+    *)
+      fatal_error "OS ($OS) or Release not supported"
+    ;;
+  esac
+}
