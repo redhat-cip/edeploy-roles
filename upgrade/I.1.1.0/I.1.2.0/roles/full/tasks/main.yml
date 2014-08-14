@@ -2,7 +2,137 @@
 # file: roles/full/tasks/main.yml
 # this role is used when all services are running on the same node.
 
+# We have to reboot all nodes since there is an upgrade in the kernel.
+- name: migrate instances on another node
+  script: migrate.sh {{ ansible_hostname }} {{ os_username }} {{ os_tenant_name }} {{ os_password }} {{ os_auth_url }}
+  tags: before_config
+  ignore_errors: yes
+
+- name: stop services before upgrade
+  service: name={{ item }} state=stopped
+  tags: before_config
+  with_items:
+    - nova-compute
+    - libvirt-bin
+    - ceilometer-agent-compute
+    - neutron-plugin-openvswitch-agent
+    - ceilometer-alarm-evaluator
+    - ceilometer-alarm-notifier
+    - ceilometer-api
+    - ceilometer-collector
+    - cinder-api
+    - cinder-scheduler
+    - cinder-volume
+    - glance-api
+    - glance-registry
+    - heat-api
+    - heat-api-cfn
+    - heat-api-cloudwatch
+    - heat-engine
+    - keystone
+    - neutron-server
+    - nova-api
+    - nova-cert
+    - nova-conductor
+    - nova-consoleauth
+    - nova-scheduler
+    - nova-spicehtml5proxy
+    - apache2
+    - haproxy
+    - keepalived
+    - neutron-l3-agent
+    - neutron-lbaas-agent
+    - neutron-metering-agent
+    - neutron-dhcp-agent
+    - neutron-metadata-agent
+
 - name: edeploy upgrade
   edeploy: command=upgrade version=D7-{{ version }}
   tags: before_config
   when: ansible_distribution == 'Debian'
+
+- name: Wait for server to come up
+  local_action: wait_for host={{ ansible_fqdn }} port=22 delay=120 timeout=900 state=started
+  tags: before_config
+
+- name: ensure MySQL is running
+  service: name=mysql state=started
+  tags: before_config
+
+- name: ensure Load-balancing services are running
+  service: name={{ item }} state=started
+  with_items:
+    - haproxy
+    - keepalived
+  tags: before_config
+
+- name: update keystone database
+  command: keystone-manage db_sync
+  tags: before_config
+  when: inventory_hostname == groups['full'][-1]
+
+- name: update nova database
+  command: nova-manage db sync
+  tags: before_config
+  when: inventory_hostname == groups['full'][-1]
+
+- name: update glance database
+  command: glance-manage db_sync
+  tags: before_config
+  when: inventory_hostname == groups['full'][-1]
+
+- name: update cinder database
+  command: cinder-manage db sync
+  tags: before_config
+  when: inventory_hostname == groups['full'][-1]
+
+- name: update neutron database
+  command: neutron-db-manage --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade head
+  tags: before_config
+  when: inventory_hostname == groups['full'][-1]
+
+- name: update heat database
+  command: heat-manage --config-file /etc/heat/heat.conf db_sync
+  tags: before_config
+  when: inventory_hostname == groups['full'][-1]
+
+- name: restart some services after all db_sync
+  service: name={{ item }} state=restarted
+  with_items:
+    - libvirt-bin
+    - ceilometer-alarm-evaluator
+    - ceilometer-alarm-notifier
+    - ceilometer-api
+    - ceilometer-collector
+    - cinder-api
+    - cinder-scheduler
+    - cinder-volume
+    - glance-api
+    - glance-registry
+    - heat-api
+    - heat-api-cfn
+    - heat-api-cloudwatch
+    - heat-engine
+    - keystone
+    - neutron-server
+    - nova-api
+    - nova-cert
+    - nova-conductor
+    - nova-scheduler
+    - neutron-plugin-openvswitch-agent
+    - neutron-l3-agent
+    - neutron-metering-agent
+    - neutron-lbaas-agent
+    - neutron-dhcp-agent
+    - neutron-metadata-agent
+    - nova-compute
+  tags: before_config
+
+- name: restart ceilometer-agent-central managed by pacemaker
+  command: crm resource cleanup ceilometer-agent-central
+  tags: before_config
+  when: inventory_hostname == groups['full'][-1]
+
+- name: allow instance scheduling on migrated compute
+  command: nova-manage service enable --service nova-compute --host {{ ansible_hostname }}
+  tags: before_config
