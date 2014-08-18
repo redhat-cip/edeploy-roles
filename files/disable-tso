@@ -12,9 +12,14 @@
 
 case "$1" in
 start)
-        echo "Disabling TSO/GSO/GRO/UFO on QVB/QVO/QBR interfaces"
-        /sbin/ip monitor link | awk -F ': ' '/qvb|qvo|qbr/{system("ethtool --offload "$2 " tso off gso off tx off ufo off gro off")}'&
-        /bin/touch /tmp/disable-tso-lock
+        if [ -f /tmp/disable-tso-lock ]; then
+          /sbin/ip monitor link | awk -F ': ' '/qvb|qvo|qbr/{system("ethtool --offload "$2 " tso off gso off tx off ufo off gro off")}'&
+          /bin/touch /tmp/disable-tso-lock
+          echo "Disabling TSO/GSO/GRO/UFO on QVB/QVO/QBR interfaces"
+        else
+          "TSO script is already running or lock file has not been deleted."
+          exit 1
+        fi
 ;;
 stop)
         echo "Enabling TSO/GSO/GRO/UFO on QVB/QVO/QBR interfaces"
