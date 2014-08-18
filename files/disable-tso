@@ -16,15 +16,17 @@ start)
           "TSO script is already running or lock file has not been deleted."
           exit 1
         else
-          ((/sbin/ip monitor link | awk -F ': ' '/qvb|qvo|qbr/{system("ethtool --offload "$2 " tso off gso off tx off ufo off gro off")}'&) & echo $! > /var/run/disable-tso.pid &)
+          ip link | awk -F ': ' '/qvb|qvo|qbr/{system("ethtool --offload "$2 " tso off gso off tx off ufo off gro off")}'
+          ip monitor link | awk -F ': ' '/qvb|qvo|qbr/{system("ethtool --offload "$2 " tso off gso off tx off ufo off gro off")}'&
+          touch /var/run/disable-tso.pid
           echo "Disabling TSO/GSO/GRO/UFO on QVB/QVO/QBR interfaces"
         fi
 ;;
 stop)
         echo "Enabling TSO/GSO/GRO/UFO on QVB/QVO/QBR interfaces"
         if [ -f /var/run/disable-tso.pid ]; then
-          /usr/bin/kill -SIGTERM $(cat /var/run/disable-tso.pid)>&2
-          /bin/rm /var/run/disable-tso.pid
+          pkill -xf '/sbin/ip monitor link'>&2
+          rm /var/run/disable-tso.pid
         else
           "TSO script was not running or PID file is missing."
           exit 1
