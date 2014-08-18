@@ -23,8 +23,13 @@ start)
 ;;
 stop)
         echo "Enabling TSO/GSO/GRO/UFO on QVB/QVO/QBR interfaces"
-        /usr/bin/pkill -xf '/sbin/ip monitor link'>&2
-        /bin/rm /tmp/disable-tso-lock
+        if ps -e | grep '/sbin/ip monitor link'; then
+          /usr/bin/pkill -xf '/sbin/ip monitor link'>&2
+          /bin/rm /tmp/disable-tso-lock
+        else
+          "TSO script was not running."
+          exit 1
+        fi
 ;;
 *)
         echo "Usage: /etc/init.d/disable-tso {start|stop}"
