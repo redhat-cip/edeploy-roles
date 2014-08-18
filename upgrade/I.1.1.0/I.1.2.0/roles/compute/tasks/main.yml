@@ -1,7 +1,39 @@
 ---
 # file: roles/compute/tasks/main.yml
 
+# We have to reboot all nodes since there is an upgrade in the kernel.
+- name: migrate instances on another node
+  script: migrate.sh {{ ansible_hostname }} {{ os_username }} {{ os_tenant_name }} {{ os_password }} {{ os_auth_url }}
+  tags: before_config
+  ignore_errors: yes
+
+- name: stop services before upgrade
+  service: name={{ item }} state=stopped
+  tags: before_config
+  with_items:
+    - nova-compute
+    - libvirt-bin
+    - ceilometer-agent-compute
+    - neutron-plugin-openvswitch-agent
+
 - name: edeploy upgrade
   edeploy: command=upgrade version=D7-{{ version }}
   tags: before_config
   when: ansible_distribution == 'Debian'
+
+- name: Wait for server to come up
+  local_action: wait_for host={{ ansible_fqdn }} port=22 delay=120 timeout=900 state=started
+  tags: before_config
+
+- name: start services after upgrade
+  service: name={{ item }} state=started
+  tags: before_config
+  with_items:
+    - nova-compute
+    - libvirt-bin
+    - ceilometer-agent-compute
+    - neutron-plugin-openvswitch-agent
+
+- name: allow instance scheduling on migrated compute
+  command: nova-manage service enable --service nova-compute --host {{ ansible_hostname }}
+  tags: before_config
