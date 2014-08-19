@@ -484,6 +484,9 @@ EOF
         else
             #TODO: spice-html5 is not yet in 7
             EXTRA_RPMS="fence-agents-all mariadb-galera-server mariadb"
+            cp $SRC/files/spice-html5-0.1.4-1.el7.noarch.rpm ${dir}/tmp/
+            do_chroot ${dir} yum -y localinstall /tmp/spice-html5-0.1.4-1.el7.noarch.rpm
+
         fi
 
         install_packages_disabled $dir ${os_packages[$(package_type)]} $EXTRA_RPMS
