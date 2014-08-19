@@ -1,5 +1,10 @@
 # -*- shell-script -*-
 
+ORIG=${SDIR}/build
+SRC=$(cd $(dirname $0); pwd)
+
+. ${ORIG}/functions
+
 add_elasticsearch_repo() {
   case "$OS" in
     "Debian")
