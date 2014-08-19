@@ -1,10 +1,5 @@
 # -*- shell-script -*-
 
-ORIG=${SDIR}/build
-SRC=$(cd $(dirname $0); pwd)
-
-. ${ORIG}/functions
-
 add_elasticsearch_repo() {
   case "$OS" in
     "Debian")
@@ -94,8 +89,8 @@ EOF
 }
 
 function add_ceph_rpm_repo() {
-  case "$dist" in
-    $supported_redhat_dists|$supported_centos_dists)
+  case "$OS" in
+    "CentOS"|"RedHatEnterpriseServer")
        cat > ${dir}/etc/yum.repos.d/ceph.repo <<EOF
 [ceph-noarch]
 name=Ceph packages for $basearch
