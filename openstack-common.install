@@ -73,7 +73,7 @@ EOF
                 # for augeas
                 add_rh_cdn_repo $dir rhel-7-server-optional-rpms
             fi
-            install_packages $dir puppet facter hiera augeas
+            install_packages $dir puppet facter hiera augeas yum-plugin-priorities
             remove_puppet_repository $DIST
             ;;
         *)
