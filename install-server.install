@@ -195,12 +195,7 @@ sed -i -e 's/HTTP_PORT=8080/HTTP_PORT=8282/' -e 's/JENKINS_PORT="8080"/JENKINS_P
 # Log Collector #
 #################
 
-if [ $OS = Debian ]; then
-    $SRC/logcollector.install $dir $dir $version
-else
-  # TODO:
-  echo "Log Collector can't be build now on Red Hat / CentOS"
-fi
+$SRC/logcollector.install $dir $dir $version
 
 ####################
 # Monitoring Server#

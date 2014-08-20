@@ -28,7 +28,7 @@ ORIG=$(cd $(dirname $0); pwd)
 declare -A packages
 packages=(
     ["deb"]="elasticsearch openjdk-7-jdk td-agent git puppet facter hiera ntp ruby-dev build-essential apache2 libcurl4-gnutls-dev"
-    ["rpm"]="elasticsearch java-1.7.0-openjdk git puppet facter hiera ntp libcurl-openssl-devel ruby-devel httpd"
+    ["rpm"]="elasticsearch java-1.7.0-openjdk git puppet facter hiera ntp ruby-devel httpd"
 )
 
 install_ib_if_needed $ORIG $dir
@@ -45,10 +45,10 @@ case "$OS" in
     "CentOS"|"RedHatEnterpriseServer")
         case "$CODENAME_MAJOR" in
             6)
-              install_packages $dir td-agent
+              install_packages $dir td-agent libcurl-openssl-devel
             ;;
             7)
-              cp files/td-agent-2.0.3-0.el7.x86_64.rpm ${dir}/tmp/
+              cp $SRC/files/td-agent-2.0.3-0.el7.x86_64.rpm ${dir}/tmp/
               do_chroot ${dir} yum -y localinstall /tmp/td-agent-2.0.3-0.el7.x86_64.rpm
             ;;
         esac
