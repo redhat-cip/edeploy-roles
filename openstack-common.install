@@ -92,7 +92,7 @@ os_install_packages () {
 	"Debian" | "Ubuntu")
 	    packages="$softprop puppet augeas-tools iptables build-essential"
 	    install_packages $dir "$packages"
-       	    do_chroot ${dir} sed -e 's/START=yes/START=no/' -i /etc/default/puppet
+	    do_chroot ${dir} sed -e 's/START=yes/START=no/' -i /etc/default/puppet
 	    do_chroot ${dir} sed -e '/templatedir/d' -i /etc/puppet/puppet.conf
 	    ;;
     esac
