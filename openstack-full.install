@@ -173,6 +173,8 @@ os_packages=(
     ["deb"]="\
         apache2 \
         build-essential \
+        ceph \
+        ceph-mds \
         ceilometer-agent-central \
         ceilometer-alarm-evaluator \
         ceilometer-alarm-notifier \
