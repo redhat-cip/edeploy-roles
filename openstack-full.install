@@ -438,6 +438,17 @@ case "$OS" in
               ;;
         esac
 
+        # Install custom package for EL7 since it hasn't been released yet
+        case "$CODENAME_MAJOR" in
+            6)
+              install_packages $dir td-agent libcurl-openssl-devel
+            ;;
+            7)
+              cp $SRC/files/td-agent-2.0.3-0.el7.x86_64.rpm ${dir}/tmp/
+              do_chroot ${dir} yum -y localinstall /tmp/td-agent-2.0.3-0.el7.x86_64.rpm
+            ;;
+        esac
+
         install_packages_disabled $dir ${monitoring_packages[$(package_type)]}
 
         # Install ICE (Ceph for Enterprise) if possible, otherwise fall back to ceph.com
