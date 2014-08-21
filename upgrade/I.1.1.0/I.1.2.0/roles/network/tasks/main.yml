@@ -1,6 +1,17 @@
 ---
 # file: roles/network/tasks/main.yml
 
+# We have to reboot all nodes since there is an upgrade in the kernel.
+# So we have to migrate all routers of network nodes in migration to other L3 agents
+# to avoid downtime.
+- name: stop neutron-l3-agent before routers migration
+  service: name=neutron-l3-agent state=stopped
+  tags: before_config
+
+- name: migrate routers on other L3 agent(s)
+  script: migrate_routers.sh {{ os_username }} {{ os_tenant_name }} {{ os_password }} {{ os_auth_url }}
+  tags: before_config
+
 - name: stop services before upgrade
   service: name={{ item }} state=stopped
   tags: before_config
