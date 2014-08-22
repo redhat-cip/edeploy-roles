@@ -16,7 +16,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-# Script that jenkins is up and running
+# Script that synchronise downstream to upstream eDeploy server.
 
 set -e
 set -x
