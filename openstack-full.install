@@ -124,14 +124,15 @@ EOF
      add_percona_deb_repo
     ;;
     "CentOS"|"RedHatEnterpriseServer")
-        cat > ${dir}/etc/yum.repos.d/mongodb.repo <<EOF
+        # mongodb do not support systemd correctly so don't use it for EL7
+        if [ "$CODENAME_MAJOR" == "6" ]; then
+            cat > ${dir}/etc/yum.repos.d/mongodb.repo <<EOF
 [mongodb]
 name=MongoDB Repository
 baseurl=http://downloads-distro.mongodb.org/repo/redhat/os/x86_64/
 gpgcheck=0
 enabled=1
 EOF
-        if [ "$CODENAME_MAJOR" == "6" ]; then
             cat > ${dir}/etc/yum.repos.d/mariadb.repo <<EOF
 # MariaDB 5.5 RedHat repository list - created 2013-12-17 16:18 UTC
 # http://mariadb.org/mariadb/repositories/
@@ -263,8 +264,6 @@ os_packages=(
         libffi-devel \
         lsof \
         memcached \
-        mongodb-org \
-        mongodb-org-server \
         nfs-utils \
         novnc \
         ntp \
@@ -422,6 +421,9 @@ case "$OS" in
 
               # pacemaker is in RHEL Server High Availability (v.7 for 64-bit x86_64)
               add_rh_cdn_repo $dir rhel-ha-for-rhel-7-server-rpms
+
+              # mongodb-server is in Red Hat Software Collections
+              add_rh_cdn_repo $dir rhel-server-rhscl-7-rpms
               ;;
         esac
 
@@ -493,10 +495,10 @@ EOF
         # TODO(EmilienM) no support for logging packages:
         if [ "$CODENAME_MAJOR" == "6" ]; then
             install_packages_disabled $dir ${logging_packages[$(package_type)]}
-            EXTRA_RPMS="fence-agents cman spice-html5 MariaDB-Galera-server"
+            EXTRA_RPMS="fence-agents cman spice-html5 MariaDB-Galera-server mongodb-org mongodb-org-server"
         else
             #TODO: spice-html5 is not yet in 7
-            EXTRA_RPMS="fence-agents-all mariadb-galera-server mariadb"
+            EXTRA_RPMS="fence-agents-all mariadb-galera-server mariadb mongodb"
             cp $SRC/files/spice-html5-0.1.4-1.el7.noarch.rpm ${dir}/tmp/
             do_chroot ${dir} yum -y localinstall /tmp/spice-html5-0.1.4-1.el7.noarch.rpm
 
