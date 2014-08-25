@@ -103,8 +103,7 @@ Listen 8300
     <Directory "/opt/kibana3/src">
       Options Indexes FollowSymLinks MultiViews
       AllowOverride None
-      Order allow,deny
-      Allow from all
+      Require all granted
     </Directory>
     ## Logging
     ErrorLog "/var/log/httpd/kibana3_error.log"
