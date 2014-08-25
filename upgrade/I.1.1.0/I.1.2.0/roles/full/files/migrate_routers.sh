@@ -31,6 +31,9 @@ export OS_TENANT_NAME=$2
 export OS_PASSWORD=$3
 export OS_AUTH_URL=$4
 
+wget https://raw.githubusercontent.com/stackforge/cookbook-openstack-network/7ef149c5c7d2e35f680b262524165bf16f6d0591/files/default/neutron-ha-tool.py -O $DIR/neutron-ha-tool.py
+chmod +x $DIR/neutron-ha-tool.py
+
 if pgrep neutron-l3-agent > /dev/null; then
     echo "L3 Agent is running running, migration can't happen on this node."
     exit 1
