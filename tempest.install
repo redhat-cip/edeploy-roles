@@ -34,7 +34,7 @@ install_ib_if_needed $ORIG $dir
 case "$(package_tool)" in
     "apt")
         update_repositories $dir
-        install_packages $dir "$PACKAGES python-openssl"
+        install_packages $dir "$PACKAGES python-openssl libxml2-dev libxslt-dev libpq-dev python-dev python-virtualenv libffi-dev"
         ;;
     "yum")
         add_epel_repository $DIST
