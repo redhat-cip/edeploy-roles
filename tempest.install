@@ -52,6 +52,8 @@ esac
 #
 mkdir -p ${dir}/opt/
 git clone 'https://github.com/enovance/tempest-report' ${dir}/opt/tempest-report
+git clone 'https://github.com/openstack/tempest' ${dir}/opt/tempest
 do_chroot ${dir} bash -c 'cd /opt/tempest-report; python ./setup.py install --single-version-externally-managed --root /'
+do_chroot ${dir} bash -c 'cd /opt/tempest; python ./setup.py install --single-version-externally-managed --root /'
 
 # tempest.install ends here
