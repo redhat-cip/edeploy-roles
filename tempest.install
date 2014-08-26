@@ -52,10 +52,6 @@ esac
 #
 mkdir -p ${dir}/opt/
 git clone 'https://github.com/enovance/tempest-report' ${dir}/opt/tempest-report
-
-# don't use pip to avoid any conflict with packages managed by packaging tools (apt or yum)
-# do_chroot ${dir} pip install /opt/tempest-report -r /opt/tempest-report/requirements.txt
-# do_chroot ${dir} easy_install -U setuptools
-# do_chroot ${dir} bash -c 'cd /opt/tempest-report; python ./setup.py install'
+do_chroot ${dir} bash -c 'cd /opt/tempest-report; python ./setup.py install --single-version-externally-managed --root /'
 
 # tempest.install ends here
