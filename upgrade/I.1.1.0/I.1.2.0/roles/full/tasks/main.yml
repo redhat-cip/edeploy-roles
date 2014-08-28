@@ -24,10 +24,8 @@
   service: name={{ item }} state=stopped
   tags: before_config
   with_items:
-    - nova-compute
-    - libvirt-bin
+    - apache2
     - ceilometer-agent-compute
-    - neutron-plugin-openvswitch-agent
     - ceilometer-alarm-evaluator
     - ceilometer-alarm-notifier
     - ceilometer-api
@@ -37,26 +35,30 @@
     - cinder-volume
     - glance-api
     - glance-registry
+    - haproxy
     - heat-api
     - heat-api-cfn
     - heat-api-cloudwatch
     - heat-engine
+    - keepalived
     - keystone
+    - libvirt-bin
+    - mysql
+    - neutron-dhcp-agent
+    - neutron-l3-agent
+    - neutron-lbaas-agent
+    - neutron-metadata-agent
+    - neutron-metering-agent
+    - neutron-plugin-openvswitch-agent
     - neutron-server
     - nova-api
     - nova-cert
+    - nova-compute
     - nova-conductor
     - nova-consoleauth
     - nova-scheduler
     - nova-spicehtml5proxy
-    - apache2
-    - haproxy
-    - keepalived
-    - neutron-l3-agent
-    - neutron-lbaas-agent
-    - neutron-metering-agent
-    - neutron-dhcp-agent
-    - neutron-metadata-agent
+    - rabbitmq-server
 
 - name: edeploy upgrade
   edeploy: command=upgrade version=D7-{{ version }}

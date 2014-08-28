@@ -5,7 +5,7 @@
   service: name={{ item }} state=stopped
   tags: before_config
   with_items:
-    - neutron-plugin-openvswitch-agent
+    - apache2
     - ceilometer-alarm-evaluator
     - ceilometer-alarm-notifier
     - ceilometer-api
@@ -20,6 +20,8 @@
     - heat-api-cloudwatch
     - heat-engine
     - keystone
+    - mysql
+    - neutron-plugin-openvswitch-agent
     - neutron-server
     - nova-api
     - nova-cert
@@ -27,7 +29,7 @@
     - nova-consoleauth
     - nova-scheduler
     - nova-spicehtml5proxy
-    - apache2
+    - rabbitmq-server
 
 - name: edeploy upgrade
   edeploy: command=upgrade version=D7-{{ version }}
