@@ -20,7 +20,7 @@
 set -e
 set -x
 
-COMPUTE=$(hostname -f)
+COMPUTE=$1
 export OS_USERNAME=$2
 export OS_TENANT_NAME=$3
 export OS_PASSWORD=$4

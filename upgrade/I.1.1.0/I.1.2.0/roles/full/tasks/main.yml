@@ -6,7 +6,7 @@
 # So we have to migrate all instances of compute nodes in migration to other computes 
 # to avoid downtime.
 - name: migrate instances on another node
-  script: migrate_instances.sh {{ os_username }} {{ os_tenant_name }} {{ os_password }} {{ os_auth_url }}
+  script: migrate_instances.sh {{ ansible_hostname }} {{ os_username }} {{ os_tenant_name }} {{ os_password }} {{ os_auth_url }}
   tags: before_config
   ignore_errors: yes
 
