@@ -27,8 +27,8 @@ ORIG=$(cd $(dirname $0); pwd)
 
 declare -A packages
 packages=(
-    ["deb"]="sensu=0.12.6-5 uchiwa redis-server rabbitmq-server"
-    ["rpm"]="sensu-0.12.6-5 uchiwa redis rabbitmq-server"
+    ["deb"]="redis-server rabbitmq-server"
+    ["rpm"]="redis rabbitmq-server"
 )
 
 install_ib_if_needed $ORIG $dir
@@ -48,5 +48,24 @@ update_repositories $dir
 
 # Install packages
 install_packages_disabled $dir ${packages[$(package_type)]}
+
+case "$OS" in
+    "Debian" | "Ubuntu")
+      install_packages $dir sensu uchiwa
+    ;;
+    "CentOS"|"RedHatEnterpriseServer")
+        case "$CODENAME_MAJOR" in
+            6)
+              install_packages $dir sensu uchiwa
+            ;;
+            7)
+              cp $SRC/files/sensu-0.13.1-1.x86_64.rpm ${dir}/tmp/
+              do_chroot ${dir} yum -y localinstall /tmp/sensu-0.13.1-1.x86_64.rpm
+              cp $SRC/files/uchiwa-0.2.1-1.x86_64.rpm ${dir}/tmp/
+              do_chroot ${dir} yum -y localinstall /tmp/uchiwa-0.2.1-1.x86_64.rpm
+            ;;
+        esac
+    ;;
+esac
 
 clear_packages_cache $dir
