@@ -11,6 +11,7 @@ os_username: admin
 os_tenant_name: admin
 os_password: secrete
 os_auth_url: "http://controller.enovance.com:5000/v2.0"
+galera_vip: mysql.enovance.com
 
 # Upstream eDeploy server
 edeploy_master: edeploy.enovance.com

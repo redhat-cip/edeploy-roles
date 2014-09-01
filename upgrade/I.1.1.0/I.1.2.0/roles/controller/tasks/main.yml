@@ -44,6 +44,10 @@
   service: name=mysql state=started
   tags: before_config
 
+- name: Wait for Galera VIP to come up
+  local_action: wait_for host={{ galera_vip }} port=3306 delay=120 timeout=900 state=started
+  tags: before_config
+
 - name: update keystone database
   command: keystone-manage db_sync
   tags: before_config
