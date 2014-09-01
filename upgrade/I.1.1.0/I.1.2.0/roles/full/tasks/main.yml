@@ -8,7 +8,6 @@
 - name: migrate instances on another node
   script: migrate_instances.sh {{ os_username }} {{ os_tenant_name }} {{ os_password }} {{ os_auth_url }}
   tags: before_config
-  ignore_errors: yes
 
 # So we have to migrate all routers of network nodes in migration to other L3 agents
 # to avoid downtime.
