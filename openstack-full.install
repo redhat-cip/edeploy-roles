@@ -74,7 +74,7 @@ case "$OS" in
     "Debian")
      do_chroot $dir apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
      cat > ${dir}/etc/apt/sources.list.d/maria.list <<EOF
-deb http://ftp.igh.cnrs.fr/pub/mariadb/repo/5.5/debian $DIST main
+deb http://nwps.ws/pub/mariadb/repo/5.5/debian $DIST main
 EOF
      do_chroot $dir apt-key adv --keyserver keyserver.ubuntu.com --recv 0x9ECBEC467F0CEB10
      cat > ${dir}/etc/apt/sources.list.d/mongodb.list <<EOF
