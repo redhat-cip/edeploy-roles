@@ -21,10 +21,10 @@ set -e
 set -x
 
 COMPUTE=$(hostname -f)
-export OS_USERNAME=$2
-export OS_TENANT_NAME=$3
-export OS_PASSWORD=$4
-export OS_AUTH_URL=$5
+export OS_USERNAME=$1
+export OS_TENANT_NAME=$2
+export OS_PASSWORD=$3
+export OS_AUTH_URL=$4
 
 if [ -z "$COMPUTE" ]; then
   echo "You have to provide the compute hostname as a parameter."
