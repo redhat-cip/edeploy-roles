@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 ### BEGIN INIT INFO
 # Provides:          disable-tso
 # Default-Start:     2 3 4 5
@@ -10,14 +10,45 @@
 # Authors: Emilien Macchi <emilien.macchi@enovance.com>
 #          Sylvain Afchain <sylvain.afchain@enovance.com>
 
+vm_netlink() {
+  IF=`echo $1 | cut -d ':' -f 1`
+  ethtool --offload $IF tso off gso off tx off ufo off gro off
+}
+
+router_netlink() {
+  IF=`echo $1 | cut -d ':' -f 1`
+  ethtool --offload $IF tso off gso off tx off ufo off gro off
+  ip netns | grep qrouter | while read NS; do
+    ip netns exec $NS ethtool --offload $IF tso off gso off tx off ufo off gro off
+  done
+}
+
+ip_monitor() {
+  ip monitor link | while read LINE; do
+    case $LINE in
+      Deleted*)
+        ;;
+      *qvo*|*qvb*|*qbr*)
+        vm_netlink $LINE
+        ;;
+       *qr*)
+        router_netlink $LINE
+        ;;
+    esac
+  done
+}	
+
 case "$1" in
 start)
         if [ -f /var/run/disable-tso.pid ]; then
           "TSO script is already running or lock file has not been deleted."
           exit 1
         else
+          # These interfaces survive to reboot, so we need to ensure that TSO is disabled after reboot.
           ip link | awk -F ': ' '/qvb|qvo|qbr/{system("ethtool --offload "$2 " tso off gso off tx off ufo off gro off")}'
-          ip monitor link | awk -F ': ' '/qvb|qvo|qbr/{system("ethtool --offload "$2 " tso off gso off tx off ufo off gro off")}'&
+          # This command manages the TSO disabling on the fly.
+          # For router netlinks, we don't need to run `ip link` at boot because namespaces don't survive to reboot.
+          ip_monitor &
           touch /var/run/disable-tso.pid
           echo "Disabling TSO/GSO/GRO/UFO on QVB/QVO/QBR interfaces"
         fi
