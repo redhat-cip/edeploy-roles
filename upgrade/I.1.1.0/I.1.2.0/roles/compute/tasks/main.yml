@@ -37,5 +37,5 @@
     - neutron-plugin-openvswitch-agent
 
 - name: allow instance scheduling on migrated compute
-  command: nova-manage service enable --service nova-compute --host {{ ansible_hostname }}
+  command: nova-manage service enable --service nova-compute --host {{ ansible_fqdn }}
   tags: before_config
