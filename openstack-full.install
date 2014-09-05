@@ -298,7 +298,7 @@ os_packages=(
         openstack-swift-container \
         openstack-swift-object \
         openstack-swift-proxy \
-        openvswitch-controller \
+        openvswitch \
         pacemaker \
         pcs \
         python-cinderclient \
