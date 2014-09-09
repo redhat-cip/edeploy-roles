@@ -517,6 +517,12 @@ esac
 # add galera-status script to validate MySQL Galera cluster sanity
 cp $SRC/files/galera-status $dir/usr/sbin
 
+# Temporary patch on spice-hml5 while the it's mainstream
+# http://www.spinics.net/lists/spice-devel/msg08075.html
+cd $dir/usr/share/spice-html5
+patch -p0 < $SRC/files/spice_auto.html.patch
+cd -
+
 clear_packages_cache $dir
 rm -rf $dir/tmp/openstack-monitoring
 

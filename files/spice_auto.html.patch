@@ -1,0 +1,12 @@
+--- spice_auto.html.orig	2014-09-09 14:23:32.259119496 -0400
++++ spice_auto.html	2014-09-09 14:23:13.647120325 -0400
+@@ -99,6 +99,9 @@
+                     }
+                 }
+                 port = spice_query_var('port', default_port);
++                if (window.location.protocol == 'https:') {
++                    scheme = "wss://";
++                }
+ 
+                 // If a token variable is passed in, set the parameter in a cookie.
+                 // This is used by nova-spiceproxy.
