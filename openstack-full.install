@@ -395,6 +395,8 @@ case "$OS" in
         echo "" > $dir/etc/nova/nova-compute.conf
         # add init script to disable TSO/GSO/GRO
         cp $SRC/files/disable-tso $dir/etc/init.d/
+        #TODO(EmilienM) While https://github.com/puppetlabs/facter/pull/785 is merged
+        cp $SRC/files/vtx.rb ${dir}/usr/lib/ruby/vendor_ruby/facter
     ;;
     "RedHatEnterpriseServer")
         case "$CODENAME_MAJOR" in
@@ -501,6 +503,9 @@ EOF
             EXTRA_RPMS="fence-agents-all mariadb-galera-server mariadb mongodb mongodb-server"
             cp $SRC/files/spice-html5-0.1.4-1.el7.noarch.rpm ${dir}/tmp/
             do_chroot ${dir} yum -y localinstall /tmp/spice-html5-0.1.4-1.el7.noarch.rpm
+
+            #TODO(EmilienM) While https://github.com/puppetlabs/facter/pull/785 is merged
+            cp $SRC/files/vtx.rb ${dir}/usr/share/ruby/vendor_ruby/facter
 
         fi
 
