@@ -11,12 +11,12 @@
 #          Sylvain Afchain <sylvain.afchain@enovance.com>
 
 vm_netlink() {
-  IF=`echo $1 | cut -d ':' -f 1`
+  IF=`echo $1 | cut -d ':' -f 2`
   ethtool --offload $IF tso off gso off tx off ufo off gro off
 }
 
 router_netlink() {
-  IF=`echo $1 | cut -d ':' -f 1`
+  IF=`echo $1 | cut -d ':' -f 2`
   ethtool --offload $IF tso off gso off tx off ufo off gro off
   ip netns | grep qrouter | while read NS; do
     ip netns exec $NS ethtool --offload $IF tso off gso off tx off ufo off gro off
