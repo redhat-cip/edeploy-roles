@@ -507,7 +507,7 @@ EOF
         install_packages_disabled $dir ${os_packages[$(package_type)]} $EXTRA_RPMS
         remove_epel_repository $DIST
         do_chroot $dir chkconfig puppet on
-        cp -pv openstack-monitoring/scripts/*/* $dir/usr/lib64/nagios/plugins
+        cp -prv openstack-monitoring/scripts/*/* $dir/usr/lib64/nagios/plugins
     ;;
     *)
     fatal_error "OS or Release not supported"
