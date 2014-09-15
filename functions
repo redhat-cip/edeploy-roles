@@ -66,6 +66,8 @@ get_openstack_repository() {
         return 1
     ;;
   esac
+
+  update_repositories $dir
 }
 
 PUPPET_RELEASE=$CODENAME_MAJOR-10
@@ -85,6 +87,8 @@ add_puppet_repository() {
             install_packages ${dir} http://yum.puppetlabs.com/el/$CODENAME_MAJOR/products/x86_64/puppetlabs-release-$PUPPET_RELEASE.noarch.rpm
 	    ;;
     esac
+
+    update_repositories $dir
 }
 
 remove_puppet_repository() {
