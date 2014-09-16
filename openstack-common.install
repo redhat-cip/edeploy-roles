@@ -47,6 +47,7 @@ prepare_packages () {
 deb $repository ${RELEASE}-backports main
 EOF
             get_openstack_repository $DIST $dir $OS_VERS > ${dir}/etc/apt/sources.list.d/openstack-$RELEASE-$OS_VERS.list
+            update_repositories $dir
             install_packages $dir ntpstat
             ;;
         "Ubuntu")

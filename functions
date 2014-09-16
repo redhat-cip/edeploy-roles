@@ -32,17 +32,14 @@ get_openstack_repository() {
     $supported_debian_dists)
         pin_repository $dist $dir 'cloud.pkgs.enovance.com' 1001 stable $openstack_release main
         echo "deb http://cloud.pkgs.enovance.com/${RELEASE}-${openstack_release}/ ${openstack_release} main"
-        update_repositories $dir
         return 0
     ;;
     $supported_ubuntu_dists)
         pin_repository $dist $dir 'cloud.pkgs.enovance.com' 1001 stable $openstack_release main
         echo "deb http://cloud.pkgs.enovance.com/${RELEASE}-${openstack_release}/ ${openstack_release} main"
-        update_repositories $dir
         return 0
     ;;
     $supported_redhat_dists)
-        update_repositories $dir
         return 0
     ;;
     $supported_centos_dists)
@@ -63,7 +60,6 @@ get_openstack_repository() {
             ;;
         esac
         echo "http://rdo.fedorapeople.org/openstack-${openstack_release}/epel-$CODENAME_MAJOR/rdo-release-${openstack_release}-${current_rpm_release}.noarch.rpm"
-        update_repositories $dir
         return 0
     ;;
     *)
@@ -89,8 +85,6 @@ add_puppet_repository() {
             install_packages ${dir} http://yum.puppetlabs.com/el/$CODENAME_MAJOR/products/x86_64/puppetlabs-release-$PUPPET_RELEASE.noarch.rpm
 	    ;;
     esac
-
-    update_repositories $dir
 }
 
 remove_puppet_repository() {
