@@ -391,7 +391,7 @@ case "$OS" in
     "Ubuntu")
         install_packages_disabled $dir ${os_packages[$(package_type)]}
         install_packages_disabled $dir ${monitoring_packages[$(package_type)]}
-        cp -pv openstack-monitoring/scripts/*/* $dir/usr/lib/nagios/plugins
+        cp -pvr openstack-monitoring/scripts/* $dir/usr/lib/nagios/plugins
         echo "" > $dir/etc/nova/nova-compute.conf
         # add init script to disable TSO/GSO/GRO
         cp $SRC/files/disable-tso $dir/etc/init.d/
@@ -507,7 +507,7 @@ EOF
         install_packages_disabled $dir ${os_packages[$(package_type)]} $EXTRA_RPMS
         remove_epel_repository $DIST
         do_chroot $dir chkconfig puppet on
-        cp -pv openstack-monitoring/scripts/*/*.{py,sh} $dir/usr/lib64/nagios/plugins
+        cp -pvr openstack-monitoring/scripts/* $dir/usr/lib64/nagios/plugins
     ;;
     *)
     fatal_error "OS or Release not supported"
