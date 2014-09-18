@@ -396,7 +396,6 @@ case "$OS" in
         cp -pvr openstack-monitoring/scripts/* $dir/usr/lib/nagios/plugins
         echo "" > $dir/etc/nova/nova-compute.conf
         # add init script to disable TSO/GSO/GRO
-        cp $SRC/files/disable-tso $dir/etc/init.d/
     ;;
     "RedHatEnterpriseServer")
         case "$CODENAME_MAJOR" in
@@ -527,5 +526,6 @@ cd -
 
 clear_packages_cache $dir
 rm -rf $dir/tmp/openstack-monitoring
+cp $SRC/files/disable-tso $dir/etc/init.d/
 
 # openstack-full.install ends here
