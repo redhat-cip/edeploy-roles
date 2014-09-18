@@ -230,6 +230,7 @@ os_packages=(
         pm-utils \
         python-argparse \
         python-dev \
+        python-psutil \
         python-swiftclient \
         python-troveclient \
         python-trove \
@@ -307,6 +308,7 @@ os_packages=(
         python-lesscpy \
         python-memcached \
         python-pip \
+        python-psutil \
         python-swiftclient \
         rabbitmq-server \
         rubygem-json \
