@@ -38,7 +38,7 @@ ip_monitor() {
 case "$1" in
 start)
         if [ -f /var/run/disable-tso.pid ]; then
-          "TSO script is already running or lock file has not been deleted."
+          echo "TSO script is already running or lock file has not been deleted."
           exit 1
         else
           # These interfaces survive to reboot, so we need to ensure that TSO is disabled after reboot.
@@ -56,7 +56,7 @@ stop)
           pkill -xf '/sbin/ip monitor link'>&2
           rm /var/run/disable-tso.pid
         else
-          "TSO script was not running or PID file is missing."
+          echo "TSO script was not running or PID file is missing."
           exit 1
         fi
 ;;
