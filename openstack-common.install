@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (C) 2013 eNovance SAS <licensing@enovance.com>
+# Copyright (C) 2013-2014 eNovance SAS <licensing@enovance.com>
 #
 # Author: Emilien Macchi <emilien.macchi@enovance.com>
 #
@@ -102,6 +102,46 @@ os_install_packages () {
     do_chroot ${dir} rm -rf /var/lib/puppet/ssl/* || true
 }
 
+install_monitoring() {
+    declare -A monitoring_packages
+    # TODO: when nagios-plugins-all is in el7, add it in rpm list
+    monitoring_packages=( 
+        ["deb"]="
+        bc \
+        libjson-perl \
+        libnagios-plugin-perl \
+        nagios-plugin-check-multi \
+        nagios-plugins-basic \
+        nagios-plugins-standard \
+        percona-nagios-plugins
+"
+
+        ["rpm"]="
+        bc \
+        nagios-plugins
+")
+
+    cd $dir/tmp
+    git clone https://github.com/enovance/openstack-monitoring.git
+
+    add_epel_repository $DIST
+    install_packages_disabled $dir python-psutil ${monitoring_packages[$(package_type)]}
+    remove_epel_repository $DIST
+    
+    case "$OS" in
+        "Debian" | "Ubuntu")
+            cp -pvr openstack-monitoring/scripts/* $dir/usr/lib/nagios/plugins
+            ;;
+        "CentOS"|"RedHatEnterpriseServer")
+            cp -pvr openstack-monitoring/scripts/* $dir/usr/lib64/nagios/plugins
+            ;;
+        *)
+            fatal_error "OS or Release not supported"
+            ;;
+    esac
+    rm -rf $dir/tmp/openstack-monitoring
+}
+
 prepare_packages
 os_install_packages
-
+install_monitoring
