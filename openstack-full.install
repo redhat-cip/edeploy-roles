@@ -57,19 +57,6 @@ function build_dkms() {
     do_chroot $dir dkms install -m "$name" -v "$version" -k "$kernel"
 }
 
-function add_percona_deb_repo() {
-    do_chroot ${dir} apt-key adv --keyserver keys.gnupg.net --recv-keys 1C4CBDCDCD2EFD2A
-    cat > ${dir}/etc/apt/sources.list.d/percona.list <<EOF
-deb http://repo.percona.com/apt wheezy main
-EOF
-    cat > ${dir}/etc/apt/preferences.d/percona-pin.pref << EOF
-Explanation: : percona-pin
-Package: *
-Pin: origin "repo.percona.com"
-Pin-Priority: 100
-EOF
-}
-
 case "$OS" in
     "Debian")
      do_chroot $dir apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
@@ -105,7 +92,6 @@ Pin: origin ftp.igh.cnrs.fr
 Pin-Priority: 900
 EOF
      add_rabbitmq_repo
-     add_percona_deb_repo
     ;;
     "Ubuntu")
      do_chroot $dir apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
@@ -121,7 +107,6 @@ EOF
 deb http://eu.ceph.com/debian-firefly $DIST main
 EOF
      add_rabbitmq_repo
-     add_percona_deb_repo
     ;;
     "CentOS"|"RedHatEnterpriseServer")
         # mongodb do not support systemd correctly so don't use it for EL7

@@ -35,6 +35,24 @@ fi
 
 install_ib_if_needed $ORIG $dir
 
+function add_percona_deb_repo() {
+    case "$OS" in
+        "Debian" | "Ubuntu")
+            do_chroot ${dir} apt-key adv --keyserver keys.gnupg.net --recv-keys 1C4CBDCDCD2EFD2A
+            cat > ${dir}/etc/apt/sources.list.d/percona.list <<EOF
+deb http://repo.percona.com/apt wheezy main
+EOF
+            cat > ${dir}/etc/apt/preferences.d/percona-pin.pref << EOF
+Explanation: : percona-pin
+Package: *
+Pin: origin "repo.percona.com"
+Pin-Priority: 100
+EOF
+            update_repositories $dir
+            ;;
+    esac
+}
+
 prepare_packages () {
     case "$OS" in
         "Debian")
@@ -124,6 +142,7 @@ install_monitoring() {
     cd $dir/tmp
     git clone https://github.com/enovance/openstack-monitoring.git
 
+    add_percona_deb_repo
     add_epel_repository $DIST
     install_packages_disabled $dir python-psutil ${monitoring_packages[$(package_type)]}
     remove_epel_repository $DIST
