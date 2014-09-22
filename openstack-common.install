@@ -117,7 +117,7 @@ os_install_packages () {
 	    ;;
     esac
 
-    do_chroot ${dir} rm -rf /var/lib/puppet/ssl/* || true
+    do_chroot ${dir} sed 's/ - puppet/#- puppet/g' /etc/cloud/cloud.cfg
 }
 
 install_monitoring() {
