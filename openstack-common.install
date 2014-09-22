@@ -117,7 +117,7 @@ os_install_packages () {
 	    ;;
     esac
 
-    do_chroot ${dir} sed 's/ - puppet/#- puppet/g' /etc/cloud/cloud.cfg
+    do_chroot ${dir} sed -e 's/ - puppet/#- puppet/g' -i /etc/cloud/cloud.cfg
 }
 
 install_monitoring() {
