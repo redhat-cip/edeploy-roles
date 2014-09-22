@@ -77,7 +77,7 @@ EOF
             ;;
         "CentOS")
             add_puppet_repository $DIST
-            install_packages $dir puppet
+            install_packages_disabled $dir puppet
             remove_puppet_repository $DIST
             ;;
          "RedHatEnterpriseServer")
@@ -93,7 +93,8 @@ EOF
                 # for augeas
                 add_rh_cdn_repo $dir rhel-7-server-optional-rpms
             fi
-            install_packages $dir puppet facter hiera augeas yum-plugin-priorities
+            install_packages_disabled $dir puppet
+            install_packages $dir facter hiera augeas yum-plugin-priorities
             remove_puppet_repository $DIST
             ;;
         *)
@@ -110,7 +111,8 @@ os_install_packages () {
 	    softprop=python-software-properties
             ;;&
 	"Debian" | "Ubuntu")
-	    packages="$softprop puppet augeas-tools iptables build-essential"
+	    packages="$softprop augeas-tools iptables build-essential"
+	    install_packages_disabled $dir puppet
 	    install_packages $dir "$packages"
 	    do_chroot ${dir} sed -e 's/START=yes/START=no/' -i /etc/default/puppet
 	    do_chroot ${dir} sed -e '/templatedir/d' -i /etc/puppet/puppet.conf
