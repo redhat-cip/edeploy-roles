@@ -65,7 +65,7 @@ case "$OS" in
         esac
         add_epel_repository $DIST
         add_rh_cdn_repo $dir rhel-7-server-optional-rpms
-        install_packages $dir make rubygems $RAKE
+        install_packages $dir make rubygems $RAKE numpy
         remove_epel_repository $DIST
 	;;
     "CentOS")
@@ -78,7 +78,7 @@ case "$OS" in
                 ;;
         esac
         add_epel_repository $DIST
-        install_packages $dir make rubygems $RAKE
+        install_packages $dir make rubygems $RAKE numpy
         remove_epel_repository $DIST
 	;;
     *)
