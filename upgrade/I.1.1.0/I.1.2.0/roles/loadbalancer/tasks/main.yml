@@ -1,7 +1,7 @@
 ---
 # file: roles/loadbalancer/tasks/main.yml
 
-- name: ensure Load-balancing services are not running to trigger a failoverg
+- name: ensure Load-balancing services are not running to trigger a failover
   service: name={{ item }} state=stopped
   with_items:
     - haproxy
@@ -14,12 +14,8 @@
   tags: before_config
   when: ansible_distribution == 'Debian'
 
-- name: Wait for server to come up
-  local_action: wait_for host={{ ansible_fqdn }} port=22 delay=120 timeout=900 state=started
-  tags: before_config
-
-- name: ensure Load-balancing services are running
-  service: name={{ item }} state=started
+- name: restart Load-balancing services
+  service: name={{ item }} state=restarted
   with_items:
     - haproxy
     - keepalived

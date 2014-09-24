@@ -2,81 +2,20 @@
 # file: roles/full/tasks/main.yml
 # this role is used when all services are running on the same node.
 
-# We have to reboot all nodes since there is an upgrade in the kernel.
-# So we have to migrate all instances of compute nodes in migration to other computes 
-# to avoid downtime.
-- name: migrate instances on another node
-  script: migrate_instances.sh {{ os_username }} {{ os_tenant_name }} {{ os_password }} {{ os_auth_url }}
-  tags: before_config
-
-# So we have to migrate all routers of network nodes in migration to other L3 agents
-# to avoid downtime.
-- name: stop neutron-l3-agent before routers migration
-  service: name=neutron-l3-agent state=stopped
-  tags: before_config
-
-- name: migrate routers on other L3 agent(s)
-  script: migrate_routers.sh {{ os_username }} {{ os_tenant_name }} {{ os_password }} {{ os_auth_url }}
-  tags: before_config
-
-- name: stop services before upgrade
-  service: name={{ item }} state=stopped
-  tags: before_config
-  with_items:
-    - apache2
-    - ceilometer-agent-compute
-    - ceilometer-alarm-evaluator
-    - ceilometer-alarm-notifier
-    - ceilometer-api
-    - ceilometer-collector
-    - cinder-api
-    - cinder-scheduler
-    - cinder-volume
-    - glance-api
-    - glance-registry
-    - haproxy
-    - heat-api
-    - heat-api-cfn
-    - heat-api-cloudwatch
-    - heat-engine
-    - keepalived
-    - keystone
-    - libvirt-bin
-    - mysql
-    - neutron-dhcp-agent
-    - neutron-l3-agent
-    - neutron-lbaas-agent
-    - neutron-metadata-agent
-    - neutron-metering-agent
-    - neutron-plugin-openvswitch-agent
-    - neutron-server
-    - nova-api
-    - nova-cert
-    - nova-compute
-    - nova-conductor
-    - nova-consoleauth
-    - nova-scheduler
-    - nova-spicehtml5proxy
-    - rabbitmq-server
-
 - name: edeploy upgrade
   edeploy: command=upgrade version=D7-{{ version }}
   tags: before_config
   when: ansible_distribution == 'Debian'
 
-- name: Wait for server to come up
-  local_action: wait_for host={{ ansible_fqdn }} port=22 delay=120 timeout=900 state=started
-  tags: before_config
-
-- name: ensure Load-balancing services are running
-  service: name={{ item }} state=started
-  with_items:
-    - haproxy
-    - keepalived
-  tags: before_config
-
 - name: ensure MySQL is running
-  service: name=mysql state=started
+  service: name=mysql state=restarted
+  tags: before_config
+
+- name: ensure HAproxy & Keepalived are running
+  service: name={{ item }} state=started
+  with_tems:
+    - keepalived
+    - haproxy
   tags: before_config
 
 - name: Wait for Galera VIP to come up
@@ -116,11 +55,6 @@
 - name: restart some services after all db_sync
   service: name={{ item }} state=restarted
   with_items:
-    - libvirt-bin
-    - ceilometer-alarm-evaluator
-    - ceilometer-alarm-notifier
-    - ceilometer-api
-    - ceilometer-collector
     - cinder-api
     - cinder-scheduler
     - cinder-volume
@@ -149,7 +83,3 @@
   command: crm resource cleanup ceilometer-agent-central
   tags: before_config
   when: inventory_hostname == groups['full'][-1]
-
-- name: allow instance scheduling on migrated compute
-  command: nova-manage service enable --service nova-compute --host {{ ansible_fqdn }}
-  tags: before_config
