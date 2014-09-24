@@ -25,6 +25,20 @@ EOF
   esac
 }
 
+remove_elasticsearch_repo() {
+  case "$OS" in
+    "Debian")
+      rm ${dir}/etc/apt/sources.list.d/elasticsearch.list
+    ;;
+    "CentOS"|"RedHatEnterpriseServer")
+      rm ${dir}/etc/yum.repos.d/elasticsearch.repo
+    ;;
+    *)
+      fatal_error "OS ($OS) or Release not supported"
+    ;;
+  esac
+}
+
 add_fluentd_repo() {
   case "$OS" in
     "Debian")
@@ -41,6 +55,20 @@ baseurl=http://packages.treasuredata.com/redhat/\$basearch
 gpgcheck=1
 gpgkey=http://packages.treasuredata.com/GPG-KEY-td-agent
 EOF
+    ;;
+    *)
+      fatal_error "OS ($OS) or Release not supported"
+    ;;
+  esac
+}
+
+remove_fluentd_repo() {
+  case "$OS" in
+    "Debian")
+      rm ${dir}/etc/apt/sources.list.d/treasure-data.list
+    ;;
+    "CentOS"|"RedHatEnterpriseServer")
+      rm ${dir}/etc/yum.repos.d/td.repo
     ;;
     *)
       fatal_error "OS ($OS) or Release not supported"
@@ -72,6 +100,20 @@ EOF
   esac
 }
 
+remove_sensu_repo() {
+  case "$OS" in
+    "Debian")
+      rm ${dir}/etc/apt/sources.list.d/sensu.list
+    ;;
+    "CentOS"|"RedHatEnterpriseServer")
+      rm ${dir}/etc/yum.repos.d/sensu.repo
+    ;;
+    *)
+      fatal_error "OS ($OS) or Release not supported"
+    ;;
+  esac
+}
+
 add_rabbitmq_repo() {
   case "$OS" in
     "Debian")
@@ -79,6 +121,19 @@ add_rabbitmq_repo() {
     cat > ${dir}/etc/apt/sources.list.d/rabbitmq.list <<EOF
 deb ${RABBITMQ_URL:=http://www.rabbitmq.com/}debian/ testing main
 EOF
+    ;;
+    "CentOS"|"RedHatEnterpriseServer")
+    ;;
+    *)
+      fatal_error "OS ($OS) or Release not supported"
+    ;;
+  esac
+}
+
+remove_rabbitmq_repo() {
+  case "$OS" in
+    "Debian")
+      rm ${dir}/etc/apt/sources.list.d/rabbitmq.list
     ;;
     "CentOS"|"RedHatEnterpriseServer")
     ;;
@@ -108,6 +163,17 @@ gpgcheck=1
 type=rpm-md
 gpgkey=https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc
 EOF
+    ;;
+    *)
+      fatal_error "OS ($OS) or Release not supported"
+    ;;
+  esac
+}
+
+remove_ceph_rpm_repo() {
+  case "$OS" in
+    "CentOS"|"RedHatEnterpriseServer")
+       rm ${dir}/etc/yum.repos.d/ceph.repo
     ;;
     *)
       fatal_error "OS ($OS) or Release not supported"

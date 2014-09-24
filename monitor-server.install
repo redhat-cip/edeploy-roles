@@ -70,4 +70,6 @@ esac
 
 remove_epel_repository $DIST
 remove_puppet_repository $DIST
+remove_sensu_repo $DIST
+remove_rabbitmq_repo $DIST
 clear_packages_cache $dir
