@@ -68,4 +68,6 @@ case "$OS" in
     ;;
 esac
 
+remove_epel_repository $DIST
+remove_puppet_repository $DIST
 clear_packages_cache $dir

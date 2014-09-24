@@ -61,6 +61,8 @@ do_chroot ${dir} git clone https://github.com/elasticsearch/kibana.git /opt/kiba
 # Install fluentd-elasticsearch plugin
 do_chroot ${dir} /opt/td-agent/embedded/bin/fluent-gem install fluent-plugin-elasticsearch
 
+remove_puppet_repository $DIST
+remove_epel_repository $DIST
 clear_packages_cache $dir
 
 # TODO (spredzy) : This is specific for the CI and the current

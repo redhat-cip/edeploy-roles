@@ -201,8 +201,7 @@ $SRC/logcollector.install $dir $dir $version
 # Monitoring Server#
 ####################
 
-# TODO (spredzy): Packages for EL7 does not exist yet
-#$SRC/monitor-server.install $dir $dir $version
+$SRC/monitor-server.install $dir $dir $version
 
 ###########
 # Tempest #
