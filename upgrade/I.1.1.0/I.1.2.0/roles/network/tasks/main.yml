@@ -1,6 +1,17 @@
 ---
 # file: roles/network/tasks/main.yml
 
+- name: ensure services are stopped before upgrade
+  service: name={{ item }} state=stopped
+  tags: before_config
+  with_items:
+    - neutron-plugin-openvswitch-agent
+    - neutron-l3-agent
+    - neutron-lbaas-agent
+    - neutron-dhcp-agent
+    - neutron-metadata-agent
+    - neutron-metering-agent
+
 - name: edeploy upgrade
   edeploy: command=upgrade version=D7-{{ version }}
   tags: before_config
@@ -10,6 +21,7 @@
   service: name={{ item }} state=restarted
   tags: before_config
   with_items:
+    - openvswitch-switch
     - neutron-plugin-openvswitch-agent
     - neutron-l3-agent
     - neutron-lbaas-agent

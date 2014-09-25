@@ -2,6 +2,38 @@
 # file: roles/full/tasks/main.yml
 # this role is used when all services are running on the same node.
 
+- name: stop some services before upgrade
+  service: name={{ item }} state=stopped
+  with_items:
+    - ceilometer-api
+    - ceilometer-collector
+    - ceilometer-alarm-evaluator
+    - ceilometer-alarm-notifier
+    - ceilometer-agent-notification
+    - cinder-api
+    - cinder-scheduler
+    - cinder-volume
+    - glance-api
+    - glance-registry
+    - heat-api
+    - heat-api-cfn
+    - heat-api-cloudwatch
+    - heat-engine
+    - keystone
+    - neutron-server
+    - nova-api
+    - nova-cert
+    - nova-conductor
+    - nova-scheduler
+    - neutron-plugin-openvswitch-agent
+    - neutron-l3-agent
+    - neutron-metering-agent
+    - neutron-lbaas-agent
+    - neutron-dhcp-agent
+    - neutron-metadata-agent
+    - nova-compute
+  tags: before_config
+
 - name: edeploy upgrade
   edeploy: command=upgrade version=D7-{{ version }}
   tags: before_config
@@ -77,6 +109,7 @@
     - neutron-dhcp-agent
     - neutron-metadata-agent
     - nova-compute
+    - openvswitch-switch
   tags: before_config
 
 - name: restart ceilometer-agent-central managed by pacemaker

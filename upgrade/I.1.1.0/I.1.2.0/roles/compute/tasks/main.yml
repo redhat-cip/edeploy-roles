@@ -1,6 +1,14 @@
 ---
 # file: roles/compute/tasks/main.yml
 
+- name: stop services before upgrade
+  service: name={{ item }} state=stopped
+  tags: before_config
+  with_items:
+    - nova-compute
+    - ceilometer-agent-compute
+    - neutron-plugin-openvswitch-agent
+
 - name: edeploy upgrade
   edeploy: command=upgrade version=D7-{{ version }}
   tags: before_config
@@ -13,3 +21,4 @@
     - nova-compute
     - ceilometer-agent-compute
     - neutron-plugin-openvswitch-agent
+    - openvswitch-switch
