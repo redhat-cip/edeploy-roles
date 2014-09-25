@@ -15,10 +15,12 @@
     - cinder-volume
     - glance-api
     - glance-registry
+    - haproxy
     - heat-api
     - heat-api-cfn
     - heat-api-cloudwatch
     - heat-engine
+    - keepalived
     - keystone
     - neutron-server
     - nova-api
@@ -44,7 +46,7 @@
   tags: before_config
 
 - name: ensure HAproxy & Keepalived are running
-  service: name={{ item }} state=started
+  service: name={{ item }} state=restarted
   with_items:
     - keepalived
     - haproxy
