@@ -13,7 +13,7 @@
 
 - name: ensure HAproxy & Keepalived are running
   service: name={{ item }} state=started
-  with_tems:
+  with_items:
     - keepalived
     - haproxy
   tags: before_config
