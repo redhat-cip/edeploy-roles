@@ -41,8 +41,11 @@
   tags: before_config
   when: ansible_distribution == 'Debian'
 
+- name: delete trove monitor
+  command: sed '/trove_api_dead/d' -i /etc/haproxy/haproxy.cfg
+  tags: before_config
 - name: delete trove binding
-  command: sed '/trove/d' -i /etc/haproxy/haproxy.cfg
+  command: sed '/^listen trove_api_cluster$/,/^$/d' -i /etc/haproxy/haproxy.cfg
   tags: before_config
 
 - name: ensure MySQL is running
