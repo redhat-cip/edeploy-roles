@@ -41,6 +41,10 @@
   tags: before_config
   when: ansible_distribution == 'Debian'
 
+- name: delete trove binding
+  command: sed '/trove/d' -i /etc/haproxy/haproxy.cfg
+  tags: before_config
+
 - name: ensure MySQL is running
   service: name=mysql state=restarted
   tags: before_config
