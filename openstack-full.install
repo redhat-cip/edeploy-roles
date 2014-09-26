@@ -472,7 +472,7 @@ EOF
     fatal_error "OS or Release not supported"
     ;;
 esac
-
+remove_fluentd_repo
 # add galera-status script to validate MySQL Galera cluster sanity
 cp $SRC/files/galera-status $dir/usr/sbin
 

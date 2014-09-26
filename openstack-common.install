@@ -27,6 +27,7 @@ ROLE=openstack-common
 ORIG=$(cd $(dirname $0); pwd)
 
 . ${ORIG}/functions
+. ./repositories
 
 if [ -z "$OS_VERS" ]; then
     echo "OS_VERS is not set, Icehouse will be built by default"
@@ -148,18 +149,30 @@ install_monitoring() {
     add_epel_repository $DIST
     install_packages_disabled $dir python-psutil ${monitoring_packages[$(package_type)]}
     remove_epel_repository $DIST
-    
+
+    add_sensu_repo
     case "$OS" in
         "Debian" | "Ubuntu")
             cp -pvr openstack-monitoring/scripts/* $dir/usr/lib/nagios/plugins
+            install_packages $dir sensu
             ;;
         "CentOS"|"RedHatEnterpriseServer")
             cp -pvr openstack-monitoring/scripts/* $dir/usr/lib64/nagios/plugins
-            ;;
+            case "$CODENAME_MAJOR" in
+                6)
+                    install_packages $dir sensu
+                ;;
+                7)
+                    cp $SRC/files/sensu-0.13.1-1.x86_64.rpm ${dir}/tmp/
+                    do_chroot ${dir} yum -y localinstall /tmp/sensu-0.13.1-1.x86_64.rpm
+                ;;
+            esac
+        ;;
         *)
             fatal_error "OS or Release not supported"
             ;;
     esac
+    remove_sensu_repo
     rm -rf $dir/tmp/openstack-monitoring
 }
 
