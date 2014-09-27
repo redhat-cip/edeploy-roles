@@ -151,6 +151,7 @@ install_monitoring() {
     remove_epel_repository $DIST
 
     add_sensu_repo
+    update_repositories $dir
     case "$OS" in
         "Debian" | "Ubuntu")
             cp -pvr openstack-monitoring/scripts/* $dir/usr/lib/nagios/plugins
