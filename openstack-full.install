@@ -197,6 +197,7 @@ os_packages=(
         neutron-metering-agent \
         neutron-plugin-linuxbridge-agent \
         neutron-plugin-openvswitch-agent \
+        neutron-plugin-cisco \
         neutron-server \
         nfs-common \
         nova-api \
@@ -268,6 +269,7 @@ os_packages=(
         openstack-heat-engine \
         openstack-keystone \
         openstack-neutron \
+        openstack-neutron-cisco \
         openstack-neutron-linuxbridge \
         openstack-neutron-metering-agent \
         openstack-neutron-ml2 \
