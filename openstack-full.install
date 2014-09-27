@@ -339,10 +339,14 @@ backup_packages=(
 declare -A logging_packages
 logging_packages=( 
     ["deb"]="
-        td-agent
+        td-agent \
+        rsyslog-gnutls \
+        rsyslog-relp
 "
     ["rpm"]="
-        td-agent
+        td-agent \
+        rsyslog-gnutls \
+        rsyslog-relp
 ")
 
 add_fluentd_repo
