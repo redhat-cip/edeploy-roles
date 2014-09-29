@@ -142,8 +142,7 @@ install_monitoring() {
         nagios-plugins
 ")
 
-    cd $dir/tmp
-    git clone https://github.com/enovance/openstack-monitoring.git
+    do_chroot ${dir} bash -c 'pip install --no-deps git+https://github.com/enovance/openstack-monitoring.git#egg=openstack-monitoring'
 
     add_percona_deb_repo
     add_epel_repository $DIST
@@ -154,11 +153,9 @@ install_monitoring() {
     update_repositories $dir
     case "$OS" in
         "Debian" | "Ubuntu")
-            cp -pvr openstack-monitoring/scripts/* $dir/usr/lib/nagios/plugins
             install_packages $dir sensu
             ;;
         "CentOS"|"RedHatEnterpriseServer")
-            cp -pvr openstack-monitoring/scripts/* $dir/usr/lib64/nagios/plugins
             case "$CODENAME_MAJOR" in
                 6)
                     install_packages $dir sensu
