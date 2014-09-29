@@ -144,7 +144,7 @@ install_monitoring() {
 
     add_percona_deb_repo
     add_epel_repository $DIST
-    install_packages_disabled $dir python-pip python-psutil ${monitoring_packages[$(package_type)]}
+    install_packages_disabled $dir git python-pip python-psutil ${monitoring_packages[$(package_type)]}
     remove_epel_repository $DIST
 
     do_chroot ${dir} bash -c 'pip install --no-deps git+https://github.com/enovance/openstack-monitoring.git#egg=openstack-monitoring'
