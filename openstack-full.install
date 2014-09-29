@@ -294,7 +294,6 @@ os_packages=(
         python-kombu \
         python-lesscpy \
         python-memcached \
-        python-pip \
         python-psutil \
         python-swiftclient \
         rabbitmq-server \

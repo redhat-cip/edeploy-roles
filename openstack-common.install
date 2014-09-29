@@ -142,8 +142,6 @@ install_monitoring() {
         nagios-plugins
 ")
 
-    do_chroot ${dir} bash -c 'pip install --no-deps git+https://github.com/enovance/openstack-monitoring.git#egg=openstack-monitoring'
-
     add_percona_deb_repo
     add_epel_repository $DIST
     install_packages_disabled $dir python-psutil ${monitoring_packages[$(package_type)]}
@@ -170,8 +168,11 @@ install_monitoring() {
             fatal_error "OS or Release not supported"
             ;;
     esac
+    install_packages $dir python-pip
+
+    do_chroot ${dir} bash -c 'pip install --no-deps git+https://github.com/enovance/openstack-monitoring.git#egg=openstack-monitoring'
+
     remove_sensu_repo
-    rm -rf $dir/tmp/openstack-monitoring
 }
 
 prepare_packages
