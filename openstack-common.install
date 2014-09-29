@@ -144,9 +144,10 @@ install_monitoring() {
 
     add_percona_deb_repo
     add_epel_repository $DIST
-    install_packages_disabled $dir python-psutil ${monitoring_packages[$(package_type)]}
+    install_packages_disabled $dir python-pip python-psutil ${monitoring_packages[$(package_type)]}
     remove_epel_repository $DIST
 
+    do_chroot ${dir} bash -c 'pip install --no-deps git+https://github.com/enovance/openstack-monitoring.git#egg=openstack-monitoring'
     add_sensu_repo
     update_repositories $dir
     case "$OS" in
@@ -168,9 +169,6 @@ install_monitoring() {
             fatal_error "OS or Release not supported"
             ;;
     esac
-    install_packages $dir python-pip
-
-    do_chroot ${dir} bash -c 'pip install --no-deps git+https://github.com/enovance/openstack-monitoring.git#egg=openstack-monitoring'
 
     remove_sensu_repo
 }
