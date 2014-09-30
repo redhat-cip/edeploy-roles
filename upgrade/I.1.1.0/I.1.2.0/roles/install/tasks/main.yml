@@ -1,6 +1,13 @@
 ---
 # file: roles/install/tasks/main.yml
 
+- name: stop puppet
+  service: name={{ item }} state=stopped
+  with_items:
+    - apache2
+    - puppetdb
+  tags: install_server
+
 - name: synchronize eDeploy roles & metadata with upstream
   script: edeploy-sync.sh {{ edeploy_master }} D7-{{ version }}
   tags: install_server
