@@ -471,7 +471,6 @@ EOF
 
         install_packages_disabled $dir ${os_packages[$(package_type)]} $EXTRA_RPMS
         remove_epel_repository $DIST
-        do_chroot $dir chkconfig puppet on
     ;;
     *)
     fatal_error "OS or Release not supported"
