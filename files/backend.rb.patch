@@ -7,6 +7,8 @@
 -        return answer
 +        if answer.is_a?(String) and (answer.start_with?('[') or answer.start_with?('{'))
 +          proper_answer = eval(answer)
++        elsif answer.is_a?(String) and (answer.eql?('true') or answer.eql?('false'))
++          proper_answer = eval(answer)
 +        else
 +          proper_answer = answer
 +        end
