@@ -1,9 +1,10 @@
---- backend.rb  2014-10-08 16:43:30.204845671 +0000
-+++ backend.rb2 2014-10-08 16:44:10.168149074 +0000
-@@ -227,6 +227,13 @@
+--- backend.rb.orig	2015-10-08 17:42:53.580259460 +0000
++++ backend.rb	2014-10-08 17:43:33.271531859 +0000
+@@ -227,7 +227,14 @@
          answer = parse_string(default, scope) if answer.nil? and default.is_a?(String)
  
          return default if answer.nil?
+-        return answer
 +        if answer.is_a?(String) and (answer.start_with?('[') or answer.start_with?('{'))
 +          proper_answer = eval(answer)
 +        elsif answer.is_a?(String) and (answer.eql?('true') or answer.eql?('false'))
@@ -11,5 +12,7 @@
 +        else
 +          proper_answer = answer
 +        end
-         return proper_answer
++        return proper_answer
        end
+ 
+       def clear!
