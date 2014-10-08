@@ -340,8 +340,7 @@ prod_packages=(
         sysstat \
         telnet \
         tmux \
-        traceroute \
-        w3m
+        traceroute
 ")
 
 declare -A backup_packages
