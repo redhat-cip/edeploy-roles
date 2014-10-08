@@ -71,7 +71,7 @@ EOF
 	    ;;
 	"CentOS")
 	    add_epel_repository $DIST
-	    install_packages $dir "cloud-init"
+	    install_packages $dir "cloud-init cloud-utils cloud-utils-growpart"
 	    remove_epel_repository $DIST
 	    ;;
 	*)
@@ -86,6 +86,7 @@ preserve_hostname: False
 
 cloud_init_modules:
  - bootcmd
+ - growpart
  - resizefs
  - set_hostname
  - update_hostname
