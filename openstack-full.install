@@ -326,8 +326,22 @@ prod_packages=(
         telnet \
         tmux \
         traceroute \
-        w3m"
-)
+        w3m
+"
+    ["rpm"]="
+        bash-completion \
+        crash \
+        iotop \
+        ltrace \
+        mtr \
+        nmap \
+        nmap-ncat \
+        strace \
+        sysstat \
+        telnet \
+        tmux \
+        traceroute
+")
 
 declare -A backup_packages
 backup_packages=( 
