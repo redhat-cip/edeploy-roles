@@ -65,7 +65,7 @@ EOF
                 attach_pool_rh_cdn $dir $RHN_CDN_POOL_ID
                 # Red Hat OpenStack 5
                 add_rh_cdn_repo $dir rhel-7-server-openstack-5.0-rpms
-                install_packages $dir "cloud-init"
+                install_packages $dir "cloud-init cloud-utils cloud-utils-growpart"
 	        remove_epel_repository $DIST
             fi
 	    ;;
