@@ -247,6 +247,7 @@ os_packages=(
         git \
         haproxy \
         httpd \
+        mod_ssl \
         keepalived \
         libffi-devel \
         lsof \
