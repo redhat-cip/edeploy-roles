@@ -123,6 +123,7 @@ deb ${RABBITMQ_URL:=http://www.rabbitmq.com/}debian/ testing main
 EOF
     ;;
     "CentOS"|"RedHatEnterpriseServer")
+    do_chroot $dir rpm --import ${RABBITMQ_URL:=http://www.rabbitmq.com/}rabbitmq-signing-key-public.asc
     ;;
     *)
       fatal_error "OS ($OS) or Release not supported"
