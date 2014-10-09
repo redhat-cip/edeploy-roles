@@ -358,7 +358,6 @@ logging_packages=(
         rsyslog-relp
 "
     ["rpm"]="
-        td-agent \
         rsyslog-gnutls \
         rsyslog-relp
 ")
@@ -472,9 +471,7 @@ EOF
         add_epel_repository $DIST
     ;;&
     "CentOS"|"RedHatEnterpriseServer")
-        # TODO(EmilienM) no support for logging packages:
         if [ "$CODENAME_MAJOR" == "6" ]; then
-            install_packages_disabled $dir ${logging_packages[$(package_type)]}
             EXTRA_RPMS="fence-agents cman spice-html5 MariaDB-Galera-server mongodb-org mongodb-org-server"
         else
             #TODO: spice-html5 is not yet in 7
@@ -483,7 +480,7 @@ EOF
             do_chroot ${dir} yum -y localinstall /tmp/spice-html5-0.1.4-1.el7.noarch.rpm
 
         fi
-
+        install_packages_disabled $dir ${logging_packages[$(package_type)]}
         install_packages_disabled $dir ${os_packages[$(package_type)]} $EXTRA_RPMS
         remove_epel_repository $DIST
     ;;
