@@ -483,10 +483,6 @@ EOF
         install_packages_disabled $dir ${logging_packages[$(package_type)]}
         install_packages_disabled $dir ${os_packages[$(package_type)]} $EXTRA_RPMS
         remove_epel_repository $DIST
-
-        # Temporary patch on openstack-nova-spicehtml5proxy.service while it's maintstream
-        # https://bugzilla.redhat.com/show_bug.cgi?id=1150303
-        patch -p0 $dir/usr/lib/systemd/system/openstack-nova-spicehtml5proxy.service < $SRC/files/openstack-nova-spicehtml5proxy.service.patch
     ;;
     *)
     fatal_error "OS or Release not supported"
@@ -501,6 +497,12 @@ cp $SRC/files/galera-status $dir/usr/sbin
 cd $dir/usr/share/spice-html5
 patch -p0 < $SRC/files/spice_auto.html.patch
 cd -
+
+if [ $OS = "RedHatEnterpriseServer" ]; then
+  # Temporary patch on openstack-nova-spicehtml5proxy.service while it's maintstream
+  # https://bugzilla.redhat.com/show_bug.cgi?id=1150303
+  patch -p0 $dir/usr/lib/systemd/system/openstack-nova-spicehtml5proxy.service < $SRC/files/openstack-nova-spicehtml5proxy.service.patch
+fi
 
 clear_packages_cache $dir
 cp $SRC/files/disable-tso $dir/etc/init.d/
