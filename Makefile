@@ -42,7 +42,8 @@ export CURRENT_TARGET
 INST=$(TOP)/install/$(VERS)
 META=$(TOP)/metadata/$(VERS)
 
-ROLES = cloud devstack openstack-common openstack-full mysql puppet-master install-server logcollector monitor-server
+ROLES = cloud devstack openstack-common openstack-full mysql puppet-master install-server logcollector monitor-server\
+        postgresql-server
 
 all: $(ROLES)
 
@@ -70,6 +71,11 @@ monitor-server: $(INST)/monitor-server.done
 $(INST)/monitor-server.done: monitor-server.install $(INST)/cloud.done
 	./monitor-server.install $(INST)/cloud $(INST)/monitor-server $(VERS)
 	touch $(INST)/monitor-server.done
+
+postgresql-server: $(INST)/postgresql-server.done
+$(INST)/postgresql-server.done: postgresql-server.install $(INST)/cloud.done
+	./postgresql-server.install $(INST)/cloud $(INST)/postgresql-server $(VERS)
+	touch $(INST)/postgresql-server.done
 
 openstack-common: $(INST)/openstack-common.done
 $(INST)/openstack-common.done: openstack-common.install $(INST)/cloud.done functions
@@ -135,4 +141,4 @@ version:
 	@echo "$(VERS)"
 
 .PHONY: cloud devstack openstack-common openstack-full mysql docker puppet-master\
-	chef-server logcollector dist clean distclean version monitor-server
+	chef-server logcollector dist clean distclean version monitor-server postgresql-server
