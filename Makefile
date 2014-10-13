@@ -72,11 +72,6 @@ $(INST)/monitor-server.done: monitor-server.install $(INST)/cloud.done
 	./monitor-server.install $(INST)/cloud $(INST)/monitor-server $(VERS)
 	touch $(INST)/monitor-server.done
 
-postgresql-server: $(INST)/postgresql-server.done
-$(INST)/postgresql-server.done: postgresql-server.install $(INST)/cloud.done
-	./postgresql-server.install $(INST)/cloud $(INST)/postgresql-server $(VERS)
-	touch $(INST)/postgresql-server.done
-
 openstack-common: $(INST)/openstack-common.done
 $(INST)/openstack-common.done: openstack-common.install $(INST)/cloud.done functions
 	./openstack-common.install $(INST)/cloud $(INST)/openstack-common $(VERS)
@@ -91,6 +86,11 @@ puppetdb-server: $(INST)/puppetdb-server.done
 $(INST)/puppetdb-server.done: puppetdb-server.install $(INST)/openstack-common.done
 	./puppetdb-server.install $(INST)/openstack-common $(INST)/puppetdb-server $(VERS)
 	touch $(INST)/puppetdb-server.done
+
+postgresql-server: $(INST)/postgresql-server.done
+$(INST)/postgresql-server.done: postgresql-server.install $(INST)/openstack-common.done functions
+	./postgresql-server.install $(INST)/openstack-common $(INST)/postgresql-server $(VERS)
+	touch $(INST)/postgresql-server.done
 
 mysql: $(INST)/mysql.done
 $(INST)/mysql.done: mysql.install $(INST)/base.done
