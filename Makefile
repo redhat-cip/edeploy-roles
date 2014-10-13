@@ -43,7 +43,7 @@ INST=$(TOP)/install/$(VERS)
 META=$(TOP)/metadata/$(VERS)
 
 ROLES = cloud devstack openstack-common openstack-full mysql puppet-master install-server logcollector monitor-server\
-        postgresql-server
+        postgresql-server puppetdb-server
 
 all: $(ROLES)
 
@@ -86,6 +86,11 @@ openstack-full: $(INST)/openstack-full.done
 $(INST)/openstack-full.done: openstack-full.install $(INST)/openstack-common.done
 	./openstack-full.install $(INST)/openstack-common $(INST)/openstack-full $(VERS)
 	touch $(INST)/openstack-full.done
+
+puppetdb-server: $(INST)/puppetdb-server.done
+$(INST)/puppetdb-server.done: puppetdb-server.install $(INST)/openstack-common.done
+	./puppetdb-server.install $(INST)/openstack-common $(INST)/puppetdb-server $(VERS)
+	touch $(INST)/puppetdb-server.done
 
 mysql: $(INST)/mysql.done
 $(INST)/mysql.done: mysql.install $(INST)/base.done
@@ -141,4 +146,5 @@ version:
 	@echo "$(VERS)"
 
 .PHONY: cloud devstack openstack-common openstack-full mysql docker puppet-master\
-	chef-server logcollector dist clean distclean version monitor-server postgresql-server
+	chef-server logcollector dist clean distclean version monitor-server postgresql-server\
+	puppetdb-server
