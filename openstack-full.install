@@ -350,27 +350,11 @@ backup_packages=(
         xtrabackup
 ")
 
-declare -A logging_packages
-logging_packages=( 
-    ["deb"]="
-        td-agent \
-        rsyslog-gnutls \
-        rsyslog-relp
-"
-    ["rpm"]="
-        rsyslog-gnutls \
-        rsyslog-relp
-")
-
-add_fluentd_repo
-update_repositories $dir
-
 case "$OS" in
     "Debian")
         update_repositories $dir
         install_packages_disabled $dir -t wheezy-backports linux-headers-3.14-0.bpo.2-amd64 linux-image-3.14-0.bpo.2-amd64
         install_packages_disabled $dir ${backup_packages[$(package_type)]}
-        install_packages_disabled $dir ${logging_packages[$(package_type)]}
         install_packages_disabled $dir ${prod_packages[$(package_type)]}
     ;&
     "Ubuntu")
@@ -422,17 +406,6 @@ case "$OS" in
               ;;
         esac
 
-        # Install custom package for EL7 since it hasn't been released yet
-        case "$CODENAME_MAJOR" in
-            6)
-              install_packages $dir td-agent libcurl-openssl-devel
-            ;;
-            7)
-              cp $SRC/files/td-agent-2.0.3-0.el7.x86_64.rpm ${dir}/tmp/
-              do_chroot ${dir} yum -y localinstall /tmp/td-agent-2.0.3-0.el7.x86_64.rpm
-            ;;
-        esac
-
         # Install ICE (Ceph for Enterprise) if possible, otherwise fall back to ceph.com
         # packages (community edition)
         if [ -z "$CEPH_USERNAME" ] || [ -z "$CEPH_PASSWORD" ]; then
@@ -480,7 +453,6 @@ EOF
             do_chroot ${dir} yum -y localinstall /tmp/spice-html5-0.1.4-1.el7.noarch.rpm
 
         fi
-        install_packages_disabled $dir ${logging_packages[$(package_type)]}
         install_packages_disabled $dir ${os_packages[$(package_type)]} $EXTRA_RPMS
         remove_epel_repository $DIST
     ;;
@@ -488,7 +460,6 @@ EOF
     fatal_error "OS or Release not supported"
     ;;
 esac
-remove_fluentd_repo
 # add galera-status script to validate MySQL Galera cluster sanity
 cp $SRC/files/galera-status $dir/usr/sbin
 
