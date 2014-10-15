@@ -48,8 +48,11 @@
   command: sed '/^listen trove_api_cluster$/,/^$/d' -i /etc/haproxy/haproxy.cfg
   tags: before_config
 
-- name: ensure MySQL is running
-  service: name=mysql state=restarted
+- name: ensure MySQL and MongoDB are running
+  service: name={{ item }} state=restarted
+  with_items:
+    - mysql
+    - mongodb
   tags: before_config
 
 - name: ensure HAproxy & Keepalived are running

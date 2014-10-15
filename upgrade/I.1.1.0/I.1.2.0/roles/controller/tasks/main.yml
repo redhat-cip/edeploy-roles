@@ -38,8 +38,11 @@
   tags: before_config
   when: ansible_distribution == 'Debian'
 
-- name: ensure MySQL is running
-  service: name=mysql state=restarted
+- name: ensure MySQL and MongoDB are running
+  service: name={{ item }} state=restarted
+  with_items:
+    - mysql
+    - mongodb
   tags: before_config
 
 - name: Wait for Galera VIP to come up
