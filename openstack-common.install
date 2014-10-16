@@ -186,7 +186,7 @@ install_monitoring() {
     install_packages_disabled $dir git python-pip python-psutil ${monitoring_packages[$(package_type)]}
     remove_epel_repository $DIST
 
-    do_chroot ${dir} bash -c 'pip install -U --no-deps git+https://github.com/enovance/openstack-monitoring.git#egg=openstack-monitoring'
+    do_chroot ${dir} bash -c 'pip install -U --no-deps git+https://github.com/stackforge/monitoring-for-openstack.git#egg=monitoring-for-openstack'
     add_sensu_repo
     update_repositories $dir
     case "$OS" in
