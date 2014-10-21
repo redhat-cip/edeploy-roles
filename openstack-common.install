@@ -145,6 +145,7 @@ install_logging() {
             install_packages_disabled $dir ${logging_packages[$(package_type)]}
         ;;
         "RedHatEnterpriseServer")
+            install_packages_disabled $dir ${logging_packages[$(package_type)]}
             case "$CODENAME_MAJOR" in
                 6)
                     install_packages $dir td-agent libcurl-openssl-devel
@@ -154,7 +155,6 @@ install_logging() {
                     do_chroot ${dir} yum -y localinstall /tmp/td-agent-2.0.3-0.el7.x86_64.rpm
                 ;;
             esac
-
         ;;
     esac
 
