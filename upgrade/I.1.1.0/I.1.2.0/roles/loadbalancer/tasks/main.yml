@@ -23,6 +23,7 @@
 
 - name: restart Load-balancing services
   service: name={{ item }} state=restarted
+  sleep: 3
   with_items:
     - haproxy
     - keepalived

@@ -50,6 +50,7 @@
 
 - name: ensure MySQL and MongoDB are running
   service: name={{ item }} state=restarted
+  sleep: 3
   with_items:
     - mysql
     - mongodb
@@ -57,6 +58,7 @@
 
 - name: ensure HAproxy & Keepalived are running
   service: name={{ item }} state=restarted
+  sleep: 3
   with_items:
     - keepalived
     - haproxy
@@ -98,6 +100,7 @@
 
 - name: restart some services after all db_sync
   service: name={{ item }} state=restarted
+  sleep: 3
   with_items:
     - cinder-api
     - cinder-scheduler

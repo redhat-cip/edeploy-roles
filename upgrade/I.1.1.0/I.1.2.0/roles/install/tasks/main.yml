@@ -21,6 +21,7 @@
 # restart jenkins because of newer version
 - name: restart jenkins
   service: name=jenkins state=restarted
+  sleep: 3
   tags: install_server
 
 - name: wait jenkins is up and running

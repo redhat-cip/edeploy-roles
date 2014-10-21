@@ -20,6 +20,7 @@
 - name: ensure services are restarted after upgrade
   service: name={{ item }} state=restarted
   tags: before_config
+  sleep: 3
   with_items:
     - openvswitch-switch
     - neutron-plugin-openvswitch-agent

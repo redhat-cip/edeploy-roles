@@ -17,6 +17,7 @@
 - name: start services after upgrade
   service: name={{ item }} state=restarted
   tags: before_config
+  sleep: 3
   with_items:
     - nova-compute
     - ceilometer-agent-compute

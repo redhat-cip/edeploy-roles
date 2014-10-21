@@ -40,6 +40,7 @@
 
 - name: ensure MySQL and MongoDB are running
   service: name={{ item }} state=restarted
+  sleep: 3
   with_items:
     - mysql
     - mongodb
@@ -81,6 +82,7 @@
 
 - name: restart some services after all db_sync
   service: name={{ item }} state=restarted
+  sleep: 3
   with_items:
     - ceilometer-api
     - ceilometer-collector
