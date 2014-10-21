@@ -341,7 +341,8 @@ prod_packages=(
         sysstat \
         telnet \
         tmux \
-        traceroute
+        traceroute \
+        vim-enhanced
 ")
 
 declare -A backup_packages
@@ -390,6 +391,8 @@ case "$OS" in
 
               # mongodb-server is in Red Hat Software Collections
               add_rh_cdn_repo $dir rhel-server-rhscl-7-rpms
+              # install production packages
+              install_packages_disabled $dir ${prod_packages[$(package_type)]}
               ;;
         esac
 
