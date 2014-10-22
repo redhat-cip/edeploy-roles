@@ -285,6 +285,7 @@ os_packages=(
         openstack-nova-console \
         openstack-nova-novncproxy \
         openstack-nova-scheduler \
+        openstack-selinux \
         openstack-swift-account \
         openstack-swift-container \
         openstack-swift-object \
