@@ -22,8 +22,7 @@
   tags: before_config
 
 - name: restart Load-balancing services
-  service: name={{ item }} state=restarted
-  sleep: 3
+  service: name={{ item }} state=restarted sleep=3
   with_items:
     - haproxy
     - keepalived

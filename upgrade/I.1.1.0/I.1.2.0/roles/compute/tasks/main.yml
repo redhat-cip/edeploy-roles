@@ -15,9 +15,8 @@
   when: ansible_distribution == 'Debian'
 
 - name: start services after upgrade
-  service: name={{ item }} state=restarted
+  service: name={{ item }} state=restarted sleep=3
   tags: before_config
-  sleep: 3
   with_items:
     - nova-compute
     - ceilometer-agent-compute

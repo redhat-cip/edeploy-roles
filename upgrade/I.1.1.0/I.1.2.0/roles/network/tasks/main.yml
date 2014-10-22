@@ -18,9 +18,8 @@
   when: ansible_distribution == 'Debian'
 
 - name: ensure services are restarted after upgrade
-  service: name={{ item }} state=restarted
+  service: name={{ item }} state=restarted sleep=3
   tags: before_config
-  sleep: 3
   with_items:
     - openvswitch-switch
     - neutron-plugin-openvswitch-agent

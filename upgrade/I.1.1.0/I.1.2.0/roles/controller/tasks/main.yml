@@ -39,8 +39,7 @@
   when: ansible_distribution == 'Debian'
 
 - name: ensure MySQL and MongoDB are running
-  service: name={{ item }} state=restarted
-  sleep: 3
+  service: name={{ item }} state=restarted sleep=3
   with_items:
     - mysql
     - mongodb
@@ -81,8 +80,7 @@
   when: inventory_hostname == groups['full'][-1]
 
 - name: restart some services after all db_sync
-  service: name={{ item }} state=restarted
-  sleep: 3
+  service: name={{ item }} state=restarted sleep=3
   with_items:
     - ceilometer-api
     - ceilometer-collector
