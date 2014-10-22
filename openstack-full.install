@@ -148,6 +148,8 @@ type=rpm-md
 gpgkey=https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc
 EOF
         fi
+
+        add_rabbitmq_repo
         ;;
     *)
         fatal_error "OS ($OS) or Release not supported"
