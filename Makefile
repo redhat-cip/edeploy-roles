@@ -136,7 +136,7 @@ $(INST)/base.done: $(ARCHIVE)/$(BVERS)/base-$(BVERS).edeploy
 $(INST)/pxe.done: $(ARCHIVE)/$(BVERS)/initrd.pxe
 	rm -rf $(INST)/initrd.pxe
 	cp $(ARCHIVE)/$(BVERS)/initrd.pxe $(INST)/initrd.pxe
-	cp $(ARCHIVE)/$(BVERS)/base/boot/vmlinuz-* $(INST)/vmlinuz
+	cp $(ARCHIVE)/$(BVERS)/vmlinuz-* $(INST)/vmlinuz
 	touch $(INST)/pxe.done
 
 $(INST)/health.done: $(ARCHIVE)/$(BVERS)/health.pxe
