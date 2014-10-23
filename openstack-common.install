@@ -164,7 +164,6 @@ install_logging() {
 
 install_monitoring() {
     declare -A monitoring_packages
-    # TODO: when nagios-plugins-all is in el7, add it in rpm list
     monitoring_packages=( 
         ["deb"]="
         bc \
@@ -178,7 +177,7 @@ install_monitoring() {
 
         ["rpm"]="
         bc \
-        nagios-plugins
+        nagios-plugins-all
 ")
 
     add_percona_deb_repo
