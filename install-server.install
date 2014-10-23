@@ -42,6 +42,8 @@ update_repositories $dir
 $ORIG/deploy.install $dir $dir $version
 install_packages_disabled $dir dnsmasq
 
+mkdir -p $dir/var/lib/tftpboot/
+cp $INST/vmlinuz $INST/initrd.pxe $INST/health.pxe $dir/var/lib/tftpboot/
 
 #################
 # Puppet master #
