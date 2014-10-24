@@ -133,7 +133,7 @@ $(INST)/base.done: $(ARCHIVE)/$(BVERS)/base-$(BVERS).edeploy
 	tar zxf $(ARCHIVE)/$(BVERS)/base-$(BVERS).edeploy -C $(INST)/base
 	touch $(INST)/base.done
 
-$(INST)/pxe.done: $(ARCHIVE)/$(BVERS)/initrd.pxe
+$(INST)/pxe.done: $(ARCHIVE)/$(BVERS)/initrd.pxe $(INST)/base.done
 	rm -rf $(INST)/initrd.pxe
 	cp $(ARCHIVE)/$(BVERS)/initrd.pxe $(INST)/initrd.pxe
 	cp $(ARCHIVE)/$(BVERS)/vmlinuz $(INST)/vmlinuz
