@@ -133,15 +133,15 @@ $(INST)/base.done: $(ARCHIVE)/$(BVERS)/base-$(BVERS).edeploy
 	tar zxf $(ARCHIVE)/$(BVERS)/base-$(BVERS).edeploy -C $(INST)/base
 	touch $(INST)/base.done
 
-$(INST)/pxe.done: $(ARCHIVE)/$(BVERS)/initrd.pxe
-	rm -rf $(INST)/initrd.pxe
-	cp $(ARCHIVE)/$(BVERS)/initrd.pxe $(INST)/initrd.pxe
-	cp $(ARCHIVE)/$(BVERS)/vmlinuz $(INST)/vmlinuz
+$(INST)/pxe.done: $(ARCHIVE)/$(BVERS)/initrd.pxe $(ARCHIVE)/$(BVERS)/vmlinuz
+	rm -f $(INST)/initrd.pxe* $(INST)/vmlinuz*
+	cp $(ARCHIVE)/$(BVERS)/initrd.pxe* $(INST)/
+	cp $(ARCHIVE)/$(BVERS)/vmlinuz* $(INST)/
 	touch $(INST)/pxe.done
 
 $(INST)/health.done: $(ARCHIVE)/$(BVERS)/health.pxe
-	rm -rf $(INST)/health.pxe
-	cp $(ARCHIVE)/$(BVERS)/health.pxe $(INST)/health.pxe
+	rm -f $(INST)/health.pxe*
+	cp $(ARCHIVE)/$(BVERS)/health.pxe* $(INST)/
 	touch $(INST)/health.done
 
 
