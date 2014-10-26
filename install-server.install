@@ -211,4 +211,7 @@ $SRC/monitor-server.install $dir $dir $version
 
 $SRC/tempest.install $dir $dir $version
 
+# ensure the role is updated
+update_system $dir
+
 # install-server.install ends here
