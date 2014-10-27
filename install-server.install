@@ -167,6 +167,8 @@ case "$OS" in
     "RedHatEnterpriseServer"|"CentOS")
         install_packages $dir python-subunit python-devel libffi-devel
         remove_packages $dir $(basename $(get_openstack_repository centos $dir $OS_VERS) .noarch.rpm)
+        # ensure the role is updated
+        update_system $dir
         ;;
     *)
         install_packages $dir python-dev libffi-dev subunit
@@ -210,8 +212,5 @@ $SRC/monitor-server.install $dir $dir $version
 ###########
 
 $SRC/tempest.install $dir $dir $version
-
-# ensure the role is updated
-update_system $dir
 
 # install-server.install ends here
