@@ -23,9 +23,38 @@ version="$3"
 ROLE=mysql
 
 ORIG=$(cd $(dirname $0); pwd)
-PACKAGES="mysql-server"
 
 . ${ORIG}/functions
+
+case "$OS" in
+    "RedHatEnterpriseServer")
+        case "$CODENAME_MAJOR" in
+            6)
+                PACKAGES="mysql-server"
+                SERVICE="mysql"
+                ;;
+            7)
+                PACKAGES="mariadb-server"
+                SERVICE="mariadb"
+                ;;
+        esac
+        ;;
+    "CentOS")
+        case "$CODENAME_MAJOR" in
+            6)
+                PACKAGES="mysql-server"
+                SERVICE="mysql"
+                ;;
+            7)
+                PACKAGES="mariadb-server"
+                SERVICE="mariadb"
+                ;;
+        esac
+        ;;
+    *)
+        PACKAGES="mysql-server"
+        ;;
+esac
 
 update_repositories $dir
 install_ib_if_needed $ORIG $dir
@@ -40,7 +69,7 @@ case "$(package_tool)" in
         ;;
     "yum")
         install_packages $dir "$PACKAGES"
-        do_chroot ${dir} chkconfig --level 2345 mysqld on
+        do_chroot ${dir} chkconfig --level 2345 $SERVICE on
         ;;
     *)
         fatal_error "$package_tool isn't supported for $ROLE role"
