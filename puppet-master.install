@@ -39,7 +39,7 @@ rh_install_passenger () {
 
     # passenger is not packaged in el7, let's install & configure it
     do_chroot ${dir} gem install rack passenger
-    do_chroot ${dir} passenger-install-apache2-module -a
+    do_chroot ${dir} /usr/local/bin/passenger-install-apache2-module -a
     mkdir -p ${dir}/usr/share/puppet/rack/puppetmasterd
     mkdir -p ${dir}/usr/share/puppet/rack/puppetmasterd/public ${dir}/usr/share/puppet/rack/puppetmasterd/tmp
     cp ${dir}/usr/share/puppet/ext/rack/config.ru ${dir}/usr/share/puppet/rack/puppetmasterd/
