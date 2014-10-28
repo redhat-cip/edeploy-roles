@@ -39,6 +39,17 @@ add_fluentd_repo
 add_elasticsearch_repo
 update_repositories $dir
 
+case "$OS" in
+    "RedHatEnterpriseServer")
+        case "$CODENAME_MAJOR" in
+            7)
+                attach_pool_rh_cdn $dir $RHN_CDN_POOL_ID
+                add_rh_cdn_repo $dir rhel-7-server-optional-rpms
+                ;;
+        esac
+       ;;
+esac
+
 # Install packages
 install_packages $dir ${packages[$(package_type)]}
 case "$OS" in
@@ -48,6 +59,7 @@ case "$OS" in
               install_packages $dir td-agent libcurl-openssl-devel
             ;;
             7)
+              install_packages $dir libcurl-devel gcc
               cp $SRC/files/td-agent-2.0.3-0.el7.x86_64.rpm ${dir}/tmp/
               do_chroot ${dir} yum -y localinstall /tmp/td-agent-2.0.3-0.el7.x86_64.rpm
             ;;
