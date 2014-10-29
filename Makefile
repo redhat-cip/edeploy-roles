@@ -24,11 +24,11 @@ TOP=/var/lib/debootstrap
 ARCHIVE=$(TOP)/install
 DVER=D7
 PVER=I
-REL=1.2.0
+REL=1.3.0
 VERSION:=$(PVER).$(REL)
 VERS=$(DVER)-$(VERSION)
 DIST=wheezy
-BREL=1.6.0
+BREL=1.7.0
 BVERS=$(DVER)-$(BREL)
 
 ARCH=amd64
