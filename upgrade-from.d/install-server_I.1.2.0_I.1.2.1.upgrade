@@ -1,0 +1,58 @@
+#!/bin/bash
+#
+# Copyright (C) 2014 eNovance SAS <licensing@enovance.com>
+#
+# Author: Frederic Lepied <frederic.lepied@enovance.com>
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+
+src="$1"
+dir="$2"
+version="$3"
+ROLE=install-server
+INST=$dir/..
+
+ORIG=$(cd $(dirname $0)/..; pwd)
+
+. ${ORIG}/functions
+. ${ORIG}/repositories
+
+case "$OS" in
+    "RedHatEnterpriseServer")
+        add_epel_repository $DIST
+        add_rh_cdn_repo $dir rhel-7-server-optional-rpms
+	;;
+    "CentOS")
+        add_epel_repository $DIST
+	;;
+    *)
+        ;;
+esac
+
+update_repositories $dir
+update_system $dir
+
+case "$OS" in
+    "Debian")
+    ;;
+    "Ubuntu")
+    ;;
+    "CentOS"|"RedHatEnterpriseServer")
+        remove_epel_repository $DIST
+    ;;
+    *)
+        fatal_error "OS or Release not supported"
+    ;;
+esac
+
+# install-server_I.1.2.0_I.1.2.1.upgrade ends here

@@ -144,6 +144,13 @@ $(INST)/health.done: $(ARCHIVE)/$(BVERS)/health.pxe
 	cp $(ARCHIVE)/$(BVERS)/health.pxe* $(INST)/
 	touch $(INST)/health.done
 
+upgrade: install-server-$(DVER)-I.1.2.1 openstack-full-$(DVER)-I.1.2.1
+
+install-server-$(DVER)-I.1.2.1:
+	./upgrade-from install-server $(DVER) I.1.2.0 I.1.2.1 $(TOP)/install
+
+openstack-full-$(DVER)-I.1.2.1:
+	./upgrade-from openstack-full $(DVER) I.1.2.0 I.1.2.1 $(TOP)/install
 
 dist:
 	tar zcvf ../edeploy-roles.tgz Makefile README.rst *.install *.exclude
