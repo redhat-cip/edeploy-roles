@@ -51,6 +51,12 @@ cp $INST/vmlinuz $INST/initrd.pxe $INST/health.pxe $dir/var/lib/tftpboot/
 
 $SRC/puppet-master.install $dir $dir $version
 
+###################
+# PuppetDB server #
+###################
+
+$SRC/puppetdb-server.install $dir $dir $version
+
 ##############
 # Serverspec #
 ##############
