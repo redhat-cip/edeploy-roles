@@ -357,7 +357,7 @@ backup_packages=(
 case "$OS" in
     "Debian")
         update_repositories $dir
-        install_packages_disabled $dir -t wheezy-backports linux-headers-3.14-0.bpo.2-amd64 linux-image-3.14-0.bpo.2-amd64
+        install_packages_disabled $dir -t wheezy-backports linux-headers-3.16-0.bpo.2-amd64 linux-image-3.16-0.bpo.2-amd64
         install_packages_disabled $dir ${backup_packages[$(package_type)]}
         install_packages_disabled $dir ${prod_packages[$(package_type)]}
     ;&
