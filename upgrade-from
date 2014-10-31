@@ -24,6 +24,8 @@ DEST=$5
 
 set -e
 
+mkdir -p ${DEST}/${DVER}-${TO}
+
 ./upgrade-from.d/${ROLE}_${FROM}_${TO}.upgrade ${DEST}/${DVER}-${FROM}/${ROLE} ${DEST}/${DVER}-${TO}/${ROLE} ${DVER}-${TO}
 touch ${DEST}/${DVER}-${TO}/${ROLE}-${DVER}-${TO}
 
