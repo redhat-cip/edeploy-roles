@@ -112,7 +112,7 @@ $(INST)/chef-server.done: chef-server.install $(INST)/base.done
 	./chef-server.install $(INST)/base $(INST)/chef-server $(VERS)
 	touch $(INST)/chef-server.done
 
-install-server: $(INST)/pxe.done $(INST)/health.done $(INST)/install-server.done
+install-server: $(INST)/install-server.done
 $(INST)/install-server.done: install-server.install $(INST)/openstack-common.done puppet-master.install
 	./install-server.install $(INST)/openstack-common $(INST)/install-server $(VERS)
 	touch $(INST)/install-server.done
@@ -132,18 +132,6 @@ $(INST)/base.done: $(ARCHIVE)/$(BVERS)/base-$(BVERS).edeploy
 	mkdir -p $(INST)/base
 	tar zxf $(ARCHIVE)/$(BVERS)/base-$(BVERS).edeploy -C $(INST)/base
 	touch $(INST)/base.done
-
-$(INST)/pxe.done: $(ARCHIVE)/$(BVERS)/initrd.pxe $(ARCHIVE)/$(BVERS)/vmlinuz
-	rm -f $(INST)/initrd.pxe* $(INST)/vmlinuz*
-	cp $(ARCHIVE)/$(BVERS)/initrd.pxe* $(INST)/
-	cp $(ARCHIVE)/$(BVERS)/vmlinuz* $(INST)/
-	touch $(INST)/pxe.done
-
-$(INST)/health.done: $(ARCHIVE)/$(BVERS)/health.pxe
-	rm -f $(INST)/health.pxe*
-	cp $(ARCHIVE)/$(BVERS)/health.pxe* $(INST)/
-	touch $(INST)/health.done
-
 
 dist:
 	tar zcvf ../edeploy-roles.tgz Makefile README.rst *.install *.exclude
