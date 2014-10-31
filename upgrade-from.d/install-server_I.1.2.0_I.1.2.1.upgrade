@@ -29,7 +29,9 @@ ORIG=$(cd $(dirname $0)/..; pwd)
 
 case "$OS" in
     "RedHatEnterpriseServer")
-        add_epel_repository $DIST
+	add_puppet_repository $DIST
+	add_epel_repository $DIST
+	attach_pool_rh_cdn $dir $RHN_CDN_POOL_ID
         add_rh_cdn_repo $dir rhel-7-server-optional-rpms
 	;;
     "CentOS")
@@ -49,6 +51,7 @@ case "$OS" in
     ;;
     "CentOS"|"RedHatEnterpriseServer")
         remove_epel_repository $DIST
+	remove_puppet_repository $DIST
     ;;
     *)
         fatal_error "OS or Release not supported"
