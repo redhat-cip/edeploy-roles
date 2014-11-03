@@ -85,14 +85,16 @@ deb http://repos.sensuapp.org/apt sensu main
 EOF
     ;;
     "CentOS"|"RedHatEnterpriseServer")
-      do_chroot ${dir} rpm --import http://packages.elasticsearch.org/GPG-KEY-elasticsearch
-      cat > ${dir}/etc/yum.repos.d/sensu.repo <<EOF
+        case "$CODENAME_MAJOR" in
+            6)
+                cat > ${dir}/etc/yum.repos.d/sensu.repo <<EOF
 [sensu]
 name=Sensu
-baseurl=baseurl=http://repos.sensuapp.org/yum/el/$releasever/$basearch/
+baseurl=http://repos.sensuapp.org/yum/el/\$releasever/\$basearch/
 gpgcheck=0
 enabled=1
 EOF
+        esac
     ;;
     *)
       fatal_error "OS ($OS) or Release not supported"
@@ -106,7 +108,10 @@ remove_sensu_repo() {
       rm ${dir}/etc/apt/sources.list.d/sensu.list
     ;;
     "CentOS"|"RedHatEnterpriseServer")
-      rm ${dir}/etc/yum.repos.d/sensu.repo
+        case "$CODENAME_MAJOR" in
+            6)
+                rm ${dir}/etc/yum.repos.d/sensu.repo
+        esac
     ;;
     *)
       fatal_error "OS ($OS) or Release not supported"
