@@ -88,7 +88,7 @@ Pin-Priority: 1002
 EOF
      cat > ${dir}/etc/apt/preferences.d/mariadb <<EOF
 Package: *
-Pin: origin ftp.igh.cnrs.fr
+Pin: release o=MariaDB,n=${DIST},l=MariaDB,c=main
 Pin-Priority: 900
 EOF
      add_rabbitmq_repo
@@ -96,7 +96,7 @@ EOF
     "Ubuntu")
      do_chroot $dir apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xcbcb082a1bb943db
      cat > ${dir}/etc/apt/sources.list.d/maria.list <<EOF
-deb [trusted=yes] http://ftp.igh.cnrs.fr/pub/mariadb/repo/5.5/ubuntu $DIST main
+deb http://nwps.ws/pub/mariadb/repo/5.5/ubuntu $DIST main
 EOF
      do_chroot $dir apt-key adv --keyserver keyserver.ubuntu.com --recv 7F0CEB10
      cat > ${dir}/etc/apt/sources.list.d/mongodb.list <<EOF
@@ -105,6 +105,11 @@ EOF
      do_chroot $dir apt-key adv --keyserver keyserver.ubuntu.com --recv 0x7ebfdd5d17ed316d
      cat > ${dir}/etc/apt/sources.list.d/ceph.list <<EOF
 deb http://eu.ceph.com/debian-firefly $DIST main
+EOF
+     cat > ${dir}/etc/apt/preferences.d/mariadb <<EOF
+Package: *
+Pin: release o=MariaDB,n=${DIST},l=MariaDB,c=main
+Pin-Priority: 900
 EOF
      add_rabbitmq_repo
     ;;
