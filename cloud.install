@@ -40,14 +40,7 @@ configure_cloudinit () {
 deb $repository ${RELEASE}-backports main
 EOF
             update_repositories $dir
-	    install_packages ${dir} "cloud-init euca2ools file python-paramiko"
-            cloudutils=cloud-utils_0.26-2~bpo70+1_all.deb
-            cloudinitramfs=cloud-initramfs-growroot_0.18.debian5_all.deb
-            do_chroot ${dir} wget --no-verbose http://ftp.de.debian.org/debian/pool/main/c/cloud-initramfs-tools/$cloudinitramfs
-            do_chroot ${dir} wget --no-verbose http://ftp.de.debian.org/debian/pool/main/c/cloud-utils/$cloudutils
-            do_chroot ${dir} dpkg -i $cloudutils
-            do_chroot ${dir} dpkg -i $cloudinitramfs
-            do_chroot ${dir} rm -f $cloudutils $cloudinitramfs
+            install_packages ${dir} "cloud-init cloud-utils cloud-initramfs-growroot"
 	    ;;
         "Ubuntu")
             update_repositories $dir
