@@ -192,7 +192,7 @@ add_percona_deb_repo() {
         "Debian" | "Ubuntu")
             do_chroot ${dir} apt-key adv --keyserver keys.gnupg.net --recv-keys 1C4CBDCDCD2EFD2A
             cat > ${dir}/etc/apt/sources.list.d/percona.list <<EOF
-deb http://repo.percona.com/apt wheezy main
+deb http://repo.percona.com/apt ${RELEASE} main
 EOF
             cat > ${dir}/etc/apt/preferences.d/percona-pin.pref << EOF
 Explanation: : percona-pin
