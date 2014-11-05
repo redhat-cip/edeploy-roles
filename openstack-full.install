@@ -123,16 +123,6 @@ EOF
      cat > ${dir}/etc/apt/sources.list.d/ceph.list <<EOF
 deb http://eu.ceph.com/debian-firefly $DIST main
 EOF
-     cat > ${dir}/etc/apt/sources.list.d/haproxy-wheezy.list <<EOF
-deb http://41.apt-proxy.gplhost.com/debian haproxy-wheezy main
-EOF
-     do_chroot ${dir} wget -O- http://41.apt-proxy.gplhost.com/debian/repository_key.asc | do_chroot $dir apt-key add -
-     cat > ${dir}/etc/apt/preferences.d/haproxy <<EOF
-Package: *
-Pin: release a=stable,n=haproxy-wheezy,c=main
-Pin: origin 41.apt-proxy.gplhost.com
-Pin-Priority: 1002
-EOF
      cat > ${dir}/etc/apt/preferences.d/mariadb <<EOF
 Package: *
 Pin: release o=MariaDB,n=${DIST},l=MariaDB,c=main
