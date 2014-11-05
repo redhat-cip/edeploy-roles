@@ -37,7 +37,7 @@ configure_cloudinit () {
 	"Debian")
 	    local repository=$(add_main_repository $DIST)
 	    cat > ${dir}/etc/apt/sources.list.d/$RELEASE-backport.list <<EOF
-deb $repository ${RELEASE}-backports main
+deb $repository ${RELEASE}-backports main contrib non-free
 EOF
             update_repositories $dir
             install_packages ${dir} "cloud-init cloud-utils cloud-initramfs-growroot"
