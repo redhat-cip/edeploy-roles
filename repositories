@@ -198,7 +198,7 @@ EOF
 Explanation: : percona-pin
 Package: *
 Pin: origin "repo.percona.com"
-Pin-Priority: 100
+Pin-Priority: 600
 EOF
             update_repositories $dir
             ;;
