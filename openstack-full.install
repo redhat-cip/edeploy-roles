@@ -460,12 +460,19 @@ EOF
 
         fi
 
-        # TODO (spredzy) : Find a more elegant way to do that
-        # and make it persistent.
-        # Set priority to one for RH repos
-        do_chroot $dir sed -i "s/\[\(rhel-7-server-openstack-5.0-rpms\)\]/\[\1\]\npriority = 1/g" /etc/yum.repos.d/redhat.repo
-        do_chroot $dir sed -i "s/\[\(rhel-ha-for-rhel-7-server-rpms\)\]/\[\1\]\npriority = 1/g" /etc/yum.repos.d/redhat.repo
-        do_chroot $dir sed -i "s/\[\(rhel-server-rhscl-7-rpms\)\]/\[\1\]\npriority = 1/g" /etc/yum.repos.d/redhat.repo
+        if [ "$OS" == "RedHatEnterpriseServer" ]; then
+            # TODO (spredzy) : Find a more elegant way to do that
+            # and make it persistent.
+            # Set priority to one for RH repos
+            do_chroot $dir sed -i "s/\[\(rhel-7-server-openstack-5.0-rpms\)\]/\[\1\]\npriority = 1/g" /etc/yum.repos.d/redhat.repo
+            do_chroot $dir sed -i "s/\[\(rhel-ha-for-rhel-7-server-rpms\)\]/\[\1\]\npriority = 1/g" /etc/yum.repos.d/redhat.repo
+            do_chroot $dir sed -i "s/\[\(rhel-server-rhscl-7-rpms\)\]/\[\1\]\npriority = 1/g" /etc/yum.repos.d/redhat.repo
+
+            # TODO (spredzy) : The following line prevent RabbitMQ from
+            # starting. A discussion is in progress with RH people to
+            # find what is the cause
+            do_chroot $dir sed -i 's/Requires=epmd@0.0.0.0.socket/#Requires=epmd@0.0.0.0.socket/g' /usr/lib/systemd/system/rabbitmq-server.service
+        fi
 
         install_packages_disabled $dir ${os_packages[$(package_type)]} $EXTRA_RPMS
         remove_epel_repository $DIST
