@@ -65,6 +65,11 @@ install_monitoring() {
             install_packages_disabled $dir ${monitoring_packages[$(package_type)]}
             ;;
         "CentOS"|"RedHatEnterpriseServer")
+            if [ "$OS" == "RedHatEnterpriseServer" ]; then
+                DISABLEREPO=--disablerepo='rhel-7-server-openstack-5.0-rpms'
+            else
+                DISABLEREPO=''
+            fi
             case "$CODENAME_MAJOR" in
                 6)
                     install_packages $dir sensu
@@ -73,7 +78,7 @@ install_monitoring() {
                 7)
                     cp $SRC/files/sensu-0.13.1-1.x86_64.rpm ${dir}/tmp/
                     do_chroot ${dir} yum -y localinstall /tmp/sensu-0.13.1-1.x86_64.rpm
-                    do_chroot ${dir} yum -y install ${monitoring_packages[$(package_type)]} --disablerepo='rhel-7-server-openstack-5.0-rpms'
+                    do_chroot ${dir} yum -y install ${monitoring_packages[$(package_type)]} $DISABLEREPO
                 ;;
             esac
         ;;
