@@ -491,11 +491,12 @@ EOF
     "CentOS")
         install_packages $dir $(get_openstack_repository $DIST $dir $OS_VERS)
         install_packages $dir qemu-kvm
-        # Note that ceph is installed before activating EPEL because
-        # we want to use ceph.com packages
+        # Ceph has an higher priority compared to EPEL
+        # So packages will be pulled first from Ceph if
+        # available on both
         add_ceph_rpm_repo
-        install_packages_disabled $dir ceph
         add_epel_repository $DIST
+        install_packages_disabled $dir ceph
     ;;&
     "CentOS"|"RedHatEnterpriseServer")
         if [ "$CODENAME_MAJOR" == "6" ]; then
