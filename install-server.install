@@ -59,6 +59,7 @@ install_monitoring() {
     do_chroot ${dir} bash -c 'pip install -U --no-deps git+https://github.com/stackforge/monitoring-for-openstack.git#egg=monitoring-for-openstack'
     add_sensu_repo
     update_repositories $dir
+    do_chroot ${dir} gem install sensu-plugin
     case "$OS" in
         "Debian" | "Ubuntu")
             install_packages $dir sensu
