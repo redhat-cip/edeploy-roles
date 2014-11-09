@@ -96,26 +96,36 @@ EOF
 esac
 
 update_repositories $dir
-update_system $dir
 
 case "$OS" in
+    "Debian"|"Ubuntu")
+        do_chroot $dir apt-get upgrade -y --force-yes
+        ;;& # → means "continue"
     "Debian")
-    ;;
-    "Ubuntu")
-    ;;
+        cloudutils=cloud-utils_0.26-2~bpo70+1_all.deb
+        cloudinitramfs=cloud-initramfs-growroot_0.18.debian5_all.deb
+        do_chroot ${dir} wget --no-verbose http://ftp.de.debian.org/debian/pool/main/c/cloud-initramfs-tools/$cloudinitramfs
+        do_chroot ${dir} wget --no-verbose http://ftp.de.debian.org/debian/pool/main/c/cloud-utils/$cloudutils
+        do_chroot ${dir} dpkg -i $cloudutils
+        do_chroot ${dir} dpkg -i $cloudinitramfs
+        do_chroot ${dir} rm -f $cloudutils $cloudinitramfs
+        ;;
+    "CentOS"|"RedHatEnterpriseServer")
+        update_system $dir
+        ;;& # → means "continue"
     "RedHatEnterpriseServer")
         if [ -z "$CEPH_USERNAME" -o -z "$CEPH_PASSWORD" ]; then
             remove_ceph_rpm_repo
         else
             rm $dir/etc/yum.repos.d/ice.repo
         fi
-    ;;& # → means "continue"
+        ;;& # → means "continue"
     "CentOS"|"RedHatEnterpriseServer")
         remove_epel_repository $DIST
-    ;;
+        ;;
     *)
         fatal_error "OS or Release not supported"
-    ;;
+        ;;
 esac
 
 # openstack-full_I.1.2.0_I.1.2.1.upgrade ends here
