@@ -338,6 +338,11 @@ os_packages=(
         openstack-swift-container \
         openstack-swift-object \
         openstack-swift-proxy \
+        openstack-trove-api \
+        openstack-trove-common \
+        openstack-trove-conductor \
+        openstack-trove-guestagent \
+        openstack-trove-taskmanager \
         openvswitch \
         pacemaker \
         pcs \
