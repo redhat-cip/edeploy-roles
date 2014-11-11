@@ -30,13 +30,13 @@ ORIG=$(cd $(dirname $0); pwd)
 . ./repositories
 
 case $version in
-    *-I.*)
-        OS_VERS=icehouse
-        ;;
-    *)
-        echo "unsupported version $version" 1>&2
-        exit 1
-        ;;
+  *-I.*)
+    OS_VERS=icehouse
+    ;;
+  *)
+    echo "unsupported version $version" 1>&2
+    exit 1
+    ;;
 esac
 
 install_ib_if_needed $ORIG $dir
@@ -149,68 +149,8 @@ install_logging() {
     remove_epel_repository $DIST
 }
 
-install_monitoring() {
-    declare -A monitoring_packages
-    monitoring_packages=(
-        ["deb"]="
-        bc \
-        libjson-perl \
-        ruby-dev \
-        libnagios-plugin-perl \
-        nagios-plugin-check-multi \
-        nagios-plugins-basic \
-        nagios-plugins-standard \
-        percona-nagios-plugins
-"
-
-        ["rpm"]="
-        bc \
-        nagios-plugins-all
-")
-
-    add_percona_deb_repo
-    add_epel_repository $DIST
-    install_packages_disabled $dir git python-pip python-psutil
-
-    do_chroot ${dir} bash -c 'pip install -U --no-deps git+https://github.com/stackforge/monitoring-for-openstack.git#egg=monitoring-for-openstack'
-    add_sensu_repo
-    update_repositories $dir
-    case "$OS" in
-        "Debian" | "Ubuntu")
-            install_packages $dir sensu
-            install_packages_disabled $dir ${monitoring_packages[$(package_type)]}
-            ;;
-        "CentOS"|"RedHatEnterpriseServer")
-            if [ "$OS" == "RedHatEnterpriseServer" ]; then
-                DISABLEREPO=--disablerepo='rhel-7-server-openstack-5.0-rpms'
-            else
-                DISABLEREPO=''
-            fi
-            case "$CODENAME_MAJOR" in
-                6)
-                    install_packages $dir sensu
-                    install_packages_disabled $dir ${monitoring_packages[$(package_type)]}
-                ;;
-                7)
-                    cp $SRC/files/sensu-0.13.1-1.x86_64.rpm ${dir}/tmp/
-                    do_chroot ${dir} yum -y localinstall /tmp/sensu-0.13.1-1.x86_64.rpm
-                    do_chroot ${dir} yum -y install ${monitoring_packages[$(package_type)]} $DISABLEREPO
-                ;;
-            esac
-        ;;
-        *)
-            fatal_error "OS or Release not supported"
-            ;;
-    esac
-
-    do_chroot ${dir} gem install sensu-plugin
-
-    remove_sensu_repo
-    remove_epel_repository $DIST
-}
-
 prepare_packages
 os_install_packages
 install_logging
 # TODO (spredzy) : https://bugzilla.redhat.com/show_bug.cgi?id=1159894
-install_monitoring
+# install_monitoring

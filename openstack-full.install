@@ -29,13 +29,13 @@ ORIG=$(cd $(dirname $0); pwd)
 . ./repositories
 
 case $version in
-    *-I.*)
-        OS_VERS=icehouse
-        ;;
-    *)
-        echo "unsupported version $version" 1>&2
-        exit 1
-        ;;
+  *-I.*)
+    OS_VERS=icehouse
+    ;;
+  *)
+    echo "unsupported version $version" 1>&2
+    exit 1
+    ;;
 esac
 
 # Specify the ICE (Ceph for Enterprise) release
@@ -485,6 +485,9 @@ EOF
     fatal_error "OS or Release not supported"
     ;;
 esac
+
+# TODO (spredzy): https://bugzilla.redhat.com/show_bug.cgi?id=1159894
+install_monitoring
 
 # add galera-status script to validate MySQL Galera cluster sanity
 cp $SRC/files/galera-status $dir/usr/sbin

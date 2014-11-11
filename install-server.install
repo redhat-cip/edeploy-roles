@@ -223,4 +223,6 @@ $SRC/monitor-server.install $dir $dir $version
 
 $SRC/tempest.install $dir $dir $version
 
+install_monitoring
+
 # install-server.install ends here
