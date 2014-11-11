@@ -1,0 +1,11 @@
+
+module nova-consoleauth 1.0;
+
+require {
+	type memcache_port_t;
+	type nova_console_t;
+	class tcp_socket name_connect;
+}
+
+#============= nova_console_t ==============
+allow nova_console_t memcache_port_t:tcp_socket name_connect;

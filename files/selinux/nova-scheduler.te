@@ -1,0 +1,11 @@
+
+module nova-scheduler 1.0;
+
+require {
+	type nova_scheduler_t;
+	type memcache_port_t;
+	class tcp_socket name_connect;
+}
+
+#============= nova_scheduler_t ==============
+allow nova_scheduler_t memcache_port_t:tcp_socket name_connect;

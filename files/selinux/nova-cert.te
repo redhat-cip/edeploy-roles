@@ -1,0 +1,11 @@
+
+module nova-cert 1.0;
+
+require {
+	type nova_cert_t;
+	type memcache_port_t;
+	class tcp_socket name_connect;
+}
+
+#============= nova_cert_t ==============
+allow nova_cert_t memcache_port_t:tcp_socket name_connect;

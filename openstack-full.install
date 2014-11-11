@@ -479,6 +479,12 @@ EOF
             # find what is the cause
             do_chroot $dir sed -i 's/Requires=epmd@0.0.0.0.socket/#Requires=epmd@0.0.0.0.socket/g' /usr/lib/systemd/system/rabbitmq-server.service
         fi
+
+        # TODO (spredzy): Install selinux policies
+        # while the issues are fixed upstream
+        do_chroot $dir mkdir -p /usr/share/spinalstack/selinux
+        cp $SRC/files/selinux/*.pp ${dir}/usr/share/spinalstack/selinux
+
         remove_epel_repository $DIST
     ;;
     *)
