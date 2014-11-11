@@ -28,15 +28,10 @@ ORIG=$(cd $(dirname $0); pwd)
 . ${ORIG}/functions
 . ./repositories
 
-case $version in
-    *-I.*)
-        OS_VERS=icehouse
-        ;;
-    *)
-        echo "unsupported version $version" 1>&2
-        exit 1
-        ;;
-esac
+if [ -z "$OS_VERS" ]; then
+    echo "OS_VERS is not set, Icehouse will be built by default"
+    OS_VERS=icehouse
+fi
 
 # Specify the ICE (Ceph for Enterprise) release
 # 1.2 = firefly
@@ -60,6 +55,64 @@ function build_dkms() {
     unset ARCH
     do_chroot $dir dkms build -m "$name" -v "$version" -k "$kernel"
     do_chroot $dir dkms install -m "$name" -v "$version" -k "$kernel"
+}
+
+install_monitoring() {
+    declare -A monitoring_packages
+    monitoring_packages=(
+        ["deb"]="
+        bc \
+        libjson-perl \
+        libnagios-plugin-perl \
+        nagios-plugin-check-multi \
+        nagios-plugins-basic \
+        nagios-plugins-standard \
+        percona-nagios-plugins
+"
+
+        ["rpm"]="
+        bc \
+        nagios-plugins-all
+")
+
+    add_percona_deb_repo
+    add_epel_repository $DIST
+    install_packages_disabled $dir git python-pip python-psutil
+
+    do_chroot ${dir} bash -c 'pip install -U --no-deps git+https://github.com/stackforge/monitoring-for-openstack.git#egg=monitoring-for-openstack'
+    add_sensu_repo
+    update_repositories $dir
+    do_chroot ${dir} gem install sensu-plugin
+    case "$OS" in
+        "Debian" | "Ubuntu")
+            install_packages $dir sensu
+            install_packages_disabled $dir ${monitoring_packages[$(package_type)]}
+            ;;
+        "CentOS"|"RedHatEnterpriseServer")
+            if [ "$OS" == "RedHatEnterpriseServer" ]; then
+                DISABLEREPO=--disablerepo='rhel-7-server-openstack-5.0-rpms'
+            else
+                DISABLEREPO=''
+            fi
+            case "$CODENAME_MAJOR" in
+                6)
+                    install_packages $dir sensu
+                    install_packages_disabled $dir ${monitoring_packages[$(package_type)]}
+                ;;
+                7)
+                    cp $SRC/files/sensu-0.13.1-1.x86_64.rpm ${dir}/tmp/
+                    do_chroot ${dir} yum -y localinstall /tmp/sensu-0.13.1-1.x86_64.rpm
+                    do_chroot ${dir} yum -y install ${monitoring_packages[$(package_type)]} $DISABLEREPO
+                ;;
+            esac
+        ;;
+        *)
+            fatal_error "OS or Release not supported"
+            ;;
+    esac
+
+    remove_sensu_repo
+    remove_epel_repository $DIST
 }
 
 case "$OS" in
@@ -485,6 +538,9 @@ EOF
     fatal_error "OS or Release not supported"
     ;;
 esac
+
+# TODO (spredzy): https://bugzilla.redhat.com/show_bug.cgi?id=1159894
+install_monitoring
 
 # add galera-status script to validate MySQL Galera cluster sanity
 cp $SRC/files/galera-status $dir/usr/sbin
