@@ -24,9 +24,12 @@ TOP=/var/lib/debootstrap
 ARCHIVE=$(TOP)/install
 DVER=D7
 PVER=I
-REL=1.2.0
+PREL=1.2.0
+REL=1.2.1
 VERSION:=$(PVER).$(REL)
 VERS=$(DVER)-$(VERSION)
+PVERSION:=$(PVER).$(PREL)
+PVERS=$(DVER)-$(PVERSION)
 DIST=wheezy
 BREL=1.6.0
 BVERS=$(DVER)-$(BREL)
@@ -144,13 +147,16 @@ $(INST)/health.done: $(ARCHIVE)/$(BVERS)/health.pxe
 	cp $(ARCHIVE)/$(BVERS)/health.pxe* $(INST)/
 	touch $(INST)/health.done
 
-upgrade: install-server-$(DVER)-I.1.2.1 openstack-full-$(DVER)-I.1.2.1
+upgrade: install-server-$(VERS) openstack-full-$(VERS) pxe-$(VERS)
 
-install-server-$(DVER)-I.1.2.1:
-	./upgrade-from install-server $(DVER) I.1.2.0 I.1.2.1 $(TOP)/install
+install-server-$(VERS):
+	./upgrade-from install-server $(DVER) $(PVERSION) $(VERSION) $(TOP)/install
 
-openstack-full-$(DVER)-I.1.2.1:
-	./upgrade-from openstack-full $(DVER) I.1.2.0 I.1.2.1 $(TOP)/install
+openstack-full-$(VERS):
+	./upgrade-from openstack-full $(DVER) $(PVERSION) $(VERSION) $(TOP)/install
+
+pxe-$(VERS):
+	./upgrade-from pxe $(DVER) $(PVERSION) $(VERSION) $(TOP)/install
 
 dist:
 	tar zcvf ../edeploy-roles.tgz Makefile README.rst *.install *.exclude

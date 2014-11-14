@@ -1,0 +1,45 @@
+#!/bin/bash
+#
+# Copyright (C) 2014 eNovance SAS <licensing@enovance.com>
+#
+# Author: Frederic Lepied <frederic.lepied@enovance.com>
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+
+set -e
+set -x
+
+src="$1"
+dir="$2"
+version="$3"
+ROLE=pxe
+INST=$dir/..
+
+IMG=initrd.pxe
+
+ORIG=$(cd $(dirname $0)/..; pwd)
+
+rm -rf $dir
+mkdir -p $dir
+
+oldver=$(basename $(dirname $src))
+
+cd $dir
+ls -l $ARCHIVE/$oldver/$IMG
+zcat $ARCHIVE/$oldver/$IMG | cpio -id -
+find . | cpio --quiet -R 0:0 -o -H newc | gzip -9v > ../${IMG}
+wget -q -O$dir/detect.py https://raw.githubusercontent.com/enovance/edeploy/1.6/src/detect.py
+cd ..
+md5sum ${IMG} > ${IMG}.md5
+
+# pxe_I.1.2.0_I.1.2.1.upgrade ends here
