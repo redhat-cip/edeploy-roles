@@ -170,6 +170,9 @@ distclean: clean
 version:
 	@echo "$(VERS)"
 
+bversion:
+	@echo "$(BVERS)"
+
 .PHONY: cloud devstack openstack-common openstack-full mysql docker puppet-master\
 	chef-server logcollector dist clean distclean version monitor-server postgresql-server\
 	puppetdb-server
