@@ -147,7 +147,7 @@ $(INST)/health.done: $(ARCHIVE)/$(BVERS)/health.pxe
 	cp $(ARCHIVE)/$(BVERS)/health.pxe* $(INST)/
 	touch $(INST)/health.done
 
-upgrade: install-server-$(VERS) openstack-full-$(VERS) pxe-$(VERS)
+upgrade: install-server-$(VERS) openstack-full-$(VERS) pxe-$(VERS) health-$(VERS)
 
 install-server-$(VERS):
 	./upgrade-from install-server $(DVER) $(PVERSION) $(VERSION) $(TOP)/install
@@ -157,6 +157,9 @@ openstack-full-$(VERS):
 
 pxe-$(VERS):
 	./upgrade-from pxe $(DVER) $(PVERSION) $(VERSION) $(TOP)/install
+
+health-$(VERS):
+	./upgrade-from health $(DVER) $(PVERSION) $(VERSION) $(TOP)/install
 
 dist:
 	tar zcvf ../edeploy-roles.tgz Makefile README.rst *.install *.exclude
