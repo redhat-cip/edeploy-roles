@@ -1,0 +1,11 @@
+
+module mysql_safe 1.0;
+
+require {
+	type mysqld_safe_t;
+	type mysqld_t;
+	class process { siginh noatsecure rlimitinh };
+}
+
+#============= mysqld_safe_t ==============
+allow mysqld_safe_t mysqld_t:process { siginh rlimitinh noatsecure };

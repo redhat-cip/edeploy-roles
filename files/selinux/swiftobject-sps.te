@@ -1,0 +1,11 @@
+
+module swiftobject-sps 1.0;
+
+require {
+	type rsync_exec_t;
+	type swift_t;
+	class file execute;
+}
+
+#============= swift_t ==============
+allow swift_t rsync_exec_t:file execute;

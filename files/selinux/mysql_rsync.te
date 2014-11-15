@@ -1,0 +1,11 @@
+
+module mysql_rsync 1.0;
+
+require {
+	type kerberos_port_t;
+	type mysqld_t;
+	class tcp_socket name_bind;
+}
+
+#============= mysqld_t ==============
+allow mysqld_t kerberos_port_t:tcp_socket name_bind;

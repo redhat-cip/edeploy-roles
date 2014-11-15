@@ -1,0 +1,11 @@
+
+module keepalived_haproxy 1.0;
+
+require {
+	type haproxy_unit_file_t;
+	type keepalived_t;
+	class service { status stop };
+}
+
+#============= keepalived_t ==============
+allow keepalived_t haproxy_unit_file_t:service { status stop };
