@@ -5,7 +5,7 @@
 version: I.1.3.0
 
 # Previous product release code
-stable: I.1.2.0
+stable: I.1.2.1
 
 os_username: admin
 os_tenant_name: admin
