@@ -48,7 +48,7 @@ esac
 JENKINS_URL=https://updates.jenkins-ci.org/download/plugins
 JENKINS_URL2=http://ftp.nluug.nl/programming/jenkins/plugins
 JENKINS_PLUGINS="ssh-agent/1.4.1/ssh-agent.hpi \
-                 gearman-plugin/0.0.6/gearman-plugin.hpi \
+                 gearman-plugin/0.1.1/gearman-plugin.hpi \
                  promoted-builds/2.17/promoted-builds.hpi \
                  git-client/1.9.0/git-client.hpi \
                  scm-api/0.2/scm-api.hpi \
