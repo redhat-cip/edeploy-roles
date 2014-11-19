@@ -65,9 +65,9 @@ case "$OS" in
               # TODO (spredzy) : Find a more elegant way to do that
               # and make it persistent.
               # Set priority to one for RH repos
-              do_chroot $dir sed -i "s/\[\(rhel-7-server-openstack-5.0-rpms\)\]/\[\1\]\npriority = 1/g" /etc/yum.repos.d/redhat.repo
-              do_chroot $dir sed -i "s/\[\(rhel-ha-for-rhel-7-server-rpms\)\]/\[\1\]\npriority = 1/g" /etc/yum.repos.d/redhat.repo
-              do_chroot $dir sed -i "s/\[\(rhel-server-rhscl-7-rpms\)\]/\[\1\]\npriority = 1/g" /etc/yum.repos.d/redhat.repo
+              do_chroot $dir sed -i "s/\[\(rhel-7-server-openstack-5.0-rpms\)\]/\[\1\]\npriority = 2/g" /etc/yum.repos.d/redhat.repo
+              do_chroot $dir sed -i "s/\[\(rhel-ha-for-rhel-7-server-rpms\)\]/\[\1\]\npriority = 2/g" /etc/yum.repos.d/redhat.repo
+              do_chroot $dir sed -i "s/\[\(rhel-server-rhscl-7-rpms\)\]/\[\1\]\npriority = 2/g" /etc/yum.repos.d/redhat.repo
               ;;
         esac
         # Install ICE (Ceph for Enterprise) if possible, otherwise fall back to ceph.com
