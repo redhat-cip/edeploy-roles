@@ -21,6 +21,11 @@ ROLE=jenkins
 
 ORIG=$(cd $(dirname $0); pwd)
 
+if [ -z "$OS_VERS" ]; then
+    echo "OS_VERS is not set, Icehouse will be built by default"
+    OS_VERS=icehouse
+fi
+
 . ${ORIG}/functions
 
 #
