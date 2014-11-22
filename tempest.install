@@ -51,7 +51,7 @@ case "$(package_tool)" in
         install_packages $dir "$PACKAGES pyOpenSSL python-virtualenv libxml2-devel libxslt-devel"
         remove_epel_repository $DIST
         install_packages $dir $(get_openstack_repository centos $dir $OS_VERS)
-        install_packages openstack-tempest-icehouse
+        install_packages $dir openstack-tempest-icehouse
         ;;
     *)
         fatal_error "$package_tool isn't supported for $ROLE role"
