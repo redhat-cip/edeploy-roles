@@ -39,7 +39,7 @@ install_ib_if_needed $ORIG $dir
 case "$(package_tool)" in
     "apt")
         update_repositories $dir
-        install_packages $dir "$PACKAGES python-openssl libxml2-dev libxslt-dev libpq-dev python-dev python-virtualenv libffi-dev"
+        install_packages $dir "$PACKAGES python-openssl libxml2-dev libxslt-dev libpq-dev python-dev python-virtualenv libffi-dev python-junitxml"
         mkdir -p ${dir}/usr/share/openstack-tempest-icehouse
         git clone 'https://github.com/openstack/tempest' ${dir}/usr/share/openstack-tempest-icehouse
         do_chroot ${dir} bash -c 'cd /usr/share/openstack-tempest-icehouse; python ./setup.py install --single-version-externally-managed --root /'
@@ -48,7 +48,7 @@ case "$(package_tool)" in
     "yum")
         add_epel_repository $DIST
         update_repositories $dir
-        install_packages $dir "$PACKAGES pyOpenSSL python-virtualenv libxml2-devel libxslt-devel"
+        install_packages $dir "$PACKAGES pyOpenSSL python-virtualenv libxml2-devel libxslt-devel python-junitxml"
         remove_epel_repository $DIST
         install_packages $dir $(get_openstack_repository centos $dir $OS_VERS)
         install_packages $dir openstack-tempest-icehouse
