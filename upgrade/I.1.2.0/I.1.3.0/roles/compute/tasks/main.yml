@@ -16,3 +16,14 @@
   command: nova-manage service disable --service nova-compute --host {{ ansible_hostname }}
   tags: before_config
   when: ansible_distribution == 'Debian'
+
+# Red Hat OSP5 upgrades Icehouse to 2014.1.3
+# from 2014.1.2-2.el7ost to 2014.1.3-1.el7ost
+- name: restart services after upgrade
+  service: name={{ item }} state=restarted
+  with_items:
+    - neutron-openvswitch-agent
+    - openstack-ceilometer-compute
+    - openstack-nova-compute
+  tags: before_config
+  when: ansible_distribution == 'RedHat'
