@@ -1,0 +1,6 @@
+---
+# file: roles/network/tasks/main.yml
+
+- name: edeploy upgrade
+  edeploy: command=upgrade version={{ distro }}-{{ version }}
+  tags: before_config
