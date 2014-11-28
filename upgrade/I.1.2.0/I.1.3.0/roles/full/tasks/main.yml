@@ -1,0 +1,113 @@
+---
+# file: roles/controller/tasks/main.yml
+
+# Debian has a kernel upgrade from 3.14 to 3.16
+# So we need to restart the compute nodes and migrate the instances before.
+- name: migrate instances
+  script: migrate.sh {{ ansible_hostname }} {{ os_username }} {{ os_tenant_name }} {{ os_password }} {{ os_auth_url }}
+  tags: before_config
+  when: ansible_distribution == 'Debian'
+
+- name: edeploy upgrade
+  edeploy: command=upgrade version={{ distro }}-{{ version }}
+  tags: before_config
+
+- name: allow instance scheduling on the compute node
+  command: nova-manage service disable --service nova-compute --host {{ ansible_hostname }}
+  tags: before_config
+  when: ansible_distribution == 'Debian'
+
+# Red Hat upgrade Galera to 25.3.5-5.el7ost
+- name: restart
+  service: name=mysqld state=restarted
+  tags: before_config
+
+# HAproxy has been updated in Debian
+# from 1.5~dev26-2~bpo70+1 to 1.5.4-1~bpo70+2
+- name: restart HAproxy service
+  service: name={{ item }} state=restarted
+  with_items:
+    - haproxy
+  tags: before_config
+  when: ansible_distribution == 'Debian'
+
+# Red Hat OSP5 upgrades Icehouse to 2014.1.3
+# from 2014.1.2-2.el7ost to 2014.1.3-1.el7ost
+- name: restart services after upgrade
+  service: name={{ item }} state=restarted
+  with_items:
+    - httpd
+    - neutron-dhcp-agent
+    - neutron-l3-agent
+    - neutron-lbaas-agent
+    - neutron-metadata-agent
+    - neutron-metering-agent
+    - neutron-metering-agent
+    - neutron-openvswitch-agent
+    - neutron-openvswitch-agent
+    - neutron-server
+    - openstack-ceilometer-alarm-evaluator
+    - openstack-ceilometer-alarm-notifier
+    - openstack-ceilometer-api
+    - openstack-ceilometer-collector
+    - openstack-ceilometer-compute
+    - openstack-ceilometer-notification
+    - openstack-cinder-api
+    - openstack-cinder-scheduler
+    - openstack-cinder-volume
+    - openstack-glance-api
+    - openstack-glance-registry
+    - openstack-heat-api
+    - openstack-heat-api-cfn
+    - openstack-heat-api-cloudwatch
+    - openstack-heat-engine
+    - openstack-keystone
+    - openstack-nova-api
+    - openstack-nova-cert
+    - openstack-nova-compute
+    - openstack-nova-conductor
+    - openstack-nova-consoleauth
+    - openstack-nova-scheduler
+    - openstack-nova-spicehtml5proxy
+    - openstack-swift-account
+    - openstack-swift-container
+    - openstack-swift-object
+    - openstack-swift-proxy
+  tags: before_config
+  when: ansible_distribution == 'RedHat'
+
+- name: update keystone database
+  command: keystone-manage db_sync
+  tags: before_config
+  when: inventory_hostname == groups['controller'][-1] and ansible_distribution == 'RedHat'
+
+- name: update nova database
+  command: nova-manage db sync
+  tags: before_config
+  when: inventory_hostname == groups['controller'][-1] and ansible_distribution == 'RedHat'
+
+- name: update glance database
+  command: glance-manage db_sync
+  tags: before_config
+  when: inventory_hostname == groups['controller'][-1] and ansible_distribution == 'RedHat'
+
+- name: update cinder database
+  command: cinder-manage db sync
+  tags: before_config
+  when: inventory_hostname == groups['controller'][-1] and ansible_distribution == 'RedHat'
+
+- name: update neutron database
+  command: neutron-db-manage --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade head
+  tags: before_config
+  when: inventory_hostname == groups['controller'][-1] and ansible_distribution == 'RedHat'
+
+- name: update heat database
+  command: heat-manage --config-file /etc/heat/heat.conf db_sync
+  tags: before_config
+  when: inventory_hostname == groups['controller'][-1] and ansible_distribution == 'RedHat'
+
+
+- name: restart ceilometer-agent-central managed by pacemaker
+  command: pcs resource cleanup ceilometer-agent-central
+  tags: before_config
+  when: inventory_hostname == groups['controller'][-1] and ansible_distribution == 'RedHat'
