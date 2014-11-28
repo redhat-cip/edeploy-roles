@@ -1,5 +1,5 @@
 ---
-# file: roles/controller/tasks/main.yml
+# file: roles/full/tasks/main.yml
 
 # Debian has a kernel upgrade from 3.14 to 3.16
 # So we need to restart the compute nodes and migrate the instances before.
@@ -79,35 +79,35 @@
 - name: update keystone database
   command: keystone-manage db_sync
   tags: before_config
-  when: inventory_hostname == groups['controller'][-1] and ansible_distribution == 'RedHat'
+  when: inventory_hostname == groups['full'][-1] and ansible_distribution == 'RedHat'
 
 - name: update nova database
   command: nova-manage db sync
   tags: before_config
-  when: inventory_hostname == groups['controller'][-1] and ansible_distribution == 'RedHat'
+  when: inventory_hostname == groups['full'][-1] and ansible_distribution == 'RedHat'
 
 - name: update glance database
   command: glance-manage db_sync
   tags: before_config
-  when: inventory_hostname == groups['controller'][-1] and ansible_distribution == 'RedHat'
+  when: inventory_hostname == groups['full'][-1] and ansible_distribution == 'RedHat'
 
 - name: update cinder database
   command: cinder-manage db sync
   tags: before_config
-  when: inventory_hostname == groups['controller'][-1] and ansible_distribution == 'RedHat'
+  when: inventory_hostname == groups['full'][-1] and ansible_distribution == 'RedHat'
 
 - name: update neutron database
   command: neutron-db-manage --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade head
   tags: before_config
-  when: inventory_hostname == groups['controller'][-1] and ansible_distribution == 'RedHat'
+  when: inventory_hostname == groups['full'][-1] and ansible_distribution == 'RedHat'
 
 - name: update heat database
   command: heat-manage --config-file /etc/heat/heat.conf db_sync
   tags: before_config
-  when: inventory_hostname == groups['controller'][-1] and ansible_distribution == 'RedHat'
+  when: inventory_hostname == groups['full'][-1] and ansible_distribution == 'RedHat'
 
 
 - name: restart ceilometer-agent-central managed by pacemaker
   command: pcs resource cleanup ceilometer-agent-central
   tags: before_config
-  when: inventory_hostname == groups['controller'][-1] and ansible_distribution == 'RedHat'
+  when: inventory_hostname == groups['full'][-1] and ansible_distribution == 'RedHat'
