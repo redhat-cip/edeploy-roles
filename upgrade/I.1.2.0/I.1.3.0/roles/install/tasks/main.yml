@@ -4,7 +4,7 @@
 - name: stop puppet
   service: name={{ item }} state=stopped
   with_items:
-    - apache2
+    - {{ webserver }}
     - puppetdb
   tags: install_server
 
@@ -16,9 +16,13 @@
   edeploy: command=upgrade version={{ distro }}-{{ version }}
   tags: install_server
 
-# restart jenkins because of newer version
-- name: restart jenkins
-  service: name=jenkins state=restarted
+# restart jenkins and puppet because of newer versions
+- name: restart jenkins and puppet
+  service: name={{ item }} state=restarted
+  with_items:
+    - {{ webserver }}
+    - puppetdb
+    - jenkins
   tags: install_server
 
 - name: wait jenkins is up and running
