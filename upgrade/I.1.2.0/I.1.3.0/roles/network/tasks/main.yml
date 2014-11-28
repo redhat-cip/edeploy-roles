@@ -1,0 +1,21 @@
+---
+# file: roles/network/tasks/main.yml
+
+- name: edeploy upgrade
+  edeploy: command=upgrade version={{ distro }}-{{ version }}
+  tags: before_config
+
+# Red Hat OSP5 upgrades Icehouse to 2014.1.3
+# from 2014.1.2-2.el7ost to 2014.1.3-1.el7ost
+- name: restart services after upgrade
+  service: name={{ item }} state=restarted
+  with_items:
+    - neutron-dhcp-agent
+    - neutron-l3-agent
+    - neutron-lbaas-agent
+    - neutron-metadata-agent
+    - neutron-metering-agent
+    - neutron-openvswitch-agent
+  tags: before_config
+  when: ansible_distribution == 'RedHat'
+
