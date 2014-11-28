@@ -1,0 +1,26 @@
+---
+# file: roles/install/tasks/main.yml
+
+- name: stop puppet
+  service: name={{ item }} state=stopped
+  with_items:
+    - apache2
+    - puppetdb
+  tags: install_server
+
+- name: synchronize eDeploy roles & metadata with upstream
+  script: edeploy-sync.sh {{ edeploy_master }} {{ distro }}-{{ version }}
+  tags: install_server
+
+- name: edeploy upgrade
+  edeploy: command=upgrade version={{ distro }}-{{ version }}
+  tags: install_server
+
+# restart jenkins because of newer version
+- name: restart jenkins
+  service: name=jenkins state=restarted sleep=3
+  tags: install_server
+
+- name: wait jenkins is up and running
+  script: jenkins-wait.sh
+  tags: install_server
