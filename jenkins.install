@@ -38,7 +38,9 @@ case $OS in
                 CODENAME_MAJOR_PACKAGES="rubygem-rake"
                 ;;
         esac
-        JENKINS_PACKAGES="jenkins puppet git python-pip rubygems rubygem-rake $CODENAME_MAJOR_PACKAGES"
+        # Add a way to specify a Jenkins version to install (especially the LTS version)
+        [ -n "$JENKINS_VERSION" ] && JENKINS_VERSION="-${JENKINS_VERSION}"
+        JENKINS_PACKAGES="jenkins${JENKINS_VERSION} puppet git python-pip rubygems rubygem-rake $CODENAME_MAJOR_PACKAGES"
         ;;
     *)
         JENKINS_PACKAGES="jenkins puppet git python-pip sloccount rubygems rake puppet-lint"
@@ -66,26 +68,8 @@ install_ib_if_needed $ORIG $dir
 
 case "$(package_tool)" in
     "apt")
-        #
-        # Jenkins
-        #
         [ -f "jenkins-ci.org.key" ] || wget -q http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key -O jenkins-ci.org.key
         do_chroot $dir apt-key add - < jenkins-ci.org.key
-        # Comment that right know (as not so sure it works correclty) - pkg.jenkins-ci.org seems to be more stable now ...
-        #    JREPO="$dir/var/lib/repo-jenkins/debs" 
-        #    [ ! -d $JREPO ] && mkdir -p $JREPO
-        #    JCWD=`pwd`
-        #    cd $JREPO
-        #    # Jenkins debs repo fails almost always this time
-        #    # So we set up a local mirror
-        #    while [ ! -f jenkins_1.560_all.deb ]; do
-        #        wget http://mirrors.jenkins-ci.org/debian/jenkins_1.560_all.deb
-        #    done
-        #    cd ..
-        #    dpkg-scanpackages -m debs > Packages
-        #    chmod -R o+r .
-        #    cd $JCWD
-        # deb file:/var/lib/ repo-jenkins/
         cat > ${dir}/etc/apt/sources.list.d/jenkins.list <<EOF
     deb http://pkg.jenkins-ci.org/debian binary/
 EOF
