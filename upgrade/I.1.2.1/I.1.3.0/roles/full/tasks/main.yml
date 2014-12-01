@@ -20,8 +20,6 @@
 # HAproxy has been updated in Debian
 # from 1.5~dev26-2~bpo70+1 to 1.5.4-1~bpo70+2
 - name: restart HAproxy service
-  service: name={{ item }} state=restarted
-  with_items:
-    - haproxy
+  service: name=haproxy state=restarted
   tags: before_config
   when: ansible_distribution == 'Debian'
