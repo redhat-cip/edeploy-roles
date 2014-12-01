@@ -25,6 +25,13 @@
     - jenkins
   tags: install_server
 
-- name: wait jenkins is up and running
-  script: jenkins-wait.sh
+# sensu has been upgrade in Debian
+# from 0.14.0-1 to 0.16.0-1
+- name: restart sensu
+  service: name={{ item }} state=restarted
+  with_items:
+    - sensu-api
+    - sensu-server
+    - sensu-service
   tags: install_server
+  when: ansible_distribution == 'Debian'
