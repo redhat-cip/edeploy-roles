@@ -38,5 +38,6 @@
     - sensu-api
     - sensu-server
     - sensu-service
+    - sensu-client
   tags: install_server
   when: ansible_distribution == 'Debian'

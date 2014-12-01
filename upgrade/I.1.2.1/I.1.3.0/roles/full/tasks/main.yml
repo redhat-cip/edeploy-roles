@@ -29,3 +29,10 @@
   service: name=haproxy state=restarted
   tags: before_config
   when: ansible_distribution == 'Debian'
+
+# sensu has been upgrade in Debian
+# from 0.14.0-1 to 0.16.0-1
+- name: restart sensu
+  service: name=sensu-client state=restarted
+  tags: before_config
+  when: ansible_distribution == 'Debian'
