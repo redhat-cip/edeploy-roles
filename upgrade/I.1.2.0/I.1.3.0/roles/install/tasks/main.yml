@@ -4,9 +4,18 @@
 - name: stop puppet
   service: name={{ item }} state=stopped
   with_items:
-    - {{ webserver }}
+    - apache2
     - puppetdb
   tags: install_server
+  when: ansible_distribution == 'Debian'
+
+- name: stop puppet
+  service: name={{ item }} state=stopped
+  with_items:
+    - httpd
+    - puppetdb
+  tags: install_server
+  when: ansible_distribution == 'RedHat'
 
 - name: synchronize eDeploy roles & metadata with upstream
   script: edeploy-sync.sh {{ edeploy_master }} {{ distro }}-{{ version }}
@@ -20,10 +29,20 @@
 - name: restart jenkins and puppet
   service: name={{ item }} state=restarted
   with_items:
-    - {{ webserver }}
+    - apache2
     - puppetdb
     - jenkins
   tags: install_server
+  when: ansible_distribution == 'Debian'
+
+- name: restart jenkins and puppet
+  service: name={{ item }} state=restarted
+  with_items:
+    - httpd
+    - puppetdb
+    - jenkins
+  tags: install_server
+  when: ansible_distribution == 'RedHat'
 
 # sensu has been upgrade in Debian
 # from 0.14.0-1 to 0.16.0-1
