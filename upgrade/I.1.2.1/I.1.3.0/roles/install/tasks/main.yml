@@ -4,18 +4,9 @@
 - name: stop puppet
   service: name={{ item }} state=stopped
   with_items:
-    - apache2
+    - {{ webserver }}
     - puppetdb
   tags: install_server
-  when: ansible_distribution == 'Debian'
-
-- name: stop puppet
-  service: name={{ item }} state=stopped
-  with_items:
-    - httpd
-    - puppetdb
-  tags: install_server
-  when: ansible_distribution == 'RedHat'
 
 - name: synchronize eDeploy roles & metadata with upstream
   script: edeploy-sync.sh {{ edeploy_master }} {{ distro }}-{{ version }}
@@ -29,20 +20,10 @@
 - name: restart jenkins and puppet
   service: name={{ item }} state=restarted
   with_items:
-    - apache2
+    - {{ webserver }}
     - puppetdb
     - jenkins
   tags: install_server
-  when: ansible_distribution == 'Debian'
-
-- name: restart jenkins and puppet
-  service: name={{ item }} state=restarted
-  with_items:
-    - httpd
-    - puppetdb
-    - jenkins
-  tags: install_server
-  when: ansible_distribution == 'RedHat'
 
 - name: wait jenkins is up and running
   script: jenkins-wait.sh
