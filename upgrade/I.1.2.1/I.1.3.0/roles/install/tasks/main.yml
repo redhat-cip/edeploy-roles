@@ -4,7 +4,7 @@
 - name: stop puppet
   service: name={{ item }} state=stopped
   with_items:
-    - {{ webserver }}
+    - "{{ webserver }}"
     - puppetdb
   tags: install_server
 
@@ -20,7 +20,7 @@
 - name: restart jenkins and puppet
   service: name={{ item }} state=restarted
   with_items:
-    - {{ webserver }}
+    - "{{ webserver }}"
     - puppetdb
     - jenkins
   tags: install_server
