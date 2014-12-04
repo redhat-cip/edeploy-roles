@@ -22,7 +22,6 @@
   with_items:
     - "{{ webserver }}"
     - puppetdb
-    - jenkins
   tags: install_server
 
 - name: wait jenkins is up and running
@@ -40,3 +39,8 @@
     - sensu-client
   tags: install_server
   when: ansible_distribution == 'Debian'
+
+# restart jenkins because of newer version
+- name: restart jenkins
+  command: (sleep 60 && service restart jenkins)&
+  tags: after_config

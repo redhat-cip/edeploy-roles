@@ -16,13 +16,12 @@
   edeploy: command=upgrade version={{ distro }}-{{ version }}
   tags: install_server
 
-# restart jenkins and puppet because of newer versions
-- name: restart jenkins and puppet
+# restart puppet because of newer version
+- name: restart puppet services
   service: name={{ item }} state=restarted
   with_items:
     - "{{ webserver }}"
     - puppetdb
-    - jenkins
   tags: install_server
 
 # sensu has been upgrade in Debian
@@ -36,3 +35,8 @@
     - sensu-client
   tags: install_server
   when: ansible_distribution == 'Debian'
+
+# restart jenkins because of newer version
+- name: restart jenkins
+  command: (sleep 60 && service restart jenkins)&
+  tags: after_config
