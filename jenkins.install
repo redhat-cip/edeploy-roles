@@ -107,6 +107,8 @@ done
 # jjb
 #
 do_chroot ${dir} pip install -U jenkins-job-builder
+# update pbr else jjb will complain at runtime
+do_chroot ${dir} pip install -U pbr
 mkdir -p ${dir}/etc/jenkins_jobs
 
 # jenkins.install ends here
