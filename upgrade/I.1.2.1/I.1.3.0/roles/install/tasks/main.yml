@@ -20,8 +20,8 @@
   edeploy: command=upgrade version={{ distro }}-{{ version }}
   tags: install_server
 
-# restart jenkins and puppet because of newer versions
-- name: restart jenkins and puppet
+# restart puppet because of newer versions
+- name: restart puppet
   service: name={{ item }} state=restarted
   with_items:
     - "{{ webserver }}"
