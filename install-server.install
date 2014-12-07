@@ -225,4 +225,15 @@ $SRC/tempest.install $dir $dir $version
 
 install_monitoring
 
+# hack to fix pbr beeing packaged in 0.8.0 for tempest and conflicting
+# with jjb that wants pbr>0.8.2 under Red Hat
+
+case "$OS" in
+    "CentOS"|"RedHatEnterpriseServer")
+        do_chroot $dir bash -c "rpm -ql python-pbr|xargs rm -rf"
+        do_chroot $dir pip uninstall -y pbr
+        do_chroot $dir pip install -U pbr
+        ;;
+esac
+
 # install-server.install ends here
