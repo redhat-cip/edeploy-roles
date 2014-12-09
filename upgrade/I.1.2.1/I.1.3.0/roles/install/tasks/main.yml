@@ -2,7 +2,7 @@
 # file: roles/install/tasks/main.yml
 
 - name: ensure rsync is started
-  service: name={{ webserver }} state=started
+  service: name={{ rsync }} state=started
   tags: install_server
 
 - name: stop puppet
