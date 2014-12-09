@@ -196,7 +196,6 @@ os_packages=(
         neutron-plugin-openvswitch-agent \
         neutron-plugin-cisco \
         neutron-server \
-        neutron-vpn-agent \
         nfs-common \
         nova-api \
         nova-cert \
@@ -209,7 +208,6 @@ os_packages=(
         openstack-dashboard \
         openstack-dashboard-apache \
         openstack-pkg-tools \
-        openswan \
         openvswitch-switch \
         pacemaker \
         pm-utils \
