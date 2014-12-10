@@ -39,7 +39,7 @@
   with_items:
     - sensu-api
     - sensu-server
-    - sensu-service
+    - sensu-dashboard
     - sensu-client
   tags: install_server
   when: ansible_distribution == 'Debian'
