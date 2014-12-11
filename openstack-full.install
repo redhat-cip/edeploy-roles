@@ -359,7 +359,7 @@ case "$OS" in
     "Debian")
         add_percona_deb_repo
         update_repositories $dir
-        install_packages_disabled $dir -t wheezy-backports linux-headers-3.16-0.bpo.2-amd64 linux-image-3.16-0.bpo.2-amd64
+        install_packages_disabled $dir -t wheezy-backports linux-headers-3.16-0.bpo.3-amd64 linux-image-3.16-0.bpo.3-amd64
         install_packages_disabled $dir ${backup_packages[$(package_type)]}
         install_packages_disabled $dir ${prod_packages[$(package_type)]}
     ;&
