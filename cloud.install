@@ -91,14 +91,11 @@ cloud_init_modules:
  - write-files
 
 cloud_config_modules:
+ - migrator
  - mounts
  - ssh-import-id
  - locale
  - set-passwords
- - grub-dpkg
- - apt-pipelining
- - apt-update-upgrade
- - landscape
  - timezone
  - puppet
  - chef
@@ -114,6 +111,7 @@ cloud_final_modules:
  - scripts-per-boot
  - scripts-per-instance
  - scripts-user
+ - ssh-authkey-fingerprints
  - keys-to-console
  - phone-home
  - final-message
@@ -122,6 +120,25 @@ EOF
     cat > ${dir}/etc/cloud/cloud.cfg.d/90_sources.cfg << EOF
 datasource_list: [ NoCloud, Ec2, OpenStack, ConfigDrive, None ]
 EOF
+
+    others_cloud_config_modules=$(mktemp)
+    case "$OS" in
+      "Debian"|"Ubuntu")
+cat > $others_cloud_config_modules << EOF
+ - grub-dpkg
+ - apt-pipelining
+ - apt-update-upgrade
+ - landscape
+EOF
+      ;;
+      "CentOS"|"RedHatEnterpriseServer")
+cat > $others_cloud_config_modules << EOF
+ - yum-add-repo
+ - package-update-upgrade-install
+EOF
+      ;;
+    esac
+    sed -i "/set-passwords/r  $others_cloud_config_modules" ${dir}/etc/cloud/cloud.cfg
 }
 
 # invalidate root password
