@@ -464,12 +464,10 @@ EOF
         fi
 
         if [ "$OS" == "RedHatEnterpriseServer" ]; then
-            # TODO (spredzy) : Find a more elegant way to do that
-            # and make it persistent.
             # Set priority to one for RH repos
-            do_chroot $dir sed -i "s/\[\(rhel-7-server-openstack-5.0-rpms\)\]/\[\1\]\npriority = 1/g" /etc/yum.repos.d/redhat.repo
-            do_chroot $dir sed -i "s/\[\(rhel-ha-for-rhel-7-server-rpms\)\]/\[\1\]\npriority = 1/g" /etc/yum.repos.d/redhat.repo
-            do_chroot $dir sed -i "s/\[\(rhel-server-rhscl-7-rpms\)\]/\[\1\]\npriority = 1/g" /etc/yum.repos.d/redhat.repo
+            do_chroot $dir sed -i -e '/\[rhel-7-server-openstack-5.0-rpms\]/a priority = 1' \
+                                  -e '/\[rhel-ha-for-rhel-7-server-rpms\]/a priority = 1' \
+                                  -e '/\[rhel-server-rhscl-7-rpms\]/a priority = 1' /etc/yum.repos.d/redhat.repo
         fi
 
         install_packages_disabled $dir ${os_packages[$(package_type)]} $EXTRA_RPMS
