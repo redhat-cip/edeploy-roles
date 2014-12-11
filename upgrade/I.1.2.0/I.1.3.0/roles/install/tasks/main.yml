@@ -40,6 +40,15 @@
   tags: install_server
   when: ansible_distribution == 'Debian'
 
+# From I.1.2.X to I.3.0 releases, Ansible has been upgraded and because of
+# this commit: https://github.com/ansible/ansible/commit/ae2d198342c9bbb691647b897b69b9d9f26522db
+# we have to clean-up manually Ansible packaging by the end of install_server tag.
+# If we do that during the playbook run Ansible will crash because it won't find the
+# previous library code.
+- name: cleanup Ansible packaging
+  command: rm -rf /usr/share/ansible
+  tags: install_server
+
 # restart jenkins because of newer version
 - name: restart jenkins
   command: (sleep 60 && service restart jenkins)&
