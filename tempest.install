@@ -51,7 +51,7 @@ case "$(package_tool)" in
     "yum")
         add_epel_repository $DIST
         update_repositories $dir
-        install_packages $dir "$PACKAGES pyOpenSSL python-virtualenv libxml2-devel libxslt-devel python-junitxml"
+        install_packages $dir "$PACKAGES pyOpenSSL python-virtualenv libxml2-devel libxslt-devel python-junitxml subunit-filters"
         install_packages $dir $(get_openstack_repository centos $dir $OS_VERS)
         install_packages $dir openstack-tempest-icehouse
         remove_epel_repository $DIST
