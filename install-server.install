@@ -120,7 +120,6 @@ openstack_packages=(
         python-keystoneclient \
         python-neutronclient \
         python-novaclient \
-        python-openstackclient \
         python-saharaclient \
         python-swiftclient \
         python-ceilometerclient \

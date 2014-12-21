@@ -213,7 +213,6 @@ os_packages=(
         pm-utils \
         python-argparse \
         python-dev \
-        python-openstackclient \
         python-psutil \
         python-swiftclient \
         python-troveclient \
