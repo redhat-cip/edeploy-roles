@@ -299,7 +299,6 @@ os_packages=(
         python-kombu \
         python-lesscpy \
         python-memcached \
-        python-openstackclient \
         python-psutil \
         python-swiftclient \
         rabbitmq-server \
@@ -494,6 +493,9 @@ esac
 
 # TODO (spredzy): https://bugzilla.redhat.com/show_bug.cgi?id=1159894
 install_monitoring
+
+# TODO (EmilienM): package is will be in Juno
+do_chroot ${dir} bash -c 'pip install --no-deps python-openstackclient'
 
 # add galera-status script to validate MySQL Galera cluster sanity
 cp $SRC/files/galera-status $dir/usr/sbin
