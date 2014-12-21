@@ -135,6 +135,7 @@ openstack_packages=(
         python-keystoneclient \
         python-neutronclient \
         python-novaclient \
+        python-openstackclient \
         python-saharaclient \
         python-swiftclient \
         python-ceilometerclient \
@@ -172,9 +173,6 @@ if [ $OS = "RedHatEnterpriseServer" ]; then
 fi
 
 install_packages_disabled $dir ${openstack_packages[$(package_type)]}
-
-# TODO (EmilienM) Package will be in Juno
-do_chroot ${dir} bash -c 'pip install --no-deps python-openstackclient'
 
 case "$OS" in
     "RedHatEnterpriseServer"|"CentOS")
