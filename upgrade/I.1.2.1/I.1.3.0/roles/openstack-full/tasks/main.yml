@@ -1,5 +1,5 @@
 ---
-# file: roles/full/tasks/main.yml
+# file: roles/openstack-full/tasks/main.yml
 
 # Debian has a kernel upgrade from 3.14 to 3.16
 # So we need to restart the compute nodes and migrate the instances before.

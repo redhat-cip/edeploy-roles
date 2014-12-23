@@ -1,5 +1,5 @@
 ---
-# file: roles/loadbalancer/tasks/main.yml
+# file: roles/load-balancer/tasks/main.yml
 
 - name: edeploy upgrade
   edeploy: command=upgrade version={{ distro }}-{{ version }}

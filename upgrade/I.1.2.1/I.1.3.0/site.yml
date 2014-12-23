@@ -7,27 +7,32 @@
   vars_files:
     - [ "vars/{{ ansible_distribution }}" ]
 
-- hosts: installer
+- hosts: install-server
   serial: 1
   roles:
-    - install
+    - install-server
 
-- hosts: controllers
+- hosts: controller
   serial: 1
   roles:
     - controller
 
-- hosts: loadbalancers
+- hosts: load-balancer
   serial: 1
   roles:
-    - loadbalancer
+    - load-balancer
 
-- hosts: computes
+- hosts: compute
   serial: 1
   roles:
     - compute
 
-- hosts: networks
+- hosts: network
   serial: 1
   roles:
     - network
+
+- hosts: storage
+  serial: 1
+  roles:
+    - storage

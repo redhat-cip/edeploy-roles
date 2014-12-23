@@ -1,5 +1,5 @@
 ---
-# file: roles/install/tasks/main.yml
+# file: roles/install-server/tasks/main.yml
 
 - name: ensure rsync is started
   service: name={{ rsync }} state=started
@@ -20,16 +20,12 @@
   edeploy: command=upgrade version={{ distro }}-{{ version }}
   tags: install_server
 
-# restart puppet because of newer versions
-- name: restart puppet
+# restart puppet because of newer version
+- name: restart puppet services
   service: name={{ item }} state=restarted
   with_items:
     - "{{ webserver }}"
     - puppetdb
-  tags: install_server
-
-- name: wait jenkins is up and running
-  script: jenkins-wait.sh
   tags: install_server
 
 # sensu has been upgrade in Debian
