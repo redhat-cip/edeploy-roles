@@ -44,7 +44,9 @@ add_fluentd_repo() {
     "Debian")
       do_chroot ${dir} wget -O- http://packages.treasure-data.com/debian/RPM-GPG-KEY-td-agent | do_chroot ${dir} apt-key add -
       cat > ${dir}/etc/apt/sources.list.d/treasure-data.list<<EOF
-deb http://packages.treasuredata.com/2/debian/wheezy/ wheezy contrib
+#deb http://packages.treasuredata.com/2/debian/wheezy/ wheezy contrib
+#FIXME(sbadia): Since 2014/12/22 Release{,.gpg} doesn't match to Packages{,.gz}, I've send an email to treasuredata team
+deb http://os-ci-admin.ring.enovance.com/mirror/treasuredata/2/debian/wheezy/ wheezy contrib
 EOF
     ;;
     "CentOS"|"RedHatEnterpriseServer")
