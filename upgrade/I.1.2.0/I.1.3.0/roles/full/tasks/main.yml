@@ -4,7 +4,7 @@
 # Debian has a kernel upgrade from 3.14 to 3.16
 # So we need to restart the compute nodes and migrate the instances before.
 - name: migrate instances
-  script: migrate.sh {{ ansible_hostname }} {{ os_username }} {{ os_tenant_name }} {{ os_password }} {{ os_auth_url }}
+  script: migrate.sh {{ ansible_fqdn }} {{ os_username }} {{ os_tenant_name }} {{ os_password }} {{ os_auth_url }}
   tags: before_config
   when: ansible_distribution == 'Debian'
 

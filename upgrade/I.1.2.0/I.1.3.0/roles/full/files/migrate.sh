@@ -27,7 +27,7 @@ export OS_PASSWORD=$4
 export OS_AUTH_URL=$5
 
 if [ -z "$COMPUTE" ]; then
-  echo "You have to provide the compute hostname as a parameter."
+  echo "You have to provide the compute FQDN as a parameter."
   exit 1
 fi
 
