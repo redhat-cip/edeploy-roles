@@ -30,8 +30,8 @@ PATH=/sbin:/bin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
 export PATH
 
 if [ -z "$OS_VERS" ]; then
-    echo "OS_VERS is not set, Icehouse will be built by default"
-    OS_VERS=icehouse
+    echo "OS_VERS is not set, Juno will be built by default"
+    OS_VERS=juno
 fi
 
 update_repositories $dir

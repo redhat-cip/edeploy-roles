@@ -30,7 +30,7 @@ ORIG=$(cd $(dirname $0); pwd)
 
 case $version in
   *-I.*)
-    OS_VERS=icehouse
+    OS_VERS=juno
     ;;
   *)
     echo "unsupported version $version" 1>&2
