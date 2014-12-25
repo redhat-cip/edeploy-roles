@@ -30,6 +30,9 @@ ORIG=$(cd $(dirname $0); pwd)
 
 case $version in
   *-I.*)
+    OS_VERS=icehouse
+    ;;
+  *-J.*)
     OS_VERS=juno
     ;;
   *)
