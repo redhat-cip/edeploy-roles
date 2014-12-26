@@ -20,14 +20,6 @@
   edeploy: command=upgrade version={{ distro }}-{{ version }}
   tags: install_server
 
-# restart puppet because of newer version
-- name: restart puppet services
-  service: name={{ item }} state=restarted
-  with_items:
-    - "{{ webserver }}"
-    - puppetdb
-  tags: install_server
-
 # sensu has been upgrade in Debian
 # from 0.14.0-1 to 0.16.0-1
 - name: restart sensu

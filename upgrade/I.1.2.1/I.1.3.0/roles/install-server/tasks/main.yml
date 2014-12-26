@@ -20,14 +20,6 @@
   edeploy: command=upgrade version={{ distro }}-{{ version }}
   tags: install_server
 
-# restart puppet because of newer versions
-- name: restart puppet
-  service: name={{ item }} state=restarted
-  with_items:
-    - "{{ webserver }}"
-    - puppetdb
-  tags: install_server
-
 - name: wait jenkins is up and running
   script: jenkins-wait.sh
   tags: install_server
