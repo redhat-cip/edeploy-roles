@@ -13,7 +13,7 @@
   tags: before_config
 
 - name: allow instance scheduling on the compute node
-  command: nova-manage service disable --service nova-compute --host {{ ansible_fqdn }}
+  command: nova-manage service enable --service nova-compute --host {{ ansible_fqdn }}
   tags: before_config
   when: ansible_distribution == 'Debian'
 
