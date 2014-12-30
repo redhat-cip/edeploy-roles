@@ -80,6 +80,18 @@
   tags: before_config
   when: inventory_hostname == groups['controller'][-1] and ansible_distribution == 'RedHat'
 
+# after upgrade, heat-api is zombie
+- name: kill heat-api process
+  command: pkill -9 heat-api
+  tags: before_config
+  when: ansible_distribution == 'Debian'
+
+# then, restart it
+- name: start heat-api service
+  service: name=heat-api state=started
+  tags: before_config
+  when: ansible_distribution == 'Debian'
+
 # sensu has been upgrade in Debian
 # from 0.14.0-1 to 0.16.0-1
 - name: restart sensu

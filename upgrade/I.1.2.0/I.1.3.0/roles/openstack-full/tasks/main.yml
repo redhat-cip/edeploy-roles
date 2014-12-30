@@ -17,6 +17,18 @@
   tags: before_config
   when: ansible_distribution == 'Debian'
 
+# after upgrade, heat-api is zombie
+- name: kill heat-api process
+  command: pkill -9 heat-api
+  tags: before_config
+  when: ansible_distribution == 'Debian'
+
+# then, restart it
+- name: start heat-api service
+  service: name=heat-api state=started
+  tags: before_config
+  when: ansible_distribution == 'Debian'
+
 # Red Hat upgrade Galera to 25.3.5-5.el7ost
 - name: restart
   service: name=mysqld state=restarted

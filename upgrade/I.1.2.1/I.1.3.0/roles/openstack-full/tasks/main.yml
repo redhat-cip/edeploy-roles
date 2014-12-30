@@ -23,6 +23,18 @@
   tags: before_config
   when: ansible_distribution == 'Debian'
 
+# after upgrade, heat-api is zombie
+- name: kill heat-api process
+  command: pkill -9 heat-api
+  tags: before_config
+  when: ansible_distribution == 'Debian'
+
+# then, restart it
+- name: start heat-api service
+  service: name=heat-api state=started
+  tags: before_config
+  when: ansible_distribution == 'Debian'
+
 # HAproxy has been updated in Debian
 # from 1.5~dev26-2~bpo70+1 to 1.5.4-1~bpo70+2
 - name: restart HAproxy service
