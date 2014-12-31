@@ -54,5 +54,5 @@
 
 # restart jenkins because of newer version
 - name: restart jenkins
-  command: (sleep 10 && service jenkins restart)&
+  script: jenkins-restart.sh
   tags: after_config
