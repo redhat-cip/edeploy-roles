@@ -481,8 +481,8 @@ EOF
 
         # TODO (spredzy): Install selinux policies
         # while the issues are fixed upstream
-        do_chroot $dir mkdir -p /usr/share/spinalstack/selinux
-        cp $SRC/files/selinux/*.pp ${dir}/usr/share/spinalstack/selinux
+        do_chroot $dir mkdir -p /usr/share/selinux/custom
+        cp $SRC/files/selinux/*.pp ${dir}/usr/share/selinux/custom
 
         remove_epel_repository $DIST
     ;;
