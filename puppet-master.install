@@ -31,7 +31,7 @@ ORIG=$(cd $(dirname $0); pwd)
 rh_install_passenger () {
 
     # apache group is not managed by httpd package
-    do_chroot $dir groupadd apache
+    do_chroot $dir groupadd apache || true
 
     # Install all dependencies to run Puppet in passenger mode
     install_packages_disabled $dir puppet-server git augeas ntp httpd puppetdb-terminus python-pip mod_wsgi apr-util-devel apr-devel httpd-devel zlib-devel openssl-devel libcurl-devel gcc-c++ gcc mod_ssl ruby-devel
