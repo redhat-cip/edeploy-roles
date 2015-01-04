@@ -105,7 +105,7 @@ EOF
     ;;
     "CentOS"|"RedHatEnterpriseServer")
         # apache group is not managed by httpd package
-        do_chroot $dir grouadd apache
+        do_chroot $dir groupadd apache
 
         # mongodb do not support systemd correctly so don't use it for EL7
         if [ "$CODENAME_MAJOR" == "6" ]; then
