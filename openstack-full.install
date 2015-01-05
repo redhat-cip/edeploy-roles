@@ -104,8 +104,9 @@ EOF
      add_rabbitmq_repo
     ;;
     "CentOS"|"RedHatEnterpriseServer")
-        # apache group is not managed by httpd package
+        # TODO (EmilienM) while we fix mngids.py in eDeploy
         do_chroot $dir groupadd apache || true
+        do_chroot $dir groupadd rpcuser || true
 
         # mongodb do not support systemd correctly so don't use it for EL7
         if [ "$CODENAME_MAJOR" == "6" ]; then
