@@ -29,3 +29,11 @@
   service: name=sensu-client state=restarted
   tags: before_config
   when: ansible_distribution == 'Debian'
+
+- name: restart Cinder services after upgrade
+  service: name={{ item }} state=restarted
+  with_items:
+    - openstack-cinder-api
+    - openstack-cinder-volume
+  tags: after_config
+  when: ansible_distribution == 'RedHat'
