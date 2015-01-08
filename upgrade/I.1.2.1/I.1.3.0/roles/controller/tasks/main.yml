@@ -37,3 +37,8 @@
     - openstack-cinder-volume
   tags: after_config
   when: ansible_distribution == 'RedHat'
+
+- name: restart apache after upgrade
+  service: name=httpd state=restarted
+  tags: after_config
+  when: ansible_distribution == 'RedHat'

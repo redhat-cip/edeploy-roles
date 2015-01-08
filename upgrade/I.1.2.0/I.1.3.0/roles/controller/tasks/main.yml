@@ -98,3 +98,8 @@
   service: name=sensu-client state=restarted
   tags: before_config
   when: ansible_distribution == 'Debian'
+
+- name: restart apache after upgrade
+  service: name=httpd state=restarted
+  tags: after_config
+  when: ansible_distribution == 'RedHat'
