@@ -23,7 +23,7 @@
 # SElinux is a new feature in I.1.3.0 but
 # Upgrade from permissive to enforced is not supported.
 - name: ensure SElinux is not enabled
-  command: sed -i 's/enforcing/permissive/g' /etc/config-tools/global.yml
+  command: sed -i '/selinux/d' /etc/config-tools/global.yml
   tags: install_server
   when: ansible_distribution == 'RedHat'
 
