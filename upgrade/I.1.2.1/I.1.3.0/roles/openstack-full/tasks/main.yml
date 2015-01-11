@@ -18,6 +18,11 @@
   tags: before_config
   when: ansible_distribution == 'RedHat'
 
+- name: Wait for Galera VIP to come up
+  local_action: wait_for host={{ galera_vip }} port=3306 delay=120 timeout=900 state=started
+  tags: before_config
+  when: ansible_distribution == 'RedHat'
+
 - name: allow instance scheduling on the compute node
   command: nova-manage service enable --service nova-compute --host {{ ansible_fqdn }}
   tags: before_config

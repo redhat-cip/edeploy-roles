@@ -11,6 +11,11 @@
   tags: before_config
   when: ansible_distribution == 'RedHat'
 
+- name: Wait for Galera VIP to come up
+  local_action: wait_for host={{ galera_vip }} port=3306 delay=120 timeout=900 state=started
+  tags: before_config
+  when: ansible_distribution == 'RedHat'
+
 # after upgrade, heat-api is zombie
 - name: kill heat-api process
   command: pkill -9 heat-api
