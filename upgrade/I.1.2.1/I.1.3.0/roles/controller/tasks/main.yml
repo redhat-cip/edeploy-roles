@@ -6,15 +6,15 @@
   tags: before_config
 
 # Red Hat upgrade Galera to 25.3.5-5.el7ost
-- name: restart
+- name: bootstrap mysql cluster again
+  service: name=mysql-bootstrap state=restarted
+  tags: before_config
+  when: ansible_distribution == 'RedHat' and inventory_hostname == groups['controller'][0]
+
+- name: start other mysql nodes
   service: name=mysqld state=restarted
   tags: before_config
-  when: ansible_distribution == 'RedHat'
-
-- name: Wait for Galera VIP to come up
-  local_action: wait_for host={{ galera_vip }} port=3306 delay=120 timeout=900 state=started
-  tags: before_config
-  when: ansible_distribution == 'RedHat'
+  when: ansible_distribution == 'RedHat' and inventory_hostname != groups['controller'][0]
 
 # after upgrade, heat-api is zombie
 - name: kill heat-api process
