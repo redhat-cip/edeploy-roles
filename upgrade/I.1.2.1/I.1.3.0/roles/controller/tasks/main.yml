@@ -1,9 +1,20 @@
 ---
 # file: roles/controller/tasks/main.yml
 
+# RabbitMQ is upgraded in RHEL7
+- name: stop rabbitmq
+  service: name=rabbitmq-server state=stopped
+  tags: before_config
+  when: ansible_distribution == 'RedHat'
+
 - name: edeploy upgrade
   edeploy: command=upgrade version={{ distro }}-{{ version }}
   tags: before_config
+
+- name: start rabbitmq
+  service: name=rabbitmq-server state=started
+  tags: before_config
+  when: ansible_distribution == 'RedHat'
 
 # Red Hat upgrade Galera to 25.3.5-5.el7ost
 - name: bootstrap mysql cluster again
