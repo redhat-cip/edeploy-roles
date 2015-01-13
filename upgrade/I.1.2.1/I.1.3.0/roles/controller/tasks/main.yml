@@ -32,7 +32,7 @@
 # in the list will be master.
 # For other nodes, they will be started by Puppet later.
 - name: create systemd mysql-bootstrap script
-  file: src=mysql-bootstrap.service dest=/usr/lib/systemd/system/mysql-bootstrap.service
+  copy: src=mysql-bootstrap.service dest=/usr/lib/systemd/system/mysql-bootstrap.service
   tags: before_config
   when: ansible_distribution == 'RedHat' and inventory_hostname == groups['controller'][-1]
 
