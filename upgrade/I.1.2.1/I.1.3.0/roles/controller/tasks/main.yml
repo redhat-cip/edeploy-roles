@@ -34,7 +34,7 @@
 - name: bootstrap mysql cluster again
   service: name=mysql-bootstrap state=restarted
   tags: before_config
-  when: ansible_distribution == 'RedHat' and inventory_hostname == groups['controller'][0]
+  when: ansible_distribution == 'RedHat' and inventory_hostname == groups['controller'][-1]
 
 # after upgrade, heat-api is zombie
 - name: kill heat-api process
