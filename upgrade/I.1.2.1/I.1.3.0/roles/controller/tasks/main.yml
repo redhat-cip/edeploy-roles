@@ -25,7 +25,7 @@
 - name: start rabbitmq
   service: name=rabbitmq-server state=started
   tags: before_config
-  when: ansible_distribution == 'RedHat'
+  when: ansible_distribution == 'RedHat' and inventory_hostname == groups['controller'][-1]
 
 # Red Hat upgrade Galera to 25.3.5-5.el7ost
 # since we start in serial mode one by one, we are sure here that the first node
