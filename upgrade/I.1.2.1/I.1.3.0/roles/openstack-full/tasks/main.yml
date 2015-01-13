@@ -29,6 +29,17 @@
   edeploy: command=upgrade version={{ distro }}-{{ version }}
   tags: before_config
 
+# libvirtd is updated on RHEL7
+- name: restart libvirtd after upgrade
+  service: name=libvirtd state=restarted
+  tags: before_config
+  when: ansible_distribution == 'RedHat'
+
+- name: restart nova-compute after upgrade
+  service: name=openstack-nova-compute state=restarted
+  tags: before_config
+  when: ansible_distribution == 'RedHat'
+
 - name: start rabbitmq
   service: name=rabbitmq-server state=started
   tags: before_config
