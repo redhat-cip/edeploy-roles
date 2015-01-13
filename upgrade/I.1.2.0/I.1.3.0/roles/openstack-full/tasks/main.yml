@@ -8,9 +8,50 @@
   tags: before_config
   when: ansible_distribution == 'Debian'
 
+# RabbitMQ is upgraded in RHEL7
+- name: stop rabbitmq
+  service: name=rabbitmq-server state=stopped
+  tags: before_config
+  when: ansible_distribution == 'RedHat
+
+# MySQL is upgraded in RHEL7
+# since we don't know if the node is master or not, we stop mysql anyway
+- name: stop mysql
+  service: name={{ item }} state=stopped
+  with_items:
+    - mysqld
+    - mysql-boostrap
+  tags: before_config
+  ignore_errors: yes
+  when: ansible_distribution == 'RedHat'
+
 - name: edeploy upgrade
   edeploy: command=upgrade version={{ distro }}-{{ version }}
   tags: before_config
+
+- name: start rabbitmq
+  service: name=rabbitmq-server state=started
+  tags: before_config
+  when: ansible_distribution == 'RedHat' and inventory_hostname == groups['openstack-full'][-1]
+
+# Red Hat upgrade Galera to 25.3.5-5.el7ost
+# since we start in serial mode one by one, we are sure here that the first node
+# in the list will be master.
+# For other nodes, they will be started by Puppet later.
+- name: create systemd mysql-bootstrap script
+  file: src=mysql-bootstrap.service dest=/usr/lib/systemd/system/mysql-bootstrap.service
+  tags: before_config
+  when: ansible_distribution == 'RedHat' and inventory_hostname == groups['openstack-full'][-1]
+
+- name: reload systemd scripts list
+  command: systemctl daemon-reload
+  tags: before_config
+  when: ansible_distribution == 'RedHat' and inventory_hostname == groups['openstack-full'][-1]
+
+- name: bootstrap mysql cluster again
+  service: name=mysql-bootstrap state=restarted
+  tags: before_config
+  when: ansible_distribution == 'RedHat' and inventory_hostname == groups['openstack-full'][-1]
 
 - name: allow instance scheduling on the compute node
   command: nova-manage service enable --service nova-compute --host {{ ansible_fqdn }}
@@ -28,11 +69,6 @@
   service: name=heat-api state=started
   tags: before_config
   when: ansible_distribution == 'Debian'
-
-# Red Hat upgrade Galera to 25.3.5-5.el7ost
-- name: restart
-  service: name=mysqld state=restarted
-  tags: before_config
 
 # HAproxy has been updated in Debian
 # from 1.5~dev26-2~bpo70+1 to 1.5.4-1~bpo70+2

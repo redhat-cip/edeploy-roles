@@ -31,6 +31,16 @@
 # since we start in serial mode one by one, we are sure here that the first node
 # in the list will be master.
 # For other nodes, they will be started by Puppet later.
+- name: create systemd mysql-bootstrap script
+  file: src=mysql-bootstrap.service dest=/usr/lib/systemd/system/mysql-bootstrap.service
+  tags: before_config
+  when: ansible_distribution == 'RedHat' and inventory_hostname == groups['controller'][-1]
+
+- name: reload systemd scripts list
+  command: systemctl daemon-reload
+  tags: before_config
+  when: ansible_distribution == 'RedHat' and inventory_hostname == groups['controller'][-1]
+
 - name: bootstrap mysql cluster again
   service: name=mysql-bootstrap state=restarted
   tags: before_config
