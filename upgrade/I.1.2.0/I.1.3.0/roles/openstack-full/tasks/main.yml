@@ -176,10 +176,14 @@
   tags: before_config
   when: ansible_distribution == 'Debian'
 
+- name: restart neutron-plugin-openvswitch-agent after upgrade
+  service: name=neutron-plugin-openvswitch-agent state=restarted
+  tags: after_config
+  when: ansible_distribution == 'Debian'
+
 - name: restart neutron-l3-agent after upgrade
   service: name=neutron-l3-agent state=restarted
   tags: after_config
-  when: ansible_distribution == 'RedHat'
 
 - name: restart apache after upgrade
   service: name=httpd state=restarted
