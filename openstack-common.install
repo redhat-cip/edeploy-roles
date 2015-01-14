@@ -55,6 +55,7 @@ EOF
             get_openstack_repository $DIST $dir $OS_VERS > ${dir}/etc/apt/sources.list.d/openstack-$RELEASE-$OS_VERS.list
             update_repositories $dir
             install_packages $dir ntpstat
+            hiera_dir=usr/lib/ruby/vendor_ruby/hiera
             ;;
         "Ubuntu")
             do_chroot ${dir} wget --no-verbose http://apt.puppetlabs.com/puppetlabs-release-$RELEASE.deb
@@ -62,11 +63,13 @@ EOF
             do_chroot ${dir} rm puppetlabs-release-$RELEASE.deb
             do_chroot ${dir} apt-key adv --recv-keys --keyserver keyserver.ubuntu.com E52660B15D964F0B
             get_openstack_repository $DIST $dir $OS_VERS > ${dir}/etc/apt/sources.list.d/openstack.list
+            hiera_dir=usr/lib/ruby/vendor_ruby/hiera
             ;;
         "CentOS")
             add_puppet_repository $DIST
-            install_packages_disabled $dir puppet
+            install_packages_disabled $dir puppet puppetdb-terminus
             remove_puppet_repository $DIST
+            hiera_dir=usr/share/ruby/vendor_ruby/hiera
             ;;
          "RedHatEnterpriseServer")
             # Redhat is using a channel to get openstack
@@ -82,13 +85,18 @@ EOF
                 add_rh_cdn_repo $dir rhel-7-server-optional-rpms
             fi
             install_packages_disabled $dir puppet
-            install_packages $dir facter hiera augeas yum-plugin-priorities
+            install_packages $dir facter hiera augeas yum-plugin-priorities puppetdb-terminus
             remove_puppet_repository $DIST
+            hiera_dir=usr/share/ruby/vendor_ruby/hiera
             ;;
         *)
             fatal_error "OS ($OS) or Release ($RELEASE) not supported"
             ;;
     esac
+    # (Spredzy) Specific patch
+    cd ${dir}/$hiera_dir
+    patch -p0 < $SRC/files/backend.rb.patch
+    cd -
 }
 
 os_install_packages () {
@@ -100,7 +108,7 @@ os_install_packages () {
             ;;&
 	"Debian" | "Ubuntu")
 	    packages="$softprop augeas-tools iptables build-essential"
-	    install_packages_disabled $dir puppet
+	    install_packages_disabled $dir puppet puppetdb-terminus
 	    install_packages $dir "$packages"
 	    do_chroot ${dir} sed -e 's/START=yes/START=no/' -i /etc/default/puppet
 	    do_chroot ${dir} sed -e '/templatedir/d' -i /etc/puppet/puppet.conf
