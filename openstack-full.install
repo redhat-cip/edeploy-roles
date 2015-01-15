@@ -32,6 +32,9 @@ case $version in
   *-I.*)
     OS_VERS=icehouse
     ;;
+  *-J.*)
+    OS_VERS=juno
+    ;;
   *)
     echo "unsupported version $version" 1>&2
     exit 1

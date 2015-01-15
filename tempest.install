@@ -24,8 +24,8 @@ ORIG=$(cd $(dirname $0); pwd)
 . ${ORIG}/functions
 
 if [ -z "$OS_VERS" ]; then
-    echo "OS_VERS is not set, Icehouse will be built by default"
-    OS_VERS=icehouse
+    echo "OS_VERS is not set, Juno will be built by default"
+    OS_VERS=juno
 fi
 
 #
@@ -40,12 +40,12 @@ case "$(package_tool)" in
     "apt")
         update_repositories $dir
         install_packages $dir "$PACKAGES python-openssl libxml2-dev libxslt-dev libpq-dev python-dev python-virtualenv libffi-dev python-junitxml"
-        mkdir -p ${dir}/usr/share/openstack-tempest-icehouse
-        git clone 'https://github.com/openstack/tempest' ${dir}/usr/share/openstack-tempest-icehouse
+        mkdir -p ${dir}/usr/share/openstack-tempest-juno
+        git clone 'https://github.com/openstack/tempest' ${dir}/usr/share/openstack-tempest-juno
         # lib that are not packaged in Debian
         do_chroot ${dir} bash -c 'pip install --no-deps tempest-lib'
         do_chroot ${dir} bash -c "pip install --no-deps oslo.serialization oslo.utils --install-option='--prefix=/usr' --install-option='--install-lib=/usr/lib/python2.7/dist-packages/'"
-        do_chroot ${dir} bash -c 'cd /usr/share/openstack-tempest-icehouse; python ./setup.py install --single-version-externally-managed --root /'
+        do_chroot ${dir} bash -c 'cd /usr/share/openstack-tempest-juno; python ./setup.py install --single-version-externally-managed --root /'
 
         ;;
     "yum")
@@ -53,7 +53,7 @@ case "$(package_tool)" in
         update_repositories $dir
         install_packages $dir "$PACKAGES pyOpenSSL python-virtualenv libxml2-devel libxslt-devel python-junitxml subunit-filters"
         install_packages $dir $(get_openstack_repository centos $dir $OS_VERS)
-        install_packages $dir openstack-tempest-icehouse
+        install_packages $dir openstack-tempest-juno
         remove_epel_repository $DIST
         ;;
     *)
