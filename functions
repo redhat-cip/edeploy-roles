@@ -46,6 +46,8 @@ get_openstack_repository() {
         current_rpm_release="undef"
         cloud_init_release="0.7.2-2.el6"
         case "$openstack_release" in
+            "juno")
+                current_rpm_release=1
             "icehouse")
                 current_rpm_release=4
             ;;
