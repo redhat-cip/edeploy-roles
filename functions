@@ -48,6 +48,7 @@ get_openstack_repository() {
         case "$openstack_release" in
             "juno")
                 current_rpm_release=1
+            ;;
             "icehouse")
                 current_rpm_release=4
             ;;
