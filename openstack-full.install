@@ -43,7 +43,8 @@ esac
 
 # Specify the ICE (Ceph for Enterprise) release
 # 1.2 = firefly
-ICE_RELEASE=1.2
+ICE_RELEASE_KMOD=1.2
+ICE_RELEASE=1.2.2
 
 install_ib_if_needed $ORIG $dir
 
@@ -426,7 +427,7 @@ case "$OS" in
         else
             ICE_URL=https://$CEPH_USERNAME:$CEPH_PASSWORD@download.inktank.com/enterprise
             KMOD_REL=3.10-0.1.20140702gitdc9ac62.el7.x86_64
-            wget --no-verbose $ICE_URL/$ICE_RELEASE/ICE-$ICE_RELEASE-rhel7.tar.gz $ICE_URL/$ICE_RELEASE/kmod-libceph-$KMOD_REL.rpm $ICE_URL/$ICE_RELEASE/kmod-rbd-$KMOD_REL.rpm
+            wget --no-verbose $ICE_URL/$ICE_RELEASE/ICE-$ICE_RELEASE-rhel7.tar.gz $ICE_URL/$ICE_RELEASE_KMOD/kmod-libceph-$KMOD_REL.rpm $ICE_URL/$ICE_RELEASE_KMOD/kmod-rbd-$KMOD_REL.rpm
             tar xzvf ICE-$ICE_RELEASE-rhel7.tar.gz
             do_chroot $dir mkdir /tmp/ice_pkg
             mv kmod*.rpm ceph/*/* $dir/tmp/ice_pkg
