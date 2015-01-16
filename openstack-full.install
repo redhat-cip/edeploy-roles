@@ -263,6 +263,7 @@ os_packages=(
         openstack-ceilometer-central \
         openstack-ceilometer-collector \
         openstack-ceilometer-compute \
+        openstack-ceilometer-ipmi \
         openstack-ceilometer-notification \
         openstack-cinder \
         openstack-dashboard \
@@ -271,21 +272,31 @@ os_packages=(
         openstack-heat-api-cfn \
         openstack-heat-api-cloudwatch \
         openstack-heat-engine \
+        openstack-ironic \
+        openstack-ironic-api \
+        openstack-ironic-conductor \
+        openstack-ironic-discoverd \
         openstack-keystone \
+        openstack-manila \
         openstack-neutron \
         openstack-neutron-cisco \
         openstack-neutron-linuxbridge \
         openstack-neutron-metering-agent \
         openstack-neutron-ml2 \
         openstack-neutron-openvswitch \
+        openstack-neutron-sriov-nic-agent \
         openstack-neutron-vpn-agent \
         openstack-nova-api \
+        openstack-nova-cells \
         openstack-nova-cert \
         openstack-nova-compute \
         openstack-nova-conductor \
         openstack-nova-console \
         openstack-nova-novncproxy \
+        openstack-nova-serialproxy \
         openstack-nova-scheduler \
+        openstack-nova-spicehtml5proxy \
+        openstack-sahara \
         openstack-selinux \
         openstack-swift-account \
         openstack-swift-container \
@@ -296,6 +307,7 @@ os_packages=(
         openstack-trove-conductor \
         openstack-trove-guestagent \
         openstack-trove-taskmanager \
+        openstack-zaqar \
         openvswitch \
         pacemaker \
         pcs \
