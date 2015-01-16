@@ -222,6 +222,7 @@ os_packages=(
         python-troveclient \
         python-trove \
         rabbitmq-server \
+        redis-server \
         ruby-activerecord \
         ruby-sqlite3 \
         screen \
@@ -306,6 +307,7 @@ os_packages=(
         python-psutil \
         python-swiftclient \
         rabbitmq-server \
+        redis \
         rubygem-json \
         rubygems \
         sysfsutils \
