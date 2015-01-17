@@ -272,7 +272,6 @@ os_packages=(
         openstack-heat-api-cfn \
         openstack-heat-api-cloudwatch \
         openstack-heat-engine \
-        openstack-ironic \
         openstack-ironic-api \
         openstack-ironic-conductor \
         openstack-ironic-discoverd \
