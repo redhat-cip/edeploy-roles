@@ -217,6 +217,7 @@ os_packages=(
         pm-utils \
         python-argparse \
         python-dev \
+        python-openstackclient \
         python-psutil \
         python-swiftclient \
         python-troveclient \
@@ -315,6 +316,7 @@ os_packages=(
         python-kombu \
         python-lesscpy \
         python-memcached \
+        python-openstackclient \
         python-psutil \
         python-swiftclient \
         rabbitmq-server \
