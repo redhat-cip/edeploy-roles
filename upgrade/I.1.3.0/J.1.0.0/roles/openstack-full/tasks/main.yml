@@ -1,0 +1,213 @@
+---
+# file: roles/openstack-full/tasks/main.yml
+
+# Mark the nova-compute service as disabled to prevent Nova from scheduling
+# any new servers on this node
+- name: disable nova-compute to prevent instance scheduling
+  command: nova service-disable --reason upgrade {{ ansible_fqdn }} nova-compute
+  tags: before_config
+
+- name: stop HAproxy service
+  service: name=haproxy state=stop
+  tags: before_config
+  when: ansible_distribution == 'Debian'
+
+- name: stop openstack services
+  service: name={{ item }} state=stopped
+  with_items:
+    - "{{ ceilometer-agent-compute }}"
+    - "{{ ceilometer-agent-notification }}"
+    - "{{ ceilometer-alarm-evaluator }}"
+    - "{{ ceilometer-alarm-notifier }}"
+    - "{{ ceilometer-api }}"
+    - "{{ ceilometer-collector }}"
+    - "{{ cinder-api }}"
+    - "{{ cinder-scheduler }}"
+    - "{{ cinder-volume }}"
+    - "{{ glance-api }}"
+    - "{{ glance-registry }}"
+    - "{{ heat-api }}"
+    - "{{ heat-api-cfn }}"
+    - "{{ heat-api-cloudwatch }}"
+    - "{{ heat-engine }}"
+    - "{{ keystone }}"
+    - "{{ neutron-dhcp-agent }}"
+    - "{{ neutron-l3-agent }}"
+    - "{{ neutron-lbaas-agent }}"
+    - "{{ neutron-metadata-agent }}"
+    - "{{ neutron-metering-agent }}"
+    - "{{ neutron-openvswitch-agent }}"
+    - "{{ neutron-server }}"
+    - "{{ nova-api }}"
+    - "{{ nova-cert }}"
+    - "{{ nova-compute }}"
+    - "{{ nova-conductor }}"
+    - "{{ nova-consoleauth }}"
+    - "{{ nova-scheduler }}"
+    - "{{ nova-spicehtml5proxy }}"
+    - "{{ swift-account }}"
+    - "{{ swift-container }}"
+    - "{{ swift-object }}"
+    - "{{ swift-proxy }}"
+    - "{{ webserver }}"
+  tags: before_config
+
+- name: edeploy upgrade
+  edeploy: command=upgrade version={{ distro }}-{{ version }}
+  tags: before_config
+
+# HAproxy has been updated on Debian
+# from 1.5.4-1 to 1.5.8-2
+- name: start HAproxy service
+  service: name=haproxy state=started
+  tags: before_config
+  when: ansible_distribution == 'Debian'
+
+- name: purge keystone old tokens
+  command: keystone-manage token_flush
+  tags: before_config
+  when: inventory_hostname == groups['openstack-full'][0]
+
+- name: update keystone database
+  command: keystone-manage db_sync
+  tags: before_config
+  when: inventory_hostname == groups['openstack-full'][0]
+
+- name: start keystone service
+  service: name={{ keystone }} state=started
+  tags: before_config
+
+- name: start swift services
+  service: name={{ item }} state=started
+  with_items:
+    - "{{ swift-account }}"
+    - "{{ swift-container }}"
+    - "{{ swift-object }}"
+    - "{{ swift-proxy }}"
+  tags: before_config
+
+- name: update glance database
+  command: glance-manage db_sync
+  tags: before_config
+  when: inventory_hostname == groups['openstack-full'][0]
+
+- name: start glance services
+  service: name={{ item }} state=started
+  with_items:
+    - "{{ glance-api }}"
+    - "{{ glance-registry }}"
+  tags: before_config
+
+- name: update cinder database
+  command: cinder-manage db sync
+  tags: before_config
+  when: inventory_hostname == groups['openstack-full'][0]
+
+- name: start cinder services
+  service: name={{ item }} state=started
+  with_items:
+    - "{{ cinder-api }}"
+    - "{{ cinder-scheduler }}"
+    - "{{ cinder-volume }}"
+  tags: before_config
+
+- name: update neutron database
+  command: neutron-db-manage --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade head
+  tags: before_config
+  when: inventory_hostname == groups['openstack-full'][0]
+
+- name: start neutron services
+  service: name={{ item }} state=started
+  with_items:
+    - "{{ neutron-server }}"
+    - "{{ neutron-dhcp-agent }}"
+    - "{{ neutron-l3-agent }}"
+    - "{{ neutron-lbaas-agent }}"
+    - "{{ neutron-metadata-agent }}"
+    - "{{ neutron-metering-agent }}"
+    - "{{ neutron-openvswitch-agent }}"
+  tags: before_config
+
+- name: update heat database
+  command: heat-manage --config-file /etc/heat/heat.conf db_sync
+  tags: before_config
+  when: inventory_hostname == groups['openstack-full'][0]
+
+- name: start heat services
+  service: name={{ item }} state=started
+  with_items:
+    - "{{ heat-api }}"
+    - "{{ heat-api-cfn }}"
+    - "{{ heat-api-cloudwatch }}"
+    - "{{ heat-engine }}"
+  tags: before_config
+
+- name: start ceilometer services
+  service: name={{ item }} state=started
+  with_items:
+    - "{{ ceilometer-agent-compute }}"
+    - "{{ ceilometer-agent-notification }}"
+    - "{{ ceilometer-alarm-evaluator }}"
+    - "{{ ceilometer-alarm-notifier }}"
+    - "{{ ceilometer-api }}"
+    - "{{ ceilometer-collector }}"
+  tags: before_config
+
+- name: restart ceilometer-agent-central managed by pacemaker
+  command: {{ pacemaker }} resource cleanup ceilometer-agent-central
+  tags: before_config
+  when: inventory_hostname == groups['openstack-full'][-1]
+
+- name: prepare horizon django files
+  command: /usr/share/openstack-dashboard/manage.py compress
+  tags: before_config
+
+- name: start apache2 service
+  service: name={{ webserver }} state=started
+  tags: before_config
+
+- name: update nova database
+  command: nova-manage db sync
+  tags: before_config
+  when: inventory_hostname == groups['openstack-full'][-1]
+
+# Cap the compute RPC API at a version that will still be understood by your Icehouse compute nodes
+- ini_file: dest=/etc/nova.conf
+            section=upgrade_levels
+            option=compute
+            value=icehouse
+  tags: before_config
+
+- name: start nova services
+  service: name={{ item }} state=started
+  with_items:
+    - "{{ nova-api }}"
+    - "{{ nova-cert }}"
+    - "{{ nova-compute }}"
+    - "{{ nova-conductor }}"
+    - "{{ nova-consoleauth }}"
+    - "{{ nova-scheduler }}"
+    - "{{ nova-spicehtml5proxy }}"
+  tags: before_config
+
+- name: allow instance scheduling on the compute node
+  command: nova service-enable myhost nova-compute {{ ansible_fqdn }}
+  tags: before_config
+
+# Clean-up nova config by deleting the option, not useful anymore
+- ini_file: dest=/etc/nova.conf
+            section=upgrade_levels
+            option=compute
+  tags: after_config
+
+- name: restart nova services
+  service: name={{ item }} state=restarted
+  with_items:
+    - "{{ nova-api }}"
+    - "{{ nova-cert }}"
+    - "{{ nova-compute }}"
+    - "{{ nova-conductor }}"
+    - "{{ nova-consoleauth }}"
+    - "{{ nova-scheduler }}"
+    - "{{ nova-spicehtml5proxy }}"
+  tags: after_config
