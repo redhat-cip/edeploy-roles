@@ -161,7 +161,7 @@ case "$OS" in
               ;;
             7)
               # Red Hat OpenStack 5
-              add_rh_cdn_repo $dir rhel-7-server-openstack-5.0-rpms
+              add_rh_cdn_repo $dir rhel-7-server-openstack-6.0-rpms
               # python-subunit is on EPEL from rdo
               install_packages $dir $(get_openstack_repository centos $dir $OS_VERS)
               ;;
