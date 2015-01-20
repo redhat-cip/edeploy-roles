@@ -1,0 +1,52 @@
+---
+# file: roles/compute/tasks/main.yml
+
+# Mark the nova-compute service as disabled to prevent Nova from scheduling
+# any new servers on this node
+- name: disable nova-compute to prevent instance scheduling
+  command: nova service-disable --reason upgrade {{ ansible_fqdn }} nova-compute
+  tags: before_config
+
+- name: stop openstack services
+  service: name={{ item }} state=stopped
+  with_items:
+    - "{{ nova-compute }}"
+    - "{{ ceilometer-agent-compute }}"
+    - "{{ neutron-openvswitch-agent }}"
+  tags: before_config
+
+- name: edeploy upgrade
+  edeploy: command=upgrade version={{ distro }}-{{ version }}
+  tags: before_config
+
+# Cap the compute RPC API at a version that will still be understood by your Icehouse compute nodes
+- ini_file: dest=/etc/nova.conf
+            section=upgrade_levels
+            option=compute
+            value=icehouse
+  tags: before_config
+
+- name: start nova compute service
+  service: name={{ nova-compute }} state=started
+  tags: before_config
+
+- name: start other openstack services
+  service: name={{ item }} state=started
+  with_items:
+    - "{{ ceilometer-agent-compute }}"
+    - "{{ neutron-openvswitch-agent }}"
+  tags: before_config
+
+- name: allow instance scheduling on the compute node
+  command: nova service-enable myhost nova-compute {{ ansible_fqdn }}
+  tags: before_config
+
+# Clean-up nova config by deleting the option, not useful anymore
+- ini_file: dest=/etc/nova.conf
+            section=upgrade_levels
+            option=compute
+  tags: after_config
+
+- name: restart nova compute service
+  service: name={{ nova-compute }} state=restarted
+  tags: after_config
