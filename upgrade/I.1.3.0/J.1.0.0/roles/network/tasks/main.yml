@@ -1,0 +1,26 @@
+---
+# file: roles/network/tasks/main.yml
+
+- name: stop openstack services
+  service: name={{ item }} state=stopped
+  with_items:
+    - "{{ neutron-dhcp-agent }}"
+    - "{{ neutron-l3-agent }}"
+    - "{{ neutron-lbaas-agent }}"
+    - "{{ neutron-metadata-agent }}"
+    - "{{ neutron-metering-agent }}"
+    - "{{ neutron-openvswitch-agent }}"
+
+- name: edeploy upgrade
+  edeploy: command=upgrade version={{ distro }}-{{ version }}
+  tags: before_config
+
+- name: start openstack services
+  service: name={{ item }} state=started
+  with_items:
+    - "{{ neutron-dhcp-agent }}"
+    - "{{ neutron-l3-agent }}"
+    - "{{ neutron-lbaas-agent }}"
+    - "{{ neutron-metadata-agent }}"
+    - "{{ neutron-metering-agent }}"
+    - "{{ neutron-openvswitch-agent }}"
