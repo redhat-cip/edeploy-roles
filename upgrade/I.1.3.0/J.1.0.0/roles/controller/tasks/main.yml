@@ -1,0 +1,164 @@
+---
+# file: roles/controller/tasks/main.yml
+
+- name: stop openstack services
+  service: name={{ item }} state=stopped
+  with_items:
+    - "{{ webserver }}"
+    - "{{ ceilometer-agent-notification }}"
+    - "{{ ceilometer-alarm-evaluator }}"
+    - "{{ ceilometer-alarm-notifier }}"
+    - "{{ ceilometer-api }}"
+    - "{{ ceilometer-collector }}"
+    - "{{ cinder-api }}"
+    - "{{ cinder-scheduler }}"
+    - "{{ cinder-volume }}"
+    - "{{ glance-api }}"
+    - "{{ glance-registry }}"
+    - "{{ heat-api-cfn }}"
+    - "{{ heat-api-cloudwatch }}"
+    - "{{ heat-api }}"
+    - "{{ heat-engine }}"
+    - "{{ keystone }}"
+    - "{{ neutron-server }}"
+    - "{{ nova-api }}"
+    - "{{ nova-cert }}"
+    - "{{ nova-conductor }}"
+    - "{{ nova-consoleauth }}"
+    - "{{ nova-scheduler }}"
+    - "{{ nova-spicehtml5proxy }}"
+    - "{{ swift-proxy }}"
+  tags: before_config
+
+- name: edeploy upgrade
+  edeploy: command=upgrade version={{ distro }}-{{ version }}
+  tags: before_config
+
+- name: purge keystone old tokens
+  command: keystone-manage token_flush
+  tags: before_config
+  when: inventory_hostname == groups['controller'][0]
+
+- name: update keystone database
+  command: keystone-manage db_sync
+  tags: before_config
+  when: inventory_hostname == groups['controller'][0]
+
+- name: start keystone service
+  service: name={{ keystone }} state=started
+  tags: before_config
+
+- name: start swift proxy service
+  service: name={{ swift-proxy }} state=started
+  tags: before_config
+
+- name: update glance database
+  command: glance-manage db_sync
+  tags: before_config
+  when: inventory_hostname == groups['controller'][0]
+
+- name: start glance services
+  service: name={{ item }} state=started
+  with_items:
+    - "{{ glance-api }}"
+    - "{{ glance-registry }}"
+  tags: before_config
+
+- name: update cinder database
+  command: cinder-manage db sync
+  tags: before_config
+  when: inventory_hostname == groups['controller'][0]
+
+- name: start cinder services
+  service: name={{ item }} state=started
+  with_items:
+    - "{{ cinder-api }}"
+    - "{{ cinder-scheduler }}"
+    - "{{ cinder-volume }}"
+  tags: before_config
+
+- name: update neutron database
+  command: neutron-db-manage --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade head
+  tags: before_config
+  when: inventory_hostname == groups['controller'][0]
+
+- name: start neutron server service
+  service: name={{ neutron-server }} state=started
+  tags: before_config
+
+- name: update heat database
+  command: heat-manage --config-file /etc/heat/heat.conf db_sync
+  tags: before_config
+  when: inventory_hostname == groups['controller'][0]
+
+- name: start heat services
+  service: name={{ item }} state=started
+  with_items:
+    - "{{ heat-api }}"
+    - "{{ heat-api-cfn }}"
+    - "{{ heat-api-cloudwatch }}"
+    - "{{ heat-engine }}"
+  tags: before_config
+
+- name: start ceilometer services
+  service: name={{ item }} state=started
+  with_items:
+    - "{{ ceilometer-agent-notification }}"
+    - "{{ ceilometer-alarm-evaluator }}"
+    - "{{ ceilometer-alarm-notifier }}"
+    - "{{ ceilometer-api }}"
+    - "{{ ceilometer-collector }}"
+  tags: before_config
+
+- name: restart ceilometer-agent-central managed by pacemaker
+  command: {{ pacemaker }} resource cleanup ceilometer-agent-central
+  tags: before_config
+  when: inventory_hostname == groups['controller'][-1]
+
+- name: prepare horizon django files
+  command: /usr/share/openstack-dashboard/manage.py compress
+  tags: before_config
+
+- name: start apache2 service
+  service: name={{ webserver }} state=started
+  tags: before_config
+
+- name: update nova database
+  command: nova-manage db sync
+  tags: before_config
+  when: inventory_hostname == groups['controller'][-1]
+
+# Cap the compute RPC API at a version that will still be understood by your Icehouse compute nodes
+- ini_file: dest=/etc/nova.conf
+            section=upgrade_levels
+            option=compute
+            value=icehouse
+  tags: before_config
+
+- name: start nova services
+  service: name={{ item }} state=started
+  with_items:
+    - "{{ nova-api }}"
+    - "{{ nova-cert }}"
+    - "{{ nova-conductor }}"
+    - "{{ nova-consoleauth }}"
+    - "{{ nova-scheduler }}"
+    - "{{ nova-spicehtml5proxy }}"
+  tags: before_config
+
+# Clean-up nova config by deleting the option, not useful anymore
+- ini_file: dest=/etc/nova.conf
+            section=upgrade_levels
+            option=compute
+  tags: after_config
+
+- name: restart nova services
+  service: name={{ item }} state=restarted
+  with_items:
+    - "{{ nova-api }}"
+    - "{{ nova-cert }}"
+    - "{{ nova-conductor }}"
+    - "{{ nova-consoleauth }}"
+    - "{{ nova-scheduler }}"
+    - "{{ nova-spicehtml5proxy }}"
+  tags: after_config
