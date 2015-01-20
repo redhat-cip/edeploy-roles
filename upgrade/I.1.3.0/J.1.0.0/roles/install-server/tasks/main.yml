@@ -1,0 +1,6 @@
+---
+# file: roles/install-server/tasks/main.yml
+
+- name: edeploy upgrade
+  edeploy: command=upgrade version={{ distro }}-{{ version }}
+  tags: install_server
