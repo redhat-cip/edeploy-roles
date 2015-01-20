@@ -10,6 +10,7 @@
     - "{{ neutron-metadata-agent }}"
     - "{{ neutron-metering-agent }}"
     - "{{ neutron-openvswitch-agent }}"
+  tags: before_config
 
 - name: edeploy upgrade
   edeploy: command=upgrade version={{ distro }}-{{ version }}
@@ -24,3 +25,4 @@
     - "{{ neutron-metadata-agent }}"
     - "{{ neutron-metering-agent }}"
     - "{{ neutron-openvswitch-agent }}"
+  tags: before_config
