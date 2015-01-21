@@ -123,20 +123,29 @@ EOF
 
     others_cloud_config_modules=$(mktemp)
     case "$OS" in
-      "Debian"|"Ubuntu")
-cat > $others_cloud_config_modules << EOF
+        "Debian"|"Ubuntu")
+            cat > $others_cloud_config_modules << EOF
  - grub-dpkg
  - apt-pipelining
  - apt-update-upgrade
  - landscape
 EOF
-      ;;
-      "CentOS"|"RedHatEnterpriseServer")
-cat > $others_cloud_config_modules << EOF
+            ;;
+        "CentOS"|"RedHatEnterpriseServer")
+            cat > $others_cloud_config_modules << EOF
  - yum-add-repo
  - package-update-upgrade-install
 EOF
-      ;;
+            cat >> ${dir}/etc/cloud/cloud.cfg <<EOF
+
+system_info:
+  distro: rhel
+  paths:
+    cloud_dir: /var/lib/cloud
+    templates_dir: /etc/cloud/templates
+  ssh_svcname: sshd
+EOF
+            ;;
     esac
     sed -i "/set-passwords/r  $others_cloud_config_modules" ${dir}/etc/cloud/cloud.cfg
 }
