@@ -353,9 +353,11 @@ prod_packages=(
         crash \
         iotop \
         ltrace \
+        ipa-client \
         mtr \
         nmap \
         nmap-ncat \
+        sosreport \
         strace \
         sysstat \
         telnet \
