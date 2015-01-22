@@ -278,6 +278,7 @@ name=OpenStack Juno packages for $basearch
 baseurl=$OPENSTACK_MIRROR
 enabled=1
 gpgcheck=0
+EOF
     ;;
   esac
 }
