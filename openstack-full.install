@@ -385,7 +385,8 @@ case "$OS" in
     "Ubuntu")
         install_packages_disabled $dir ${os_packages[$(package_type)]}
         echo "" > $dir/etc/nova/nova-compute.conf
-        # add init script to disable TSO/GSO/GRO
+        # TODO(EmilienM) Dirty hack to fix spice
+        do_chroot $dir if ! [ -h /var/run/shm ] ; then chmod 777 /var/run/shm ; chmod +t /var/run/shm ; fi
     ;;
     "RedHatEnterpriseServer")
         case "$CODENAME_MAJOR" in
