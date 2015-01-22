@@ -40,7 +40,7 @@ case "$OS" in
         # Attach to the pool "Red Hat Enterprise Linux OpenStack Platform (Physical)"
         # for some reason libselinux-ruby is only available there
         attach_pool_rh_cdn $dir $RHN_CDN_POOL_ID
-        add_rh_cdn_repo $dir rhel-7-server-openstack-6.0-rpms
+        # add_rh_cdn_repo $dir rhel-7-server-openstack-6.0-rpms
         add_rh_cdn_repo $dir rhel-7-server-rpms
         install_packages_disabled $dir puppetdb
     ;;

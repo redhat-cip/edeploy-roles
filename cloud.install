@@ -56,8 +56,10 @@ EOF
 	        add_epel_repository $DIST
                 # Attach to the pool "Red Hat Enterprise Linux OpenStack Platform (Physical)"
                 attach_pool_rh_cdn $dir $RHN_CDN_POOL_ID
-                # Red Hat OpenStack 5
-                add_rh_cdn_repo $dir rhel-7-server-openstack-6.0-rpms
+                # Red Hat OpenStack 6
+                # add_rh_cdn_repo $dir rhel-7-server-openstack-6.0-rpms
+                add_openstack_6_rpm_mirror
+                update_repositories $dir
                 install_packages $dir "cloud-init cloud-utils cloud-utils-growpart"
 	        remove_epel_repository $DIST
             fi

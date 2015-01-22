@@ -408,8 +408,8 @@ case "$OS" in
               # Attach to the pool "Red Hat Enterprise Linux OpenStack Platform (Physical)"
               attach_pool_rh_cdn $dir $RHN_CDN_POOL_ID
 
-              # Red Hat OpenStack 5
-              add_rh_cdn_repo $dir rhel-7-server-openstack-6.0-rpms
+              # Red Hat OpenStack 6
+              # add_rh_cdn_repo $dir rhel-7-server-openstack-6.0-rpms
 
               # pacemaker is in RHEL Server High Availability (v.7 for 64-bit x86_64)
               add_rh_cdn_repo $dir rhel-ha-for-rhel-7-server-rpms
@@ -485,8 +485,7 @@ EOF
 
         if [ "$OS" == "RedHatEnterpriseServer" ]; then
             # Set priority to one for RH repos
-            do_chroot $dir sed -i -e '/\[rhel-7-server-openstack-6.0-rpms\]/a priority = 1' \
-                                  -e '/\[rhel-ha-for-rhel-7-server-rpms\]/a priority = 1' \
+            do_chroot $dir sed -i -e '/\[rhel-ha-for-rhel-7-server-rpms\]/a priority = 1' \
                                   -e '/\[rhel-server-rhscl-7-rpms\]/a priority = 1' /etc/yum.repos.d/redhat.repo
         fi
 

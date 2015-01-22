@@ -160,8 +160,8 @@ case "$OS" in
               add_rhn_channel rhel-x86_64-server-6-ost-beta
               ;;
             7)
-              # Red Hat OpenStack 5
-              add_rh_cdn_repo $dir rhel-7-server-openstack-6.0-rpms
+              # Red Hat OpenStack 6
+              # add_rh_cdn_repo $dir rhel-7-server-openstack-6.0-rpms
               # python-subunit is on EPEL from rdo
               install_packages $dir $(get_openstack_repository centos $dir $OS_VERS)
               ;;
