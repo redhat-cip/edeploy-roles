@@ -27,7 +27,7 @@ ORIG=$(cd $(dirname $0); pwd)
 
 declare -A packages
 packages=(
-    ["deb"]="redis-server rabbitmq-server"
+    ["deb"]="rabbitmq-server"
     ["rpm"]="redis rabbitmq-server"
 )
 
@@ -50,7 +50,10 @@ update_repositories $dir
 install_packages_disabled $dir ${packages[$(package_type)]}
 
 case "$OS" in
-    "Debian" | "Ubuntu")
+    "Debian")
+      install_packages_disabled $dir -t wheezy-backports redis-server
+    ;&
+    "Ubuntu")
       install_packages $dir sensu uchiwa
     ;;
     "CentOS"|"RedHatEnterpriseServer")

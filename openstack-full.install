@@ -223,7 +223,6 @@ os_packages=(
         python-troveclient \
         python-trove \
         rabbitmq-server \
-        redis-server \
         ruby-activerecord \
         ruby-sqlite3 \
         screen \
@@ -378,7 +377,7 @@ case "$OS" in
     "Debian")
         add_percona_deb_repo
         update_repositories $dir
-        install_packages_disabled $dir -t wheezy-backports linux-headers-amd64 linux-image-amd64
+        install_packages_disabled $dir -t wheezy-backports linux-headers-amd64 linux-image-amd64 redis-server
         install_packages_disabled $dir ${backup_packages[$(package_type)]}
         install_packages_disabled $dir ${prod_packages[$(package_type)]}
     ;&
