@@ -2,7 +2,7 @@
 # file: roles/load-balancer/tasks/main.yml
 
 - name: stop HAproxy service
-  service: name=haproxy state=stop
+  service: name=haproxy state=stopped
   tags: before_config
   when: ansible_distribution == 'Debian'
 

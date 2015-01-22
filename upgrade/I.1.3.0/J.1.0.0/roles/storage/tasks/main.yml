@@ -9,9 +9,20 @@
     - "{{ swift-object }}"
   tags: before_config
 
+# Ceph is upgraded in ICE
+- name: stop Ceph services
+  service: name=ceph state=stopped
+  tags: before_config
+  when: ansible_distribution == 'RedHat'
+
 - name: edeploy upgrade
   edeploy: command=upgrade version={{ distro }}-{{ version }}
   tags: before_config
+
+- name: start Ceph services
+  service: name=ceph state=started
+  tags: before_config
+  when: ansible_distribution == 'RedHat'
 
 - name: start openstack services
   service: name={{ item }} state=started
