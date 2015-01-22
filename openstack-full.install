@@ -276,7 +276,6 @@ os_packages=(
         openstack-ironic-conductor \
         openstack-ironic-discoverd \
         openstack-keystone \
-        openstack-manila \
         openstack-neutron \
         openstack-neutron-cisco \
         openstack-neutron-linuxbridge \
@@ -294,7 +293,6 @@ os_packages=(
         openstack-nova-novncproxy \
         openstack-nova-serialproxy \
         openstack-nova-scheduler \
-        openstack-nova-spicehtml5proxy \
         openstack-sahara \
         openstack-selinux \
         openstack-swift-account \
@@ -306,7 +304,6 @@ os_packages=(
         openstack-trove-conductor \
         openstack-trove-guestagent \
         openstack-trove-taskmanager \
-        openstack-zaqar \
         openvswitch \
         pacemaker \
         pcs \
