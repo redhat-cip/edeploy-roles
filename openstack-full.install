@@ -384,10 +384,8 @@ case "$OS" in
     ;&
     "Ubuntu")
         install_packages_disabled $dir ${os_packages[$(package_type)]}
-        # TODO(EmilienM) Dirty hack until python-glanceclient newest version is backported in Wheezy
-        # Bug faced: https://bugs.launchpad.net/python-glanceclient/+bug/1347150
-        do_chroot ${dir} bash -c 'pip install --upgrade python-glanceclient'
         echo "" > $dir/etc/nova/nova-compute.conf
+        # add init script to disable TSO/GSO/GRO
     ;;
     "RedHatEnterpriseServer")
         case "$CODENAME_MAJOR" in
