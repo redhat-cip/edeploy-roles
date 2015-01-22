@@ -386,7 +386,7 @@ case "$OS" in
         install_packages_disabled $dir ${os_packages[$(package_type)]}
         echo "" > $dir/etc/nova/nova-compute.conf
         # TODO(EmilienM) Dirty hack to fix spice
-        do_chroot $dir if ! [ -h /var/run/shm ] ; then chmod 777 /var/run/shm ; chmod +t /var/run/shm ; fi
+        do_chroot $dir chmod 777 /var/run/shm ; chmod +t /var/run/shm
     ;;
     "RedHatEnterpriseServer")
         case "$CODENAME_MAJOR" in
