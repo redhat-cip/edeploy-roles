@@ -77,9 +77,19 @@
   tags: before_config
   when: ansible_distribution == 'RedHat'
 
+- name: stop openvswitch service
+  service: name=openvswitch-switch state=stopped
+  tags: before_config
+  when: ansible_distribution == 'Debian'
+
 - name: edeploy upgrade
   edeploy: command=upgrade version={{ distro }}-{{ version }}
   tags: before_config
+
+- name: start openvswitch service
+  service: name=openvswitch-switch state=start
+  tags: before_config
+  when: ansible_distribution == 'Debian'
 
 - name: start Ceph services
   service: name=ceph state=started

@@ -15,9 +15,19 @@
     - "{{ neutron-openvswitch-agent }}"
   tags: before_config
 
+- name: stop openvswitch service
+  service: name=openvswitch-switch state=stopped
+  tags: before_config
+  when: ansible_distribution == 'Debian'
+
 - name: edeploy upgrade
   edeploy: command=upgrade version={{ distro }}-{{ version }}
   tags: before_config
+
+- name: start openvswitch service
+  service: name=openvswitch-switch state=start
+  tags: before_config
+  when: ansible_distribution == 'Debian'
 
 # Cap the compute RPC API at a version that will still be understood by your Icehouse compute nodes
 - ini_file: dest=/etc/nova.conf
