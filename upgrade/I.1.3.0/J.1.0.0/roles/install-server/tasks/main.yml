@@ -4,3 +4,11 @@
 - name: edeploy upgrade
   edeploy: command=upgrade version={{ distro }}-{{ version }}
   tags: install_server
+
+- name: restart updated services
+  service: name={{ item }} state=started
+  with_items:
+    - "{{ webserver }}"
+    - redis
+  tags: before_config
+  when: ansible_distribution == 'RedHat'
