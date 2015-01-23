@@ -357,7 +357,7 @@ prod_packages=(
         mtr \
         nmap \
         nmap-ncat \
-        sosreport \
+        sos \
         strace \
         sysstat \
         telnet \
