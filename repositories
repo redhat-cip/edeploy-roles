@@ -225,7 +225,8 @@ install_monitoring() {
 
         ["rpm"]="
         bc \
-        nagios-plugins-all
+# TODO(EmilienM) broken with OSP6 packages
+#        nagios-plugins-all
 ")
 
     add_percona_deb_repo
