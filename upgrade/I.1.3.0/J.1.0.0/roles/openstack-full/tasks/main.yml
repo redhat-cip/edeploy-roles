@@ -52,9 +52,39 @@
     - "{{ webserver }}"
   tags: before_config
 
+# RabbitMQ and MongoDB are upgraded in RHEL7
+- name: stop rabbitmq and mongodb
+  service: name={{ item }} state=stopped
+  with_items:
+    - rabbitmq-server
+    - mongod
+  tags: before_config
+  when: ansible_distribution == 'RedHat'
+
+# MySQL is upgraded in RHEL7
+# since we don't know if the node is master or not, we stop mysql anyway
+- name: stop mysql
+  service: name={{ item }} state=stopped
+  with_items:
+    - mysqld
+    - mysql-boostrap
+  tags: before_config
+  ignore_errors: yes
+  when: ansible_distribution == 'RedHat'
+
 - name: edeploy upgrade
   edeploy: command=upgrade version={{ distro }}-{{ version }}
   tags: before_config
+
+- name: start rabbitmq
+  service: name=rabbitmq-server state=started
+  tags: before_config
+  when: ansible_distribution == 'RedHat' and inventory_hostname == groups['openstack-full'][-1]
+
+- name: bootstrap mysql cluster again
+  service: name=mysql-bootstrap state=restarted
+  tags: before_config
+  when: ansible_distribution == 'RedHat' and inventory_hostname == groups['openstack-full'][-1]
 
 # HAproxy has been updated on Debian
 # from 1.5.4-1 to 1.5.8-2
@@ -62,6 +92,11 @@
   service: name=haproxy state=started
   tags: before_config
   when: ansible_distribution == 'Debian'
+
+- name: start mongodb
+  service: name=mongod state=started
+  tags: before_config
+  when: ansible_distribution == 'RedHat'
 
 - name: purge keystone old tokens
   command: keystone-manage token_flush
