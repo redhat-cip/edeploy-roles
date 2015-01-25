@@ -6,9 +6,9 @@
   tags: install_server
 
 - name: restart updated services
-  service: name={{ item }} state=started
+  service: name={{ item }} state=restarted
   with_items:
     - "{{ webserver }}"
     - redis
-  tags: before_config
+  tags: install_server
   when: ansible_distribution == 'RedHat'
