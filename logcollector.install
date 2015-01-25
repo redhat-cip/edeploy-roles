@@ -94,7 +94,7 @@ Listen 8300
 </VirtualHost>
 EOF
         do_chroot ${dir} a2ensite kibana3
-        ;;
+    ;;
     "CentOS"|"RedHatEnterpriseServer")
         cat > $dir/etc/httpd/conf.d/25-kibana.conf <<EOF
 NameVirtualHost *:8300
@@ -115,5 +115,5 @@ Listen 8300
     CustomLog "/var/log/httpd/kibana3_access.log" combined
 </VirtualHost>
 EOF
-        ;;
+    ;;
 esac
