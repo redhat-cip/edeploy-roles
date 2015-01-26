@@ -225,6 +225,7 @@ install_monitoring() {
 
         ["rpm"]="
         bc \
+        nagios-plugins-all
 ")
 
     add_percona_deb_repo
@@ -241,7 +242,7 @@ install_monitoring() {
             ;;
         "CentOS"|"RedHatEnterpriseServer")
             if [ "$OS" == "RedHatEnterpriseServer" ]; then
-                DISABLEREPO=--disablerepo='rhel-7-server-openstack-5.0-rpms'
+                DISABLEREPO=--disablerepo='openstack-6'
             else
                 DISABLEREPO=''
             fi
