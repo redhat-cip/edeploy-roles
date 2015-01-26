@@ -56,7 +56,7 @@ case "$OS" in
 esac
 
 # Install Kibana3
-do_chroot ${dir} git clone https://github.com/elasticsearch/kibana.git /opt/kibana3
+do_chroot ${dir} git clone -b v3.1.2 https://github.com/elasticsearch/kibana.git /opt/kibana3
 
 # Install fluentd-elasticsearch plugin
 do_chroot ${dir} /opt/td-agent/embedded/bin/fluent-gem install fluent-plugin-elasticsearch
