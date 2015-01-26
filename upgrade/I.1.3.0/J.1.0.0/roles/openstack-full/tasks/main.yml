@@ -233,6 +233,7 @@
             value=icehouse
   tags: before_config
 
+# we don't restart nova-spicehtml5 because it's dropped in J.1.0.0
 - name: start nova services
   service: name={{ item }} state=started
   with_items:
@@ -242,7 +243,6 @@
     - "{{ nova-conductor }}"
     - "{{ nova-consoleauth }}"
     - "{{ nova-scheduler }}"
-    - "{{ nova-spicehtml5proxy }}"
   tags: before_config
 
 - name: allow instance scheduling on the compute node
@@ -264,5 +264,4 @@
     - "{{ nova-conductor }}"
     - "{{ nova-consoleauth }}"
     - "{{ nova-scheduler }}"
-    - "{{ nova-spicehtml5proxy }}"
   tags: after_config
