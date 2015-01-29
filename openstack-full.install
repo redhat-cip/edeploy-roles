@@ -497,6 +497,9 @@ EOF
         do_chroot $dir mkdir -p /usr/share/selinux/custom
         cp $SRC/files/selinux/*.pp ${dir}/usr/share/selinux/custom
 
+        # Drop me after https://bugs.launchpad.net/puppet-openstack-cloud/+bug/1410863
+        sed -i "s/300/30/g" ${dir}/usr/lib/systemd/system/mariadb.service
+
         remove_epel_repository $DIST
     ;;
     *)
