@@ -138,11 +138,6 @@ EOF
 	    ;;
     esac
 
-    # (Spredzy) Specific patch
-    cd ${dir}/$hiera_dir
-    patch -p0 < $SRC/files/backend.rb.patch
-    cd -
-
     do_chroot ${dir} rm -rf /var/lib/puppet/ssl/* || :
 }
 
