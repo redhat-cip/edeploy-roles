@@ -59,7 +59,7 @@ EOF
             update_repositories $dir
             install_packages $dir ntpstat
             hiera_dir=usr/lib/ruby/vendor_ruby/hiera
-            ;;
+            ;;&
         "Ubuntu")
             do_chroot ${dir} wget --no-verbose http://apt.puppetlabs.com/puppetlabs-release-$RELEASE.deb
             do_chroot ${dir} dpkg -i puppetlabs-release-$RELEASE.deb
@@ -67,7 +67,16 @@ EOF
             do_chroot ${dir} apt-key adv --recv-keys --keyserver keyserver.ubuntu.com E52660B15D964F0B
             get_openstack_repository $DIST $dir $OS_VERS > ${dir}/etc/apt/sources.list.d/openstack.list
             hiera_dir=usr/lib/ruby/vendor_ruby/hiera
-            ;;
+	    softprop=python-software-properties
+            ;;&
+	"Debian" | "Ubuntu")
+            update_repositories $dir
+	    packages="$softprop augeas-tools iptables build-essential puppetdb-terminus"
+	    install_packages_disabled $dir puppet
+	    install_packages $dir "$packages"
+	    do_chroot ${dir} sed -e 's/START=yes/START=no/' -i /etc/default/puppet
+	    do_chroot ${dir} sed -e '/templatedir/d' -i /etc/puppet/puppet.conf
+	    ;;
         "CentOS")
             add_puppet_repository $DIST
             install_packages_disabled $dir puppet
@@ -98,30 +107,13 @@ EOF
             ;;
     esac
 
+    do_chroot ${dir} sed -e 's/ - puppet/#- puppet/g' -i /etc/cloud/cloud.cfg
+
     # (Spredzy) Specific patch
     cd ${dir}/$hiera_dir
     patch -p0 < $SRC/files/backend.rb.patch
     cd -
 
-}
-
-os_install_packages () {
-    update_repositories $dir
-
-    case $OS in
-	"Ubuntu")
-	    softprop=python-software-properties
-            ;;&
-	"Debian" | "Ubuntu")
-	    packages="$softprop augeas-tools iptables build-essential puppetdb-terminus"
-	    install_packages_disabled $dir puppet
-	    install_packages $dir "$packages"
-	    do_chroot ${dir} sed -e 's/START=yes/START=no/' -i /etc/default/puppet
-	    do_chroot ${dir} sed -e '/templatedir/d' -i /etc/puppet/puppet.conf
-	    ;;
-    esac
-
-    do_chroot ${dir} sed -e 's/ - puppet/#- puppet/g' -i /etc/cloud/cloud.cfg
 }
 
 install_logging() {
@@ -164,7 +156,6 @@ install_logging() {
 }
 
 prepare_packages
-os_install_packages
 install_logging
 # TODO (spredzy) : https://bugzilla.redhat.com/show_bug.cgi?id=1159894
 # install_monitoring
