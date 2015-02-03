@@ -28,7 +28,7 @@ ORIG=$(cd $(dirname $0); pwd)
 declare -A packages
 packages=(
     ["deb"]="elasticsearch openjdk-7-jdk td-agent git puppet facter hiera ntp ruby-dev build-essential apache2 libcurl4-gnutls-dev rsyslog-relp rsyslog-gnutls"
-    ["rpm"]="elasticsearch java-1.7.0-openjdk git puppet facter hiera ntp ruby-devel httpd rsyslog-relp rsyslog-gnutls"
+    ["rpm"]="elasticsearch java-1.7.0-openjdk git puppet facter hiera ntp ruby-devel httpd rsyslog-relp rsyslog-gnutls libcurl-devel gcc gcc-c++"
 )
 
 install_ib_if_needed $ORIG $dir
@@ -37,8 +37,20 @@ install_ib_if_needed $ORIG $dir
 add_puppet_repository $DIST
 add_fluentd_repo
 add_elasticsearch_repo
-update_repositories $dir
 
+case "$OS" in
+    "RedHatEnterpriseServer")
+        case "$CODENAME_MAJOR" in
+            7)
+                attach_pool_rh_cdn $dir $RHN_CDN_POOL_ID
+                add_rh_cdn_repo $dir rhel-7-server-rpms
+                add_rh_cdn_repo $dir rhel-7-server-optional-rpms
+            ;;
+        esac
+    ;;
+esac
+
+update_repositories $dir
 # Install packages
 install_packages $dir ${packages[$(package_type)]}
 case "$OS" in
