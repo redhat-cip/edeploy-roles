@@ -508,6 +508,7 @@ EOF
 esac
 
 $SRC/logcollector.install $dir $dir $version
+$SRC/monitor-server.install $dir $dir $version
 
 # TODO (spredzy): https://bugzilla.redhat.com/show_bug.cgi?id=1159894
 install_monitoring
