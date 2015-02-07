@@ -3,7 +3,6 @@
 distro: D7
 webserver: apache2
 rsync: rsync
-pacemaker: crm
 ceilometer-agent-compute: ceilometer-agent-compute
 ceilometer-agent-notification: ceilometer-agent-notification
 ceilometer-alarm-evaluator: ceilometer-alarm-evaluator

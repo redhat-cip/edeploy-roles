@@ -3,7 +3,6 @@
 distro: RH7.0
 webserver: httpd
 rsync: rsyncd
-pacemaker: pcs
 ceilometer-agent-compute: openstack-ceilometer-compute
 ceilometer-agent-notification: openstack-ceilometer-notification
 ceilometer-alarm-evaluator: openstack-ceilometer-alarm-evaluator

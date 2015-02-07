@@ -209,9 +209,14 @@
   tags: before_config
 
 - name: restart ceilometer-agent-central managed by pacemaker
-  command: {{ pacemaker }} resource cleanup ceilometer-agent-central
+  command: crm resource cleanup ceilometer-agent-central
   tags: before_config
-  when: inventory_hostname == groups['openstack-full'][-1]
+  when: ansible_distribution == 'Debian' and inventory_hostname == groups['openstack-full'][-1]
+
+- name: restart ceilometer-agent-central managed by pacemaker
+  command: pcs resource cleanup ceilometer-agent-central
+  tags: before_config
+  when: ansible_distribution == 'RedHat' and inventory_hostname == groups['openstack-full'][-1]
 
 - name: prepare horizon django files
   command: /usr/share/openstack-dashboard/manage.py compress
