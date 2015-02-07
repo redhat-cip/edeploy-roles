@@ -4,7 +4,7 @@
 # Mark the nova-compute service as disabled to prevent Nova from scheduling
 # any new servers on this node
 - name: disable nova-compute to prevent instance scheduling
-zsh:1: command not found: q
+  command: nova --os-auth-url {{ os_username }} --os-username {{ os_username }} --os-password {{ os_password }} service-disable --reason upgrade {{ ansible_fqdn }} nova-compute
   tags: before_config
 
 - name: stop openstack services

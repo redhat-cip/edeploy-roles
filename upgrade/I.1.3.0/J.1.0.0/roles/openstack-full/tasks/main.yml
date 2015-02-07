@@ -5,7 +5,7 @@
 # any new servers on this node
 - name: disable nova-compute to prevent instance scheduling
   command: nova --os-auth-url {{ os_username }} --os-username {{ os_username }} --os-password {{ os_password }} service-disable --reason upgrade {{ ansible_fqdn }} nova-compute
-zsh:1: command not found: q
+  tags: before_config
 
 - name: stop HAproxy service
   service: name=haproxy state=stopped
