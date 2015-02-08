@@ -221,6 +221,12 @@
 - name: prepare horizon django files
   command: /usr/share/openstack-dashboard/manage.py compress
   tags: before_config
+  when: ansible_distribution == 'RedHat'
+
+- name: prepare horizon django files
+  command: /usr/bin/pycompile -p python-django-horizon
+  tags: before_config
+  when: ansible_distribution == 'Debian'
 
 - name: start apache2 service
   service: name={{ webserver }} state=started
