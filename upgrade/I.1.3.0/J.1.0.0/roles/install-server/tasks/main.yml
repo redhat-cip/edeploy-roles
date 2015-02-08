@@ -1,10 +1,19 @@
 ---
 # file: roles/install-server/tasks/main.yml
 
+- name: stop Puppet
+  service: name={{ item }} state=stopped
+  with_items:
+    - "{{ webserver }}"
+    - puppetdb
+  tags: install_server
+
 - name: edeploy upgrade
   edeploy: command=upgrade version={{ distro }}-{{ version }}
   tags: install_server
 
+# We don't restart PuppetDB now, because it's managed by Puppet
+# later, since we are running masterless setup now
 - name: restart updated services
   service: name={{ item }} state=restarted
   with_items:
