@@ -25,7 +25,7 @@
   tags: before_config
 
 - name: start openvswitch service
-  service: name=openvswitch-switch state=start
+  service: name=openvswitch-switch state=started
   tags: before_config
   when: ansible_distribution == 'Debian'
 
