@@ -5,29 +5,29 @@
   service: name={{ item }} state=stopped
   with_items:
     - "{{ webserver }}"
-    - "{{ ceilometer-agent-notification }}"
-    - "{{ ceilometer-alarm-evaluator }}"
-    - "{{ ceilometer-alarm-notifier }}"
-    - "{{ ceilometer-api }}"
-    - "{{ ceilometer-collector }}"
-    - "{{ cinder-api }}"
-    - "{{ cinder-scheduler }}"
-    - "{{ cinder-volume }}"
-    - "{{ glance-api }}"
-    - "{{ glance-registry }}"
-    - "{{ heat-api-cfn }}"
-    - "{{ heat-api-cloudwatch }}"
-    - "{{ heat-api }}"
-    - "{{ heat-engine }}"
+    - "{{ ceilometer_agent_notification }}"
+    - "{{ ceilometer_alarm_evaluator }}"
+    - "{{ ceilometer_alarm_notifier }}"
+    - "{{ ceilometer_api }}"
+    - "{{ ceilometer_collector }}"
+    - "{{ cinder_api }}"
+    - "{{ cinder_scheduler }}"
+    - "{{ cinder_volume }}"
+    - "{{ glance_api }}"
+    - "{{ glance_registry }}"
+    - "{{ heat_api_cfn }}"
+    - "{{ heat_api_cloudwatch }}"
+    - "{{ heat_api }}"
+    - "{{ heat_engine }}"
     - "{{ keystone }}"
-    - "{{ neutron-server }}"
-    - "{{ nova-api }}"
-    - "{{ nova-cert }}"
-    - "{{ nova-conductor }}"
-    - "{{ nova-consoleauth }}"
-    - "{{ nova-scheduler }}"
-    - "{{ nova-spicehtml5proxy }}"
-    - "{{ swift-proxy }}"
+    - "{{ neutron_server }}"
+    - "{{ nova_api }}"
+    - "{{ nova_cert }}"
+    - "{{ nova_conductor }}"
+    - "{{ nova_consoleauth }}"
+    - "{{ nova_scheduler }}"
+    - "{{ nova_spicehtml5proxy }}"
+    - "{{ swift_proxy }}"
   tags: before_config
 
 # RabbitMQ and MongoDB are upgraded in RHEL7
@@ -84,7 +84,7 @@
   tags: before_config
 
 - name: start swift proxy service
-  service: name={{ swift-proxy }} state=started
+  service: name={{ swift_proxy }} state=started
   tags: before_config
 
 - name: update glance database
@@ -95,8 +95,8 @@
 - name: start glance services
   service: name={{ item }} state=started
   with_items:
-    - "{{ glance-api }}"
-    - "{{ glance-registry }}"
+    - "{{ glance_api }}"
+    - "{{ glance_registry }}"
   tags: before_config
 
 - name: update cinder database
@@ -107,9 +107,9 @@
 - name: start cinder services
   service: name={{ item }} state=started
   with_items:
-    - "{{ cinder-api }}"
-    - "{{ cinder-scheduler }}"
-    - "{{ cinder-volume }}"
+    - "{{ cinder_api }}"
+    - "{{ cinder_scheduler }}"
+    - "{{ cinder_volume }}"
   tags: before_config
 
 - name: update neutron database
@@ -118,7 +118,7 @@
   when: inventory_hostname == groups['controller'][0]
 
 - name: start neutron server service
-  service: name={{ neutron-server }} state=started
+  service: name={{ neutron_server }} state=started
   tags: before_config
 
 - name: update heat database
@@ -129,20 +129,20 @@
 - name: start heat services
   service: name={{ item }} state=started
   with_items:
-    - "{{ heat-api }}"
-    - "{{ heat-api-cfn }}"
-    - "{{ heat-api-cloudwatch }}"
-    - "{{ heat-engine }}"
+    - "{{ heat_api }}"
+    - "{{ heat_api_cfn }}"
+    - "{{ heat_api_cloudwatch }}"
+    - "{{ heat_engine }}"
   tags: before_config
 
 - name: start ceilometer services
   service: name={{ item }} state=started
   with_items:
-    - "{{ ceilometer-agent-notification }}"
-    - "{{ ceilometer-alarm-evaluator }}"
-    - "{{ ceilometer-alarm-notifier }}"
-    - "{{ ceilometer-api }}"
-    - "{{ ceilometer-collector }}"
+    - "{{ ceilometer_agent_notification }}"
+    - "{{ ceilometer_alarm_evaluator }}"
+    - "{{ ceilometer_alarm_notifier }}"
+    - "{{ ceilometer_api }}"
+    - "{{ ceilometer_collector }}"
   tags: before_config
 
 - name: restart ceilometer-agent-central managed by pacemaker
@@ -179,11 +179,11 @@
 - name: start nova services
   service: name={{ item }} state=started
   with_items:
-    - "{{ nova-api }}"
-    - "{{ nova-cert }}"
-    - "{{ nova-conductor }}"
-    - "{{ nova-consoleauth }}"
-    - "{{ nova-scheduler }}"
+    - "{{ nova_api }}"
+    - "{{ nova_cert }}"
+    - "{{ nova_conductor }}"
+    - "{{ nova_consoleauth }}"
+    - "{{ nova_scheduler }}"
   tags: before_config
 
 # Clean-up nova config by deleting the option, not useful anymore
@@ -195,9 +195,9 @@
 - name: restart nova services
   service: name={{ item }} state=restarted
   with_items:
-    - "{{ nova-api }}"
-    - "{{ nova-cert }}"
-    - "{{ nova-conductor }}"
-    - "{{ nova-consoleauth }}"
-    - "{{ nova-scheduler }}"
+    - "{{ nova_api }}"
+    - "{{ nova_cert }}"
+    - "{{ nova_conductor }}"
+    - "{{ nova_consoleauth }}"
+    - "{{ nova_scheduler }}"
   tags: after_config

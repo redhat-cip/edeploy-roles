@@ -4,12 +4,12 @@
 - name: stop openstack services
   service: name={{ item }} state=stopped
   with_items:
-    - "{{ neutron-dhcp-agent }}"
-    - "{{ neutron-l3-agent }}"
-    - "{{ neutron-lbaas-agent }}"
-    - "{{ neutron-metadata-agent }}"
-    - "{{ neutron-metering-agent }}"
-    - "{{ neutron-openvswitch-agent }}"
+    - "{{ neutron_dhcp_agent }}"
+    - "{{ neutron_l3_agent }}"
+    - "{{ neutron_lbaas_agent }}"
+    - "{{ neutron_metadata_agent }}"
+    - "{{ neutron_metering_agent }}"
+    - "{{ neutron_openvswitch_agent }}"
   tags: before_config
 
 - name: stop openvswitch service
@@ -29,10 +29,10 @@
 - name: start openstack services
   service: name={{ item }} state=started
   with_items:
-    - "{{ neutron-dhcp-agent }}"
-    - "{{ neutron-l3-agent }}"
-    - "{{ neutron-lbaas-agent }}"
-    - "{{ neutron-metadata-agent }}"
-    - "{{ neutron-metering-agent }}"
-    - "{{ neutron-openvswitch-agent }}"
+    - "{{ neutron_dhcp_agent }}"
+    - "{{ neutron_l3_agent }}"
+    - "{{ neutron_lbaas_agent }}"
+    - "{{ neutron_metadata_agent }}"
+    - "{{ neutron_metering_agent }}"
+    - "{{ neutron_openvswitch_agent }}"
   tags: before_config

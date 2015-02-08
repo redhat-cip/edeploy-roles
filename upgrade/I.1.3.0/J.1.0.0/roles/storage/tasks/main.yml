@@ -4,9 +4,9 @@
 - name: stop openstack services
   service: name={{ item }} state=stopped
   with_items:
-    - "{{ swift-account }}"
-    - "{{ swift-container }}"
-    - "{{ swift-object }}"
+    - "{{ swift_account }}"
+    - "{{ swift_container }}"
+    - "{{ swift_object }}"
   tags: before_config
 
 # Ceph is upgraded in ICE
@@ -27,7 +27,7 @@
 - name: start openstack services
   service: name={{ item }} state=started
   with_items:
-    - "{{ swift-account }}"
-    - "{{ swift-container }}"
-    - "{{ swift-object }}"
+    - "{{ swift_account }}"
+    - "{{ swift_container }}"
+    - "{{ swift_object }}"
   tags: before_config
