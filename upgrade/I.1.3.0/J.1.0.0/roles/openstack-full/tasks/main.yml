@@ -4,7 +4,7 @@
 # Mark the nova-compute service as disabled to prevent Nova from scheduling
 # any new servers on this node
 - name: disable nova-compute to prevent instance scheduling
-  command: nova --os-auth-url {{ os_auth_url }} --os-tenant-name admin --os-username {{ os_username }} --os-password {{ os_password }} service-disable --reason upgrade {{ ansible_fqdn }} nova-compute
+  command: nova-manage service disable {{ ansible_fqdn }} nova-compute
   tags: before_config
 
 - name: stop HAproxy service
@@ -257,7 +257,7 @@
   tags: before_config
 
 - name: allow instance scheduling on the compute node
-  command: nova --os-auth-url {{ os_auth_url }} --os-tenant-name admin --os-tenant-name admin--os-username {{ os_username }} --os-password {{ os_password }} service-enable {{ ansible_fqdn }} nova-compute
+  command: nova-manage service enable {{ ansible_fqdn }} nova-compute
   tags: before_config
 
 # Clean-up nova config by deleting the option, not useful anymore
