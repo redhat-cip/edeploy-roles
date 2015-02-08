@@ -36,3 +36,7 @@
     - "{{ neutron_metering_agent }}"
     - "{{ neutron_openvswitch_agent }}"
   tags: before_config
+
+- name: restart neutron l3 agent
+  service: name={{ neutron_l3_agent }} state=restarted
+  tags: after_config

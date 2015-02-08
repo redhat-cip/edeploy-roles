@@ -276,3 +276,7 @@
     - "{{ nova_consoleauth }}"
     - "{{ nova_scheduler }}"
   tags: after_config
+
+- name: restart neutron l3 agent
+  service: name={{ neutron_l3_agent }} state=restarted
+  tags: after_config
