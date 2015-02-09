@@ -6,10 +6,25 @@
   with_items:
     - "{{ webserver }}"
     - puppetdb
+    - postgresql
   tags: install_server
 
 - name: edeploy upgrade
   edeploy: command=upgrade version={{ distro }}-{{ version }}
+  tags: install_server
+
+- name: Ensure old puppetdb configuration file are removed (puppetdb.conf and routes.yaml)
+  file: path=/etc/puppet/{{ item }} state=absent
+  with_items:
+    - puppetdb.conf
+    - routes.yaml
+  tags: install_server
+
+- name: Ensure old puppetdb configurations are removed from puppet.conf
+  lineinfile: dest=/etc/puppet/puppet.conf state=absent regexp="\s*{{ item }}"
+  with_items:
+    - storeconfigs
+    - reports
   tags: install_server
 
 # We don't restart PuppetDB now, because it's managed by Puppet
