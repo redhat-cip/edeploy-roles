@@ -49,12 +49,6 @@ install_packages_disabled $dir dnsmasq
 
 $SRC/postgresql-server.install $dir $dir $version
 
-#################
-# Puppet master #
-#################
-
-$SRC/puppet-master.install $dir $dir $version
-
 ###################
 # PuppetDB server #
 ###################
