@@ -87,6 +87,12 @@
   service: name={{ swift_proxy }} state=started
   tags: before_config
 
+- ini_file: dest=/etc/glance/glance-api.conf
+            section=DEFAULT
+            option=known_stores
+            value=rbd
+  tags: before_config
+
 - name: update glance database
   command: glance-manage db_sync
   tags: before_config
