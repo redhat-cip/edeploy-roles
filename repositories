@@ -242,7 +242,7 @@ install_monitoring() {
             ;;
         "CentOS"|"RedHatEnterpriseServer")
             if [ "$OS" == "RedHatEnterpriseServer" ]; then
-                DISABLEREPO=--disablerepo='openstack-6'
+                DISABLEREPO=--disablerepo='rhel-7-server-openstack-6.0-rpms'
             else
                 DISABLEREPO=''
             fi
