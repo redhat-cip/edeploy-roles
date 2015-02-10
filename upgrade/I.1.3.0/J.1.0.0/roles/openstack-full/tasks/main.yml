@@ -214,7 +214,7 @@
   when: ansible_distribution == 'Debian' and inventory_hostname == groups['openstack-full'][-1]
 
 - name: restart ceilometer-agent-central managed by pacemaker
-  command: pcs resource cleanup ceilometer-agent-central
+  command: pcs resource cleanup openstack-ceilometer-central
   tags: before_config
   when: ansible_distribution == 'RedHat' and inventory_hostname == groups['openstack-full'][-1]
 
