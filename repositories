@@ -269,12 +269,12 @@ install_monitoring() {
     remove_epel_repository $DIST
 }
 
-function add_openstack_6_rpm_mirror() {
+function add_openstack_7_rpm_mirror() {
   case "$OS" in
     "RedHatEnterpriseServer")
-       cat > ${dir}/etc/yum.repos.d/openstack-6.repo <<EOF
-[openstack-6]
-name=OpenStack Juno packages for $basearch
+       cat > ${dir}/etc/yum.repos.d/openstack-7.repo <<EOF
+[openstack-7]
+name=OpenStack Kilo packages for $basearch
 baseurl=$OPENSTACK_MIRROR
 enabled=1
 gpgcheck=0
@@ -283,10 +283,10 @@ EOF
   esac
 }
 
-function remove_openstack_6_rpm_mirror() {
+function remove_openstack_7_rpm_mirror() {
   case "$OS" in
     "RedHatEnterpriseServer")
-       rm ${dir}/etc/yum.repos.d/openstack-6.repo
+       rm ${dir}/etc/yum.repos.d/openstack-7.repo
     ;;
   esac
 }
