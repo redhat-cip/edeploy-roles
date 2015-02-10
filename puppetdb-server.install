@@ -33,18 +33,25 @@ add_epel_repository $DIST
 update_repositories $dir
 
 case "$OS" in
-    "Debian"|"CentOS")
-        install_packages_disabled $dir puppetdb
+    "Debian")
+        local repository=$(add_main_repository $DIST)
+        cat > ${dir}/etc/apt/sources.list.d/$RELEASE-backport.list <<EOF
+deb $repository ${RELEASE}-backports main
+EOF
+        install_packages_disabled $dir puppetdb augeas-tools git ntp puppetdb-terminus apache2 libapache2-mod-wsgi
     ;;
     "RedHatEnterpriseServer")
         # Attach to the pool "Red Hat Enterprise Linux OpenStack Platform (Physical)"
-        # for some reason libselinux-ruby is only available there
         attach_pool_rh_cdn $dir $RHN_CDN_POOL_ID
         add_rh_cdn_repo $dir rhel-7-server-openstack-6.0-rpms
         add_rh_cdn_repo $dir rhel-7-server-rpms
-        install_packages_disabled $dir puppetdb
+    ;;&
+    "CentOS")
+        install_packages_disabled $dir puppetdb git augeas ntp httpd puppetdb-terminus python-pip mod_wsgi apr-util-devel apr-devel httpd-devel zlib-devel openssl-devel libcurl-devel gcc-c++ gcc mod_ssl ruby-devel
     ;;
 esac
+
+do_chroot ${dir} rm -rf /var/lib/puppet/ssl/* || :
 
 remove_puppet_repository $DIST
 remove_epel_repository $DIST

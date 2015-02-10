@@ -113,7 +113,6 @@ EOF
 	    PACKAGES="puppetmaster puppetmaster-passenger puppet augeas-tools git ntp puppetdb-terminus"
 	    install_packages_disabled $dir $PACKAGES
 	    do_chroot ${dir} a2dissite puppetmaster
-            hiera_dir=usr/lib/ruby/vendor_ruby/hiera
 	    ;;
 	"RedHatEnterpriseServer")
 	    add_puppet_repository $DIST
@@ -123,7 +122,6 @@ EOF
             rh_install_passenger
 	    remove_epel_repository $DIST
 	    remove_puppet_repository $DIST
-            hiera_dir=usr/share/ruby/vendor_ruby/hiera
 	    ;;
 	"CentOS")
 	    add_puppet_repository $DIST
@@ -131,7 +129,6 @@ EOF
             rh_install_passenger
 	    remove_epel_repository $DIST
 	    remove_puppet_repository $DIST
-            hiera_dir=usr/share/ruby/vendor_ruby/hiera
 	    ;;
 	*)
 	    fatal_error "OS ($OS) or Release $(RELEASE) not supported"

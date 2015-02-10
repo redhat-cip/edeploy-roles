@@ -113,7 +113,7 @@ $(INST)/chef-server.done: chef-server.install $(INST)/base.done
 	touch $(INST)/chef-server.done
 
 install-server: $(INST)/install-server.done
-$(INST)/install-server.done: install-server.install $(INST)/openstack-common.done puppet-master.install $(SDIR)/build/deploy.install postgresql-server.install puppetdb-server.install jenkins.install logcollector.install monitor-server.install tempest.install
+$(INST)/install-server.done: install-server.install $(INST)/openstack-common.done $(SDIR)/build/deploy.install postgresql-server.install puppetdb-server.install jenkins.install logcollector.install monitor-server.install tempest.install
 	./install-server.install $(INST)/openstack-common $(INST)/install-server $(VERS)
 	touch $(INST)/install-server.done
 
