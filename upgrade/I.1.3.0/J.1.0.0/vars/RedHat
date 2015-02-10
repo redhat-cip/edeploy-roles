@@ -29,7 +29,7 @@ neutron_server: neutron-server
 nova_api: openstack-nova-api
 nova_cert: openstack-nova-cert
 nova_compute: openstack-nova-compute
-nova_conductor: openstack(nova-conductor
+nova_conductor: openstack-nova-conductor
 nova_consoleauth: openstack-nova-consoleauth
 nova_scheduler: openstack-nova-scheduler
 nova_spicehtml5proxy: openstack-nova-spicehtml5proxy
