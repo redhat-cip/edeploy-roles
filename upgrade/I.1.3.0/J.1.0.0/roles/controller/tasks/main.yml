@@ -30,14 +30,15 @@
     - "{{ swift_proxy }}"
   tags: before_config
 
-# RabbitMQ and MongoDB are upgraded in RHEL7
-- name: stop rabbitmq and mongodb
-  service: name={{ item }} state=stopped
-  with_items:
-    - rabbitmq-server
-    - mongod
+# MongoDB is upgraded in RHEL7
+- name: stop mongodb
+  service: name=mongod state=stopped
   tags: before_config
   when: ansible_distribution == 'RedHat'
+
+- name: manage erlang_cookie migration in RabbitMQ
+  script: rabbitmq-upgrade.sh {{ erlang_cookie }}
+  tags: before_config
 
 # MySQL is upgraded in RHEL7
 # since we don't know if the node is master or not, we stop mysql anyway
@@ -62,7 +63,7 @@
 - name: start rabbitmq
   service: name=rabbitmq-server state=started
   tags: before_config
-  when: ansible_distribution == 'RedHat' and inventory_hostname == groups['controller'][-1]
+  when: inventory_hostname == groups['controller'][-1]
 
 - name: start mongodb
   service: name=mongod state=started
