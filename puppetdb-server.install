@@ -34,7 +34,7 @@ update_repositories $dir
 
 case "$OS" in
     "Debian")
-        local repository=$(add_main_repository $DIST)
+        repository=$(add_main_repository $DIST)
         cat > ${dir}/etc/apt/sources.list.d/$RELEASE-backport.list <<EOF
 deb $repository ${RELEASE}-backports main
 EOF
