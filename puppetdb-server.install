@@ -46,7 +46,7 @@ EOF
         add_rh_cdn_repo $dir rhel-7-server-openstack-6.0-rpms
         add_rh_cdn_repo $dir rhel-7-server-rpms
     ;;&
-    "CentOS")
+    "CentOS"|"RedHatEnterpriseServer")
         install_packages_disabled $dir puppetdb git augeas ntp httpd puppetdb-terminus python-pip mod_wsgi apr-util-devel apr-devel httpd-devel zlib-devel openssl-devel libcurl-devel gcc-c++ gcc mod_ssl ruby-devel
     ;;
 esac
