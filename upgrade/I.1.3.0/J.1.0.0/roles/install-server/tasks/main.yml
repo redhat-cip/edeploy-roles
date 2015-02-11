@@ -13,6 +13,10 @@
   edeploy: command=upgrade version={{ distro }}-{{ version }}
   tags: install_server
 
+- name: Ensure old puppet ssl files are removed
+  file: path=/var/lib/puppet/ssl state=absent
+  tags: install_server
+
 - name: Ensure old puppetdb configuration file are removed (puppetdb.conf and routes.yaml)
   file: path=/etc/puppet/{{ item }} state=absent
   with_items:

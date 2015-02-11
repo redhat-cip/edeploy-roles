@@ -51,6 +51,10 @@
   command: nova-manage service enable {{ ansible_fqdn }} nova-compute
   tags: before_config
 
+- name: Ensure old puppet ssl files are removed
+  file: path=/var/lib/puppet/ssl state=absent
+  tags: before_config
+
 # Clean-up nova config by deleting the option, not useful anymore
 - ini_file: dest=/etc/nova.conf
             section=upgrade_levels

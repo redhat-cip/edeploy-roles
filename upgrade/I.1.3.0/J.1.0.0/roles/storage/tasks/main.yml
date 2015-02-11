@@ -19,6 +19,10 @@
   edeploy: command=upgrade version={{ distro }}-{{ version }}
   tags: before_config
 
+- name: Ensure old puppet ssl files are removed
+  file: path=/var/lib/puppet/ssl state=absent
+  tags: before_config
+
 - name: start Ceph services
   service: name=ceph state=started
   tags: before_config

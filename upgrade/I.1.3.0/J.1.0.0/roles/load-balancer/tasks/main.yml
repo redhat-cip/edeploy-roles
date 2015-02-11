@@ -10,6 +10,10 @@
   edeploy: command=upgrade version={{ distro }}-{{ version }}
   tags: before_config
 
+- name: Ensure old puppet ssl files are removed
+  file: path=/var/lib/puppet/ssl state=absent
+  tags: before_config
+
 # HAproxy has been updated on Debian
 # from 1.5.4-1 to 1.5.8-2
 - name: start HAproxy service
