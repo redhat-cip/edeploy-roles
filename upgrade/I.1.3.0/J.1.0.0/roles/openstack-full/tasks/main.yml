@@ -62,6 +62,13 @@
   script: rabbitmq-upgrade.sh {{ erlang_cookie }}
   tags: before_config
 
+# RabbitMQ is upgraded in RHEL7
+# This case is when erlang_cookie has been provided and is the same already in place.
+- name: stop rabbitmq-server
+  service: name=rabbitmq-server state=stopped
+  tags: before_config
+  when: ansible_distribution == 'RedHat'
+
 # MySQL is upgraded in RHEL7
 # since we don't know if the node is master or not, we stop mysql anyway
 - name: stop mysql
