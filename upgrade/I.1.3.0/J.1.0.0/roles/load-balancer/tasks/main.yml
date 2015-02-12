@@ -29,9 +29,6 @@
   service: name=xinetd state=restarted
   tags: before_config
 
-# HAproxy has been updated on Debian
-# from 1.5.4-1 to 1.5.8-2
 - name: start HAproxy service
-  service: name=haproxy state=started
+  service: name=haproxy state=restarted
   tags: before_config
-  when: ansible_distribution == 'Debian'
