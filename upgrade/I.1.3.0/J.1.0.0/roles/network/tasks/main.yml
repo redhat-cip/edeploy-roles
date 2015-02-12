@@ -41,6 +41,13 @@
   file: path=/var/lib/puppet/ssl state=absent
   tags: before_config
 
-- name: restart neutron l3 agent
-  service: name={{ neutron_l3_agent }} state=restarted
+- name: restart openstack network services
+  service: name={{ item }} state=restarted
+  with_items:
+    - "{{ neutron_dhcp_agent }}"
+    - "{{ neutron_l3_agent }}"
+    - "{{ neutron_lbaas_agent }}"
+    - "{{ neutron_metadata_agent }}"
+    - "{{ neutron_metering_agent }}"
+    - "{{ neutron_openvswitch_agent }}"
   tags: after_config

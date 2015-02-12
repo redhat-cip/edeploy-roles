@@ -61,6 +61,9 @@
             option=compute
   tags: after_config
 
-- name: restart nova compute service
-  service: name={{ nova_compute }} state=restarted
+- name: restart openstack services
+  service: name={{ item }} state=restarted
+  with_items:
+    - "{{ nova_compute }}"
+    - "{{ neutron_openvswitch_agent }}"
   tags: after_config
