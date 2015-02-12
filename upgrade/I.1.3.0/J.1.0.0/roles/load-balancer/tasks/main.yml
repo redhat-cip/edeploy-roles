@@ -14,6 +14,21 @@
   file: path=/var/lib/puppet/ssl state=absent
   tags: before_config
 
+- name: change mysqlchk port from 9200 to 8200
+  replace:
+    dest={{ item }}
+    regexp='9200'
+    replace='8200'
+  with_items:
+    - "/etc/services"
+    - "/etc/xinetd.d/mysqlchk"
+    - "/etc/haproxy/haproxy.cfg"
+  tags: before_config
+
+- name: restart xinetd
+  service: name=xinetd state=restarted
+  tags: before_config
+
 # HAproxy has been updated on Debian
 # from 1.5.4-1 to 1.5.8-2
 - name: start HAproxy service

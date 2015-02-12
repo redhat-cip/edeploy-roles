@@ -94,6 +94,21 @@
   edeploy: command=upgrade version={{ distro }}-{{ version }}
   tags: before_config
 
+- name: change mysqlchk port from 9200 to 8200
+  replace:
+    dest={{ item }}
+    regexp='9200'
+    replace='8200'
+  with_items:
+    - "/etc/services"
+    - "/etc/xinetd.d/mysqlchk"
+    - "/etc/haproxy/haproxy.cfg"
+  tags: before_config
+
+- name: restart xinetd
+  service: name=xinetd state=restarted
+  tags: before_config
+
 - name: start openvswitch service
   service: name=openvswitch-switch state=started
   tags: before_config
