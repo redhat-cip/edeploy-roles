@@ -383,8 +383,9 @@ case "$OS" in
     "Ubuntu")
         install_packages_disabled $dir ${os_packages[$(package_type)]}
         echo "" > $dir/etc/nova/nova-compute.conf
-        # TODO(EmilienM) Dirty hack to fix spice
+        # TODO(EmilienM) Dirty hack to fix spice and novnc
         do_chroot $dir chmod 777 /var/run/shm ; chmod +t /var/run/shm
+        sed -i 's/NOVA_CONSOLE_PROXY_TYPE=spicehtml5/NOVA_CONSOLE_PROXY_TYPE=novnc/g' $dir/etc/default/nova-consoleproxy
     ;;
     "RedHatEnterpriseServer")
         case "$CODENAME_MAJOR" in
