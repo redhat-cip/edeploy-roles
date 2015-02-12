@@ -70,7 +70,6 @@
 - name: start rabbitmq
   service: name=rabbitmq-server state=started
   tags: before_config
-  when: inventory_hostname == groups['controller'][-1]
 
 - name: start mongodb
   service: name=mongod state=started
