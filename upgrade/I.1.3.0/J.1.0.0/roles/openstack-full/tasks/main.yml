@@ -122,6 +122,7 @@
 - name: start rabbitmq
   service: name=rabbitmq-server state=started
   tags: before_config
+  when: inventory_hostname == groups['openstack-full'][-1]
 
 - name: bootstrap mysql cluster again
   service: name=mysql-bootstrap state=restarted
