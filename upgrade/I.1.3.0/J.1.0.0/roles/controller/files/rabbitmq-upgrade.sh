@@ -32,11 +32,11 @@ fi
 if [ "$erlang_cookie_env" != "$erlang_cookie_real" ]; then
   echo "erlang_cookie from your env is different from the cookie already in place."
   # stop the service properly
-  service rabbitmq-server stop
+  service rabbitmq-server stop || true
   # ensure no process is still running so we can delete the cookie & restart the process later
   for bin in epmd rabbitmq-server beam.smp
   do
-    pkill -9 $bin
+    pkill -9 $bin || true
     echo $erlang_cookie_env>/var/lib/rabbitmq/.erlang.cookie
   done
 fi
