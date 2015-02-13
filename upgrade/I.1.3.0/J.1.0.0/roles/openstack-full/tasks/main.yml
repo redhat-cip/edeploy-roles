@@ -307,6 +307,7 @@
 - name: restart openstack network services
   service: name={{ item }} state=restarted
   with_items:
+    - "{{ neutron_server }}"
     - "{{ neutron_dhcp_agent }}"
     - "{{ neutron_l3_agent }}"
     - "{{ neutron_lbaas_agent }}"

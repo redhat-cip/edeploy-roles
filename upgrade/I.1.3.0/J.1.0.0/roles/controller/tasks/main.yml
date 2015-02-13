@@ -213,7 +213,7 @@
             option=compute
   tags: after_config
 
-- name: restart nova services
+- name: restart nova services and neutron-server
   service: name={{ item }} state=restarted
   with_items:
     - "{{ nova_api }}"
@@ -221,4 +221,5 @@
     - "{{ nova_conductor }}"
     - "{{ nova_consoleauth }}"
     - "{{ nova_scheduler }}"
+    - "{{ neutron_server }}"
   tags: after_config
