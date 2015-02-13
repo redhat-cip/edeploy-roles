@@ -27,9 +27,7 @@ if [ -z "$erlang_cookie_env" ]; then
   echo "erlang_cookie is a new required parameter in your environment."
   echo "Please read carefully http://spinalstack.enovance.com/en/latest/deploy/components/rabbitmq.html#upgrade-from-i-1-3-0-to-j-1-0-0"
   exit 1
-fi
-
-if [ "$erlang_cookie_env" != "$erlang_cookie_real" ]; then
+elif [ "$erlang_cookie_env" != "$erlang_cookie_real" ]; then
   echo "erlang_cookie from your env is different from the cookie already in place."
   # stop the service properly
   service rabbitmq-server stop || true
