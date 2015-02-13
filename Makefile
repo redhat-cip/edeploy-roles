@@ -130,7 +130,7 @@ $(INST)/tempest.done: tempest.install $(INST)/base.done
 $(INST)/base.done: $(ARCHIVE)/$(BVERS)/base-$(BVERS).edeploy
 	rm -rf $(INST)/base
 	mkdir -p $(INST)/base
-	tar zxf $(ARCHIVE)/$(BVERS)/base-$(BVERS).edeploy -C $(INST)/base
+	tar zxf $(ARCHIVE)/$(BVERS)/base-$(BVERS).edeploy --xattrs -C $(INST)/base
 	touch $(INST)/base.done
 
 dist:
