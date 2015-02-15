@@ -1,13 +1,6 @@
 ---
 # file: roles/install-server/tasks/main.yml
 
-# Dirty hack to upgade /usr/sbin/edeploy before actual upgrade
-# and benefit of rsync with attributes feature.
-# Useful when running SElinux before J.1.0.0
-- name: upgrade edeploy script
-  copy: src=edeploy dest=/usr/sbin/edeploy mode=0755
-  tags: before_config
-
 - name: stop Puppet
   service: name={{ item }} state=stopped
   with_items:
