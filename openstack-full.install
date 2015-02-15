@@ -456,7 +456,6 @@ protect=1
 priority=1
 EOF
             update_system $dir
-            add_epel_repository $DIST
             install_packages_disabled $dir /tmp/ice_pkg/kmod-rbd-$KMOD_REL.rpm /tmp/ice_pkg/kmod-libceph-$KMOD_REL.rpm ceph
             rm $dir/etc/yum.repos.d/ice.repo
         fi
@@ -468,7 +467,6 @@ EOF
         # So packages will be pulled first from Ceph if
         # available on both
         add_ceph_rpm_repo
-        add_epel_repository $DIST
         install_packages_disabled $dir ceph
     ;;&
     "CentOS"|"RedHatEnterpriseServer")
@@ -484,6 +482,7 @@ EOF
                                   -e '/\[rhel-server-rhscl-7-rpms\]/a priority = 1' /etc/yum.repos.d/redhat.repo
         fi
 
+        add_epel_repository $DIST
         install_packages_disabled $dir ${os_packages[$(package_type)]} $EXTRA_RPMS
 
         if [ "$OS" == "RedHatEnterpriseServer" ]; then
