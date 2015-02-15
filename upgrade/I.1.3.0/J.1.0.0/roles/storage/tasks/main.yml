@@ -1,9 +1,9 @@
 ---
 # file: roles/network/tasks/main.yml
 
-# Allow rsync to access all SElinux permissions
-- seboolean: name=rsync_full_access state=yes persistent=yes
+- seboolean: name=rsync_client state=yes persistent=yes
   tags: before_config
+  when: ansible_distribution == 'RedHat'
 
 # Dirty hack to upgade /usr/sbin/edeploy before actual upgrade
 # and benefit of rsync with attributes feature.
