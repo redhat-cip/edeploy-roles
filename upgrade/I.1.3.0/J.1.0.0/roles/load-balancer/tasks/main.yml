@@ -1,6 +1,10 @@
 ---
 # file: roles/load-balancer/tasks/main.yml
 
+# Allow rsync to access all SElinux permissions
+- seboolean: name=rsync_full_access state=yes persistent=yes
+  tags: before_config
+
 # Dirty hack to upgade /usr/sbin/edeploy before actual upgrade
 # and benefit of rsync with attributes feature.
 # Useful when running SElinux before J.1.0.0
