@@ -83,11 +83,6 @@
   tags: before_config
   when: inventory_hostname == groups['controller'][-1]
 
-- name: start mongodb
-  service: name=mongod state=started
-  tags: before_config
-  when: ansible_distribution == 'RedHat'
-
 - name: purge keystone old tokens
   command: keystone-manage token_flush
   tags: before_config
