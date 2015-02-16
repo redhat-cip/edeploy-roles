@@ -51,3 +51,9 @@
     - redis
   tags: install_server
   when: ansible_distribution == 'RedHat'
+
+# Ensure chroot is labelized
+- name: SELinux labelized chroot
+  shell: setfiles -r /var/lib/debootstrap/install/{{ distro }}-{{ version }}/openstack-full/ /etc/selinux/targeted/contexts/files/file_contexts /var/lib/debootstrap/install/{{ distro }}-{{ version }}/openstack-full/
+  tags: install_server
+  when: ansible_distribution == 'RedHat'
