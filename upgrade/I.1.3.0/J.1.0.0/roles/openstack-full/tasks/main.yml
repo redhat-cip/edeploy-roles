@@ -144,11 +144,6 @@
   service: name=haproxy state=restarted
   tags: before_config
 
-- name: purge keystone old tokens
-  command: keystone-manage token_flush
-  tags: before_config
-  when: inventory_hostname == groups['openstack-full'][0]
-
 - name: update keystone database
   command: keystone-manage db_sync
   tags: before_config
