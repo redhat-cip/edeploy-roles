@@ -170,6 +170,7 @@
 
 - name: kill heat-api process
   command: pkill -9 heat-api
+  ignore_errors: yes
   tags: before_config
   when: ansible_distribution == 'Debian'
 
