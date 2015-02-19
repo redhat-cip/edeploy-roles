@@ -32,6 +32,12 @@
     - "{{ heat_engine }}"
     - "{{ keystone }}"
     - "{{ neutron_server }}"
+    - "{{ neutron_dhcp_agent }}"
+    - "{{ neutron_l3_agent }}"
+    - "{{ neutron_lbaas_agent }}"
+    - "{{ neutron_metadata_agent }}"
+    - "{{ neutron_metering_agent }}"
+    - "{{ neutron_openvswitch_agent }}"
     - "{{ nova_api }}"
     - "{{ nova_cert }}"
     - "{{ nova_conductor }}"
@@ -69,9 +75,19 @@
   ignore_errors: yes
   when: ansible_distribution == 'RedHat'
 
+- name: stop openvswitch service
+  service: name=openvswitch-switch state=stopped
+  tags: before_config
+  when: ansible_distribution == 'Debian'
+
 - name: edeploy upgrade
   edeploy: command=upgrade version={{ distro }}-{{ version }}
   tags: before_config
+
+- name: start openvswitch service
+  service: name=openvswitch-switch state=started
+  tags: before_config
+  when: ansible_distribution == 'Debian'
 
 - name: bootstrap mysql cluster again
   service: name=mysql-bootstrap state=restarted
@@ -139,6 +155,17 @@
 
 - name: start neutron server service
   service: name={{ neutron_server }} state=started
+  tags: before_config
+
+- name: start networking services
+  service: name={{ item }} state=started
+  with_items:
+    - "{{ neutron_dhcp_agent }}"
+    - "{{ neutron_l3_agent }}"
+    - "{{ neutron_lbaas_agent }}"
+    - "{{ neutron_metadata_agent }}"
+    - "{{ neutron_metering_agent }}"
+    - "{{ neutron_openvswitch_agent }}"
   tags: before_config
 
 - name: update heat database
@@ -221,4 +248,15 @@
     - "{{ nova_consoleauth }}"
     - "{{ nova_scheduler }}"
     - "{{ neutron_server }}"
+  tags: after_config
+
+- name: restart openstack network services
+  service: name={{ item }} state=restarted
+  with_items:
+    - "{{ neutron_dhcp_agent }}"
+    - "{{ neutron_l3_agent }}"
+    - "{{ neutron_lbaas_agent }}"
+    - "{{ neutron_metadata_agent }}"
+    - "{{ neutron_metering_agent }}"
+    - "{{ neutron_openvswitch_agent }}"
   tags: after_config
