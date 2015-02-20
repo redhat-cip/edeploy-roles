@@ -35,6 +35,16 @@
   edeploy: command=upgrade version={{ distro }}-{{ version }}
   tags: before_config
 
+- name: reboot the servers
+  command: /sbin/reboot -t now
+  tags: before_config
+  when: ansible_distribution == 'Debian'
+
+- name: Wait for server to come up
+  local_action: wait_for host={{ ansible_fqdn }} port=22 delay=120 timeout=900 state=started
+  tags: before_config
+  when: ansible_distribution == 'Debian'
+
 - name: start openvswitch service
   service: name=openvswitch-switch state=started
   tags: before_config
