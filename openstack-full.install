@@ -501,6 +501,7 @@ EOF
         sed -i "s/300/30/g" ${dir}/usr/lib/systemd/system/mariadb.service
 
         # Finalize Neutron OVS configuration
+        # https://bugzilla.redhat.com/show_bug.cgi?id=1087647
         # http://docs.openstack.org/juno/install-guide/install/yum/content/neutron-compute-node.html
         sed -i 's,plugins/openvswitch/ovs_neutron_plugin.ini,plugin.ini,g' $dir/usr/lib/systemd/system/neutron-openvswitch-agent.service
         remove_epel_repository $DIST
