@@ -64,8 +64,6 @@
   tags: before_config
   when: ansible_distribution == 'RedHat'
 
-# MySQL is upgraded in RHEL7
-# since we don't know if the node is master or not, we stop mysql anyway
 - name: stop mysql
   service: name={{ item }} state=stopped
   with_items:
@@ -73,7 +71,6 @@
     - mysql-boostrap
   tags: before_config
   ignore_errors: yes
-  when: ansible_distribution == 'RedHat'
 
 - name: stop openvswitch service
   service: name=openvswitch-switch state=stopped
@@ -102,7 +99,7 @@
 - name: bootstrap mysql cluster again
   service: name=mysql-bootstrap state=restarted
   tags: before_config
-  when: ansible_distribution == 'RedHat' and inventory_hostname == groups['controller'][-1]
+  when: inventory_hostname == groups['controller'][-1]
 
 - name: start rabbitmq
   service: name=rabbitmq-server state=started

@@ -80,8 +80,6 @@
   tags: before_config
   when: ansible_distribution == 'RedHat'
 
-# MySQL is upgraded in RHEL7
-# since we don't know if the node is master or not, we stop mysql anyway
 - name: stop mysql
   service: name={{ item }} state=stopped
   with_items:
@@ -89,7 +87,6 @@
     - mysql-boostrap
   tags: before_config
   ignore_errors: yes
-  when: ansible_distribution == 'RedHat'
 
 - name: stop Ceph services
   service: name=ceph state=stopped
@@ -148,7 +145,7 @@
 - name: bootstrap mysql cluster again
   service: name=mysql-bootstrap state=restarted
   tags: before_config
-  when: ansible_distribution == 'RedHat' and inventory_hostname == groups['openstack-full'][-1]
+  when: inventory_hostname == groups['openstack-full'][-1]
 
 - name: restart HAproxy service
   service: name=haproxy state=restarted
