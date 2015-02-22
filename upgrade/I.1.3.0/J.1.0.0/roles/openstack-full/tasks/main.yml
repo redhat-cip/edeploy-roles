@@ -12,6 +12,11 @@
   copy: src=edeploy dest=/usr/sbin/edeploy mode=0755
   tags: before_config
 
+- name: migrate instances
+  script: migrate.sh {{ ansible_fqdn }} {{ os_username }} {{ os_tenant_name }} {{ os_password }} {{ os_auth_url }}
+  tags: before_config
+  when: ansible_distribution == 'Debian'
+
 # Mark the nova-compute service as disabled to prevent Nova from scheduling
 # any new servers on this node
 - name: disable nova-compute to prevent instance scheduling
