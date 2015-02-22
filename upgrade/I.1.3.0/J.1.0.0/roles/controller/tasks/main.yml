@@ -112,7 +112,7 @@
 - name: update keystone database
   command: keystone-manage db_sync
   tags: before_config
-  when: inventory_hostname == groups['controller'][-1]
+  when: inventory_hostname == groups['controller'][0]
 
 - name: start keystone service
   service: name={{ keystone }} state=started
@@ -131,7 +131,7 @@
 - name: update glance database
   command: glance-manage db_sync
   tags: before_config
-  when: inventory_hostname == groups['controller'][-1]
+  when: inventory_hostname == groups['controller'][0]
 
 - name: start glance services
   service: name={{ item }} state=started
@@ -143,7 +143,7 @@
 - name: update cinder database
   command: cinder-manage db sync
   tags: before_config
-  when: inventory_hostname == groups['controller'][-1]
+  when: inventory_hostname == groups['controller'][0]
 
 - name: start cinder services
   service: name={{ item }} state=started
@@ -156,7 +156,7 @@
 - name: update neutron database
   command: neutron-db-manage --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade head
   tags: before_config
-  when: inventory_hostname == groups['controller'][-1]
+  when: inventory_hostname == groups['controller'][0]
 
 - name: start neutron server service
   service: name={{ neutron_server }} state=started
@@ -176,7 +176,7 @@
 - name: update heat database
   command: heat-manage --config-file /etc/heat/heat.conf db_sync
   tags: before_config
-  when: inventory_hostname == groups['controller'][-1]
+  when: inventory_hostname == groups['controller'][0]
 
 - name: kill heat-api process
   command: pkill -9 heat-api
