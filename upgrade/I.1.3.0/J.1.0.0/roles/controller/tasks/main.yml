@@ -220,7 +220,7 @@
 - name: update nova database
   command: nova-manage db sync
   tags: before_config
-  when: inventory_hostname == groups['controller'][-1]
+  when: inventory_hostname == groups['controller'][0]
 
 # Cap the compute RPC API at a version that will still be understood by your Icehouse compute nodes
 - ini_file: dest=/etc/nova.conf
