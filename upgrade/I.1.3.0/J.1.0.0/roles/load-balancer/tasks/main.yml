@@ -31,6 +31,11 @@
   tags: before_config
   when: ansible_distribution == 'Debian'
 
+- name: start keepalived
+  service: name=keepalived state=started
+  tags: before_config
+  when: ansible_distribution == 'Debian'
+
 - name: Ensure old puppet ssl files are removed
   file: path=/var/lib/puppet/ssl state=absent
   tags: before_config

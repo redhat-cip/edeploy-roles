@@ -117,6 +117,11 @@
   tags: before_config
   when: ansible_distribution == 'Debian'
 
+- name: start keepalived
+  service: name=keepalived state=started
+  tags: before_config
+  when: ansible_distribution == 'Debian'
+
 - name: change mysqlchk port from 9200 to 8200
   replace:
     dest={{ item }}
