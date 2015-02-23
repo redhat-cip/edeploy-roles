@@ -108,6 +108,7 @@
 
 - name: update keystone database
   command: keystone-manage db_sync
+  ignore_errors: yes
   tags: before_config
   when: inventory_hostname == groups['controller'][0]
 
