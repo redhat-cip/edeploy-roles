@@ -15,7 +15,6 @@
 - name: stop HAproxy service
   service: name=haproxy state=stopped
   tags: before_config
-  when: ansible_distribution == 'Debian'
 
 - name: edeploy upgrade
   edeploy: command=upgrade version={{ distro }}-{{ version }}
