@@ -18,6 +18,10 @@
   command: nova-manage service disable {{ ansible_fqdn }} nova-compute
   tags: before_config
 
+- name: stop keepalived
+  service: name=keepalived state=stopped
+  tags: before_config
+
 - name: stop HAproxy service
   service: name=haproxy state=stopped
   tags: before_config
@@ -114,7 +118,6 @@
 - name: start keepalived
   service: name=keepalived state=started
   tags: before_config
-  when: ansible_distribution == 'Debian'
 
 - name: change mysqlchk port from 9200 to 8200
   replace:

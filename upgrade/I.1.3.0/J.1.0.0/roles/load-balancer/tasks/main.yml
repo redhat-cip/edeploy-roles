@@ -12,6 +12,10 @@
   copy: src=edeploy dest=/usr/sbin/edeploy mode=0755
   tags: before_config
 
+- name: stop keepalived
+  service: name=keepalived state=stopped
+  tags: before_config
+
 - name: stop HAproxy service
   service: name=haproxy state=stopped
   tags: before_config
