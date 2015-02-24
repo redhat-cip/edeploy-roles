@@ -503,7 +503,10 @@ EOF
         # Finalize Neutron OVS configuration
         # https://bugzilla.redhat.com/show_bug.cgi?id=1087647
         # http://docs.openstack.org/juno/install-guide/install/yum/content/neutron-compute-node.html
-        sed -i 's,plugins/openvswitch/ovs_neutron_plugin.ini,plugin.ini,g' $dir/usr/lib/systemd/system/neutron-openvswitch-agent.service
+        # WIP in Puppet: https://review.openstack.org/#/c/158800
+        # Launchpad: https://bugs.launchpad.net/puppet-neutron/+bug/1425213
+        rm ${dir}/etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini
+        do_chroot $dir ln -s /etc/neutron/plugins/ml2/ml2_conf.ini /etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini
         remove_epel_repository $DIST
     ;;
     *)
