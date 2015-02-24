@@ -301,6 +301,10 @@
   file: path=/var/lib/puppet/ssl state=absent
   tags: before_config
 
+- name: start keepalived
+  service: name=keepalived state=started
+  tags: before_config
+
 # Clean-up nova config by deleting the option, not useful anymore
 - ini_file: dest=/etc/nova.conf
             section=upgrade_levels
