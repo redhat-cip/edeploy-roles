@@ -237,7 +237,6 @@
 - name: start heat services
   service: name={{ item }} state=started
   with_items:
-    - "{{ heat_api }}"
     - "{{ heat_api_cfn }}"
     - "{{ heat_api_cloudwatch }}"
     - "{{ heat_engine }}"
