@@ -115,10 +115,6 @@
   tags: before_config
   when: ansible_distribution == 'Debian'
 
-- name: start keepalived
-  service: name=keepalived state=started
-  tags: before_config
-
 - name: change mysqlchk port from 9200 to 8200
   replace:
     dest={{ item }}
@@ -156,6 +152,10 @@
 
 - name: restart HAproxy service
   service: name=haproxy state=restarted
+  tags: before_config
+
+- name: start keepalived
+  service: name=keepalived state=started
   tags: before_config
 
 - name: update keystone database
@@ -299,10 +299,6 @@
 
 - name: Ensure old puppet ssl files are removed
   file: path=/var/lib/puppet/ssl state=absent
-  tags: before_config
-
-- name: start keepalived
-  service: name=keepalived state=started
   tags: before_config
 
 # Clean-up nova config by deleting the option, not useful anymore
