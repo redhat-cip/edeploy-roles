@@ -1,10 +1,6 @@
 ---
 # file: roles/install-server/tasks/main.yml
 
-- seboolean: name=rsync_client state=yes persistent=yes
-  tags: before_config
-  when: ansible_distribution == 'RedHat'
-
 # Dirty hack to upgade /usr/sbin/edeploy before actual upgrade
 # and benefit of rsync with attributes feature.
 # Useful when running SElinux before J.1.0.0
