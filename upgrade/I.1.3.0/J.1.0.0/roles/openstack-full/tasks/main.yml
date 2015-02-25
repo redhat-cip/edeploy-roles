@@ -154,9 +154,14 @@
   service: name=haproxy state=restarted
   tags: before_config
 
+# we start keepalived on the last openstack-full node, to ensure all nodes
+# have xinetd updated, otherwise the VIP can come back on the first node
+# while xinetd config is not updated, so HAproxy won't be able to load-balance
+# MySQL.
 - name: start keepalived
   service: name=keepalived state=started
   tags: before_config
+  when: inventory_hostname == groups['openstack-full'][-1]
 
 - name: update keystone database
   command: keystone-manage db_sync
