@@ -160,7 +160,6 @@
 
 - name: update keystone database
   command: keystone-manage db_sync
-  ignore_errors: yes
   tags: before_config
   when: inventory_hostname == groups['openstack-full'][0]
 
@@ -223,6 +222,7 @@
     - "{{ neutron_metadata_agent }}"
     - "{{ neutron_metering_agent }}"
     - "{{ neutron_openvswitch_agent }}"
+  ignore_errors: yes
   tags: before_config
 
 - name: update heat database
