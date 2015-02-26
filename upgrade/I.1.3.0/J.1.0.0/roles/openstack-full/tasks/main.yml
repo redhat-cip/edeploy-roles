@@ -312,6 +312,11 @@
             option=compute
   tags: after_config
 
+- name: restart libvirtd service
+  service: name=libvirtd state=restarted
+  tags: after_config
+  when: ansible_distribution == 'RedHat'
+
 - name: restart nova services
   service: name={{ item }} state=restarted
   with_items:
@@ -334,3 +339,4 @@
     - "{{ neutron_metering_agent }}"
     - "{{ neutron_openvswitch_agent }}"
   tags: after_config
+  ignore_errors: yes
