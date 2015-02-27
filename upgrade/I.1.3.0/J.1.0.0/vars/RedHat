@@ -2,6 +2,7 @@
 
 distro: RH7.0
 webserver: httpd
+redis: redis
 rsync: rsyncd
 ceilometer_agent_compute: openstack-ceilometer-compute
 ceilometer_agent_notification: openstack-ceilometer-notification

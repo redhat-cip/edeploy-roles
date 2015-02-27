@@ -2,6 +2,7 @@
 
 distro: D7
 webserver: apache2
+redis: redis-server
 rsync: rsync
 ceilometer_agent_compute: ceilometer-agent-compute
 ceilometer_agent_notification: ceilometer-agent-notification

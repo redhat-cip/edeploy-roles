@@ -53,3 +53,18 @@
   shell: setfiles -r /var/lib/debootstrap/install/{{ distro }}-{{ version }}/openstack-full/ /etc/selinux/targeted/contexts/files/file_contexts /var/lib/debootstrap/install/{{ distro }}-{{ version }}/openstack-full/
   tags: install_server
   when: ansible_distribution == 'RedHat'
+
+- name: kill old redis instance
+  command: pkill -9 {{ redis }}
+  tags: before_config
+
+- name: restart redis
+  service: name={{ redis }} state=restarted
+  tags: after_config
+
+- name: restart sensu
+  service: name={{ item }} state=restarted
+  with_items:
+    - sensu-api
+    - sensu-server
+  tags: after_config
