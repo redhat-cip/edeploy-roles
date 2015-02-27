@@ -328,7 +328,25 @@
     - "{{ nova_scheduler }}"
   tags: after_config
 
-- name: restart openstack network services
+- name: kill neutron-server process
+  command: pkill -9 neutron-server
+  ignore_errors: yes
+  tags: after_config
+  when: ansible_distribution == 'Debian'
+
+- name: kill keystone process
+  command: pkill -9 keystone
+  ignore_errors: yes
+  tags: after_config
+  when: ansible_distribution == 'Debian'
+
+- name: kill glance-registry process
+  command: pkill -9 glance-registry
+  ignore_errors: yes
+  tags: after_config
+  when: ansible_distribution == 'Debian'
+
+- name: restart some openstack services
   service: name={{ item }} state=restarted
   with_items:
     - "{{ neutron_server }}"
@@ -338,5 +356,8 @@
     - "{{ neutron_metadata_agent }}"
     - "{{ neutron_metering_agent }}"
     - "{{ neutron_openvswitch_agent }}"
+    - "{{ ceilometer_collector }}"
+    - "{{ keystone }}"
+    - "{{ glance_registry }}"
   tags: after_config
   ignore_errors: yes

@@ -247,6 +247,24 @@
             option=compute
   tags: after_config
 
+- name: kill neutron-server process
+  command: pkill -9 neutron-server
+  ignore_errors: yes
+  tags: after_config
+  when: ansible_distribution == 'Debian'
+
+- name: kill keystone process
+  command: pkill -9 keystone
+  ignore_errors: yes
+  tags: after_config
+  when: ansible_distribution == 'Debian'
+
+- name: kill glance-registry process
+  command: pkill -9 glance-registry
+  ignore_errors: yes
+  tags: after_config
+  when: ansible_distribution == 'Debian'
+
 - name: restart nova services and neutron-server
   service: name={{ item }} state=restarted
   with_items:
@@ -256,9 +274,11 @@
     - "{{ nova_consoleauth }}"
     - "{{ nova_scheduler }}"
     - "{{ neutron_server }}"
+    - "{{ keystone }}"
+    - "{{ glance_registry }}"
   tags: after_config
 
-- name: restart openstack network services
+- name: restart openstack services
   service: name={{ item }} state=restarted
   with_items:
     - "{{ neutron_dhcp_agent }}"
@@ -267,5 +287,6 @@
     - "{{ neutron_metadata_agent }}"
     - "{{ neutron_metering_agent }}"
     - "{{ neutron_openvswitch_agent }}"
+    - "{{ ceilometer_collector }}"
   tags: after_config
   ignore_errors: yes
