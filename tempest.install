@@ -42,7 +42,6 @@ case "$(package_tool)" in
         install_packages $dir "$PACKAGES python-openssl libxml2-dev libxslt-dev libpq-dev python-dev python-virtualenv libffi-dev python-junitxml"
         mkdir -p ${dir}/usr/share/openstack-tempest-juno
         git clone 'https://github.com/openstack/tempest' ${dir}/usr/share/openstack-tempest-juno
-        do_chroot ${dir} bash -c 'cd /usr/share/openstack-tempest-juno; git checkout 424aa41cc433d01e10f90fdd8ae8d0f03f7d2051'
         # lib that are not packaged in Debian
         do_chroot ${dir} bash -c 'pip install --no-deps tempest-lib'
         do_chroot ${dir} bash -c "pip install --no-deps oslo.serialization oslo.utils --install-option='--prefix=/usr' --install-option='--install-lib=/usr/lib/python2.7/dist-packages/'"
