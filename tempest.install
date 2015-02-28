@@ -44,7 +44,7 @@ case "$(package_tool)" in
         git clone 'https://github.com/openstack/tempest' ${dir}/usr/share/openstack-tempest-juno
         # lib that are not packaged in Debian
         do_chroot ${dir} bash -c 'pip install --no-deps tempest-lib'
-        do_chroot ${dir} bash -c "pip install --no-deps oslo.serialization oslo.utils --install-option='--prefix=/usr' --install-option='--install-lib=/usr/lib/python2.7/dist-packages/'"
+        do_chroot ${dir} bash -c "pip install --no-deps oslo.log oslo.context oslo.i18n oslo.config oslo.serialization oslo.utils --install-option='--prefix=/usr' --install-option='--install-lib=/usr/lib/python2.7/dist-packages/'"
         do_chroot ${dir} bash -c 'cd /usr/share/openstack-tempest-juno; python ./setup.py install --single-version-externally-managed --root /'
 
         ;;
