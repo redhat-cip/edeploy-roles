@@ -129,28 +129,12 @@ install_logging() {
         rsyslog-relp
 "
         ["rpm"]="
+        td-agent \
         rsyslog-gnutls \
         rsyslog-relp
 ")
 
-    case "$OS" in
-        "Debian")
-            install_packages_disabled $dir ${logging_packages[$(package_type)]}
-        ;;
-        "RedHatEnterpriseServer")
-            install_packages_disabled $dir ${logging_packages[$(package_type)]}
-            case "$CODENAME_MAJOR" in
-                6)
-                    install_packages $dir td-agent libcurl-openssl-devel
-                ;;
-                7)
-                    cp $SRC/files/td-agent-2.0.3-0.el7.x86_64.rpm ${dir}/tmp/
-                    do_chroot ${dir} yum -y localinstall /tmp/td-agent-2.0.3-0.el7.x86_64.rpm
-                ;;
-            esac
-        ;;
-    esac
-
+    install_packages_disabled $dir ${logging_packages[$(package_type)]}
     remove_fluentd_repo
     remove_epel_repository $DIST
 }
