@@ -28,7 +28,7 @@ ORIG=$(cd $(dirname $0); pwd)
 declare -A packages
 packages=(
     ["deb"]="elasticsearch openjdk-7-jdk td-agent git puppet facter hiera ntp ruby-dev build-essential apache2 libcurl4-gnutls-dev rsyslog-relp rsyslog-gnutls"
-    ["rpm"]="elasticsearch java-1.7.0-openjdk git puppet facter hiera ntp ruby-devel httpd rsyslog-relp rsyslog-gnutls libcurl-devel gcc gcc-c++"
+    ["rpm"]="elasticsearch java-1.7.0-openjdk git puppet facter hiera ntp ruby-devel httpd rsyslog-relp rsyslog-gnutls libcurl-devel gcc gcc-c++ td-agent"
 )
 
 install_ib_if_needed $ORIG $dir
@@ -53,19 +53,6 @@ esac
 update_repositories $dir
 # Install packages
 install_packages $dir ${packages[$(package_type)]}
-case "$OS" in
-    "CentOS"|"RedHatEnterpriseServer")
-        case "$CODENAME_MAJOR" in
-            6)
-              install_packages $dir td-agent libcurl-openssl-devel
-            ;;
-            7)
-              cp $SRC/files/td-agent-2.0.3-0.el7.x86_64.rpm ${dir}/tmp/
-              do_chroot ${dir} yum -y localinstall /tmp/td-agent-2.0.3-0.el7.x86_64.rpm
-            ;;
-        esac
-    ;;
-esac
 
 # Install Kibana3
 do_chroot ${dir} git clone -b v3.1.2 https://github.com/elasticsearch/kibana.git /opt/kibana3
