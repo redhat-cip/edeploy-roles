@@ -47,12 +47,13 @@ case "$(package_tool)" in
         do_chroot ${dir} bash -c "pip install --upgrade --no-deps oslo.log oslo.context oslo.i18n oslo.config oslo.serialization oslo.utils --install-option='--prefix=/usr' --install-option='--install-lib=/usr/lib/python2.7/dist-packages/'"
         do_chroot ${dir} bash -c "pip install --upgrade python-glanceclient --install-option='--prefix=/usr' --install-option='--install-lib=/usr/lib/python2.7/dist-packages/'"
         do_chroot ${dir} bash -c 'cd /usr/share/openstack-tempest-juno; python ./setup.py install --single-version-externally-managed --root /'
-
+        do_chroot ${dir} bash -c 'pip install ospurge'
         ;;
     "yum")
         add_epel_repository $DIST
         update_repositories $dir
         install_packages $dir "$PACKAGES pyOpenSSL python-virtualenv libxml2-devel libxslt-devel python-junitxml subunit-filters"
+        do_chroot ${dir} bash -c 'pip install ospurge'
         install_packages $dir $(get_openstack_repository centos $dir $OS_VERS)
         install_packages $dir openstack-tempest-juno
         remove_epel_repository $DIST
