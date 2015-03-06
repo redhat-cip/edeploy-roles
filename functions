@@ -71,7 +71,7 @@ get_openstack_repository() {
   esac
 }
 
-PUPPET_RELEASE=$CODENAME_MAJOR-10
+PUPPET_RELEASE=$CODENAME_MAJOR-11
 add_puppet_repository() {
     local dist=$1
 
