@@ -440,6 +440,8 @@ case "$OS" in
             add_ceph_rpm_repo
             install_packages_disabled $dir ceph
         else
+            # drop librados2 and librbd1 that will be re-installed from ICE
+            remove_packages $dir librados2 librbd1
             ICE_URL=https://$CEPH_USERNAME:$CEPH_PASSWORD@download.inktank.com/enterprise
             KMOD_REL=3.10-0.1.20140702gitdc9ac62.el7.x86_64
             wget --no-verbose $ICE_URL/$ICE_RELEASE/ICE-$ICE_RELEASE-rhel7.tar.gz $ICE_URL/$ICE_RELEASE_KMOD/kmod-libceph-$KMOD_REL.rpm $ICE_URL/$ICE_RELEASE_KMOD/kmod-rbd-$KMOD_REL.rpm
