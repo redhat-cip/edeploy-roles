@@ -446,10 +446,6 @@ case "$OS" in
             tar xzvf ICE-$ICE_RELEASE-rhel7.tar.gz
             do_chroot $dir mkdir /tmp/ice_pkg
             mv kmod*.rpm ceph/*/* $dir/tmp/ice_pkg
-            # Set priority to one for RH repos
-            do_chroot $dir sed -i -e '/\[rhel-ha-for-rhel-7-server-rpms\]/a priority = 2' \
-                                  -e '/\[rhel-server-rhscl-7-rpms\]/a priority = 2' \
-                                  -e '/\[rhel-7-server-rpms = 2' /etc/yum.repos.d/redhat.repo
             cat > ${dir}/etc/yum.repos.d/ice.repo <<EOF
 [ice]
 name=Inktank Ceph Enterprise - local packages for Ceph
@@ -478,6 +474,13 @@ EOF
             EXTRA_RPMS="fence-agents cman MariaDB-Galera-server mongodb-org mongodb-org-server"
         else
             EXTRA_RPMS="fence-agents-all mariadb-galera-server mariadb mongodb mongodb-server"
+        fi
+
+        if [ "$OS" == "RedHatEnterpriseServer" ]; then
+            # Set priority to one for RH repos
+            do_chroot $dir sed -i -e '/\[rhel-ha-for-rhel-7-server-rpms\]/a priority = 2' \
+                                  -e '/\[rhel-server-rhscl-7-rpms\]/a priority = 2' \
+                                  -e '/\[rhel-7-server-rpms = 2' /etc/yum.repos.d/redhat.repo
         fi
 
         add_epel_repository $DIST
