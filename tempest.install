@@ -56,6 +56,7 @@ case "$(package_tool)" in
         do_chroot ${dir} bash -c 'pip install ospurge'
         install_packages $dir $(get_openstack_repository centos $dir $OS_VERS)
         install_packages $dir openstack-tempest-juno
+        do_chroot ${dir} bash -c 'cd /usr/share/openstack-tempest-juno; python ./setup.py install --single-version-externally-managed --root /'
         remove_epel_repository $DIST
         ;;
     *)
