@@ -456,7 +456,9 @@ protect=1
 priority=1
 EOF
             update_system $dir
-            do_chroot ${dir} yum -y --skip-broken /tmp/ice_pkg/kmod-rbd-$KMOD_REL.rpm /tmp/ice_pkg/kmod-libceph-$KMOD_REL.rpm ceph
+            install_packages $dir /tmp/ice_pkg/kmod-rbd-$KMOD_REL.rpm /tmp/ice_pkg/kmod-libceph-$KMOD_REL.rpm
+            # TODO: Fix dependencies errors
+            do_chroot ${dir} yum -y --skip-broken ceph
             rm $dir/etc/yum.repos.d/ice.repo
         fi
     ;;& # → means "continue"
