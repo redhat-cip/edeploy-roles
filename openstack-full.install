@@ -481,8 +481,7 @@ EOF
         if [ "$OS" == "RedHatEnterpriseServer" ]; then
             # Set priority to one for RH repos
             do_chroot $dir sed -i -e '/\[rhel-ha-for-rhel-7-server-rpms\]/a priority = 2' \
-                                  -e '/\[rhel-server-rhscl-7-rpms\]/a priority = 2' \
-                                  -e '/\[rhel-7-server-rpms = 2' /etc/yum.repos.d/redhat.repo
+                                  -e '/\[rhel-server-rhscl-7-rpms\]/a priority = 2' /etc/yum.repos.d/redhat.repo
         fi
 
         add_epel_repository $DIST
