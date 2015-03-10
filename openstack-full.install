@@ -41,11 +41,6 @@ case $version in
     ;;
 esac
 
-# Specify the ICE (Ceph for Enterprise) release
-# 1.2 = firefly
-ICE_RELEASE_KMOD=1.2
-ICE_RELEASE=1.2.2
-
 install_ib_if_needed $ORIG $dir
 
 function build_dkms() {
@@ -435,28 +430,21 @@ case "$OS" in
 
         # Install ICE (Ceph for Enterprise) if possible, otherwise fall back to ceph.com
         # packages (community edition)
-        if [ -z "$CEPH_USERNAME" ] || [ -z "$CEPH_PASSWORD" ]; then
-            echo "CEPH_USERNAME or CEPH_PASSWORD are not set, we fall back to Ceph Community Edition."
+        if [ -z "$CEPH_MIRROR" ]; then
             add_ceph_rpm_repo
             install_packages_disabled $dir ceph
         else
-            ICE_URL=https://$CEPH_USERNAME:$CEPH_PASSWORD@download.inktank.com/enterprise
-            KMOD_REL=3.10-0.1.20140702gitdc9ac62.el7.x86_64
-            wget --no-verbose $ICE_URL/$ICE_RELEASE/ICE-$ICE_RELEASE-rhel7.tar.gz $ICE_URL/$ICE_RELEASE_KMOD/kmod-libceph-$KMOD_REL.rpm $ICE_URL/$ICE_RELEASE_KMOD/kmod-rbd-$KMOD_REL.rpm
-            tar xzvf ICE-$ICE_RELEASE-rhel7.tar.gz
-            do_chroot $dir mkdir /tmp/ice_pkg
-            mv kmod*.rpm ceph/*/* $dir/tmp/ice_pkg
             cat > ${dir}/etc/yum.repos.d/ice.repo <<EOF
 [ice]
 name=Inktank Ceph Enterprise - local packages for Ceph
-baseurl=file:///tmp/ice_pkg
+baseurl=$CEPH_MIRROR
 enabled=1
 gpgcheck=0
 protect=1
 priority=1
 EOF
             update_system $dir
-            install_packages $dir /tmp/ice_pkg/kmod-rbd-$KMOD_REL.rpm /tmp/ice_pkg/kmod-libceph-$KMOD_REL.rpm ceph
+            install_packages $dir ceph
             rm $dir/etc/yum.repos.d/ice.repo
         fi
     ;;& # → means "continue"
