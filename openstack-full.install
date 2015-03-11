@@ -168,7 +168,7 @@ os_packages=(
         cinder-scheduler \
         cinder-volume \
         euca2ools \
-        galera \
+        galera-3 \
         git \
         glance \
         haproxy \
