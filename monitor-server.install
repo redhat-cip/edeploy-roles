@@ -28,7 +28,7 @@ ORIG=$(cd $(dirname $0); pwd)
 declare -A packages
 packages=(
     ["deb"]="rabbitmq-server"
-    ["rpm"]="redis rabbitmq-server"
+    ["rpm"]="rabbitmq-server"
 )
 
 install_ib_if_needed $ORIG $dir
@@ -62,6 +62,8 @@ case "$OS" in
               install_packages $dir sensu uchiwa
             ;;
             7)
+              # TODO (spredzy) : https://bugzilla.redhat.com/show_bug.cgi?id=1191528
+              do_chroot ${dir} yum -y install --enablerepo=epel-testing redis-2.8.19-1.el7
               cp $SRC/files/sensu-0.13.1-1.x86_64.rpm ${dir}/tmp/
               do_chroot ${dir} yum -y localinstall /tmp/sensu-0.13.1-1.x86_64.rpm
               cp $SRC/files/uchiwa-0.2.1-1.x86_64.rpm ${dir}/tmp/
