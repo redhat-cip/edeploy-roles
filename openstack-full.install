@@ -302,6 +302,7 @@ os_packages=(
         openvswitch \
         pacemaker \
         pcs \
+        pm-utils \
         python-cinderclient \
         python-devel \
         python-kombu \
@@ -443,7 +444,7 @@ protect=1
 priority=1
 EOF
             update_system $dir
-            install_packages $dir ceph
+            install_packages $dir ceph python-ceph
             rm $dir/etc/yum.repos.d/ice.repo
         fi
     ;;& # → means "continue"
