@@ -56,6 +56,9 @@ case "$(package_tool)" in
         do_chroot ${dir} bash -c 'pip install ospurge'
         install_packages $dir $(get_openstack_repository centos $dir $OS_VERS)
         install_packages $dir openstack-tempest-juno
+        # TODO(EmilienM) drop me in Kilo release
+        # Because Javelin2 supports multi-node environment thanks to https://review.openstack.org/163622
+        curl -k https://raw.githubusercontent.com/openstack/tempest/master/tempest/cmd/javelin.py -o $dir/usr/share/openstack-tempest-juno/tempest/cmd/javelin.py
         remove_epel_repository $DIST
         ;;
     *)
