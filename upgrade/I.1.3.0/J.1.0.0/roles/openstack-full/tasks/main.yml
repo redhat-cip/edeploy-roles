@@ -145,10 +145,9 @@
   tags: before_config
   when: inventory_hostname == groups['openstack-full'][-1]
 
-- name: bootstrap mysql cluster again
-  service: name=mysql-bootstrap state=restarted
+- name: restart mysql cluster again
+  service: name=mysqld state=restarted
   tags: before_config
-  when: inventory_hostname == groups['openstack-full'][-1]
 
 - name: restart HAproxy service
   service: name=haproxy state=restarted

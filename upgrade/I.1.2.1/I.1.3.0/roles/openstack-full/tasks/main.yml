@@ -1,6 +1,11 @@
 ---
 # file: roles/openstack-full/tasks/main.yml
 
+# NOTE(Gonéri): rabbitmq version has been changed on RedHat. It's not possible
+# to mix the old version and new version in the same cluster. To do so, we need
+# to upgrade all the nodes at the same time. That's why this roles have to be
+# run serial==0.
+
 # Debian has a kernel upgrade from 3.14 to 3.16
 # So we need to restart the compute nodes and migrate the instances before.
 - name: migrate instances
@@ -29,29 +34,50 @@
   edeploy: command=upgrade version={{ distro }}-{{ version }}
   tags: before_config
 
+- name: create systemd mysql-bootstrap script
+  copy: src=mysql-bootstrap.service dest=/etc/systemd/system/mysqld.service
+  tags: before_config
+  when: ansible_distribution == 'RedHat' and inventory_hostname == groups['openstack-full'][-1]
+
 - name: reload systemd scripts list
   command: systemctl daemon-reload
   tags: before_config
   when: ansible_distribution == 'RedHat'
 
-- name: start rabbitmq
+- name: bootstrap mysql cluster again
+  service: name=mysqld state=started
+  tags: before_config
+  when: ansible_distribution == 'RedHat' and inventory_hostname == groups['openstack-full'][-1]
+
+- name: restart the mysql nodes
+  service: name=mysqld state=started
+  tags: before_config
+  when: ansible_distribution == 'RedHat'
+
+- name: drop the mysql-bootstrap script
+  file: path=/etc/systemd/system/mysqld.service state=absent
+  tags: before_config
+  when: ansible_distribution == 'RedHat' and inventory_hostname == groups['openstack-full'][-1]
+
+# RabbitMQ
+- name: start RabbitMQ nodes
   service: name=rabbitmq-server state=started
   tags: before_config
-  when: ansible_distribution == 'RedHat' and inventory_hostname == groups['openstack-full'][-1]
+  when: ansible_distribution == 'RedHat'
+  register: rabbitmq_result
+  ignore_errors: yes
 
-# Red Hat upgrade Galera to 25.3.5-5.el7ost
-# since we start in serial mode one by one, we are sure here that the first node
-# in the list will be master.
-# For other nodes, they will be started by Puppet later.
-- name: create systemd mysql-bootstrap script
-  copy: src=mysql-bootstrap.service dest=/usr/lib/systemd/system/mysql-bootstrap.service
+- name: start RabbitMQ nodes
+  service: name=rabbitmq-server state=started
   tags: before_config
-  when: ansible_distribution == 'RedHat' and inventory_hostname == groups['openstack-full'][-1]
+  when: ansible_distribution == 'RedHat' and rabbitmq_result|failed
+  register: rabbitmq_result
+  ignore_errors: yes
 
-- name: bootstrap mysql cluster again
-  service: name=mysql-bootstrap state=restarted
+- name: start RabbitMQ nodes
+  service: name=rabbitmq-server state=started
   tags: before_config
-  when: ansible_distribution == 'RedHat' and inventory_hostname == groups['openstack-full'][-1]
+  when: ansible_distribution == 'RedHat' and rabbitmq_result|failed
 
 # libvirtd is updated on RHEL7
 - name: restart libvirtd after upgrade
