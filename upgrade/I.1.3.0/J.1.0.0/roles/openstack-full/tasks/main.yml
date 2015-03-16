@@ -91,6 +91,11 @@
   tags: before_config
   ignore_errors: yes
 
+- name: kill reamining mysqld daemon
+  command: pkill -9 mysqld
+  ignore_errors: yes
+  tags: before_config
+
 - name: stop Ceph services
   service: name=ceph state=stopped
   tags: before_config
