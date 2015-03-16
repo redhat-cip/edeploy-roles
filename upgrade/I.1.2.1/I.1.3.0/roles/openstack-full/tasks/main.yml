@@ -30,6 +30,13 @@
   ignore_errors: yes
   when: ansible_distribution == 'RedHat'
 
+# NOTE(Gonéri): to avoid split-brain we ensure there is no mysqld daemon running
+- name: kill reamining mysqld daemon
+  command: pkill -9 mysqld
+  ignore_errors: yes
+  tags: before_config
+  when: ansible_distribution == 'RedHat'
+
 - name: edeploy upgrade
   edeploy: command=upgrade version={{ distro }}-{{ version }}
   tags: before_config
