@@ -22,10 +22,6 @@
   service: name=keepalived state=stopped
   tags: before_config
 
-- name: stop HAproxy service
-  service: name=haproxy state=stopped
-  tags: before_config
-
 - name: stop openstack services
   service: name={{ item }} state=stopped
   with_items:
@@ -115,21 +111,6 @@
   tags: before_config
   when: ansible_distribution == 'Debian'
 
-- name: change mysqlchk port from 9200 to 8200
-  replace:
-    dest={{ item }}
-    regexp='9200'
-    replace='8200'
-  with_items:
-    - "/etc/services"
-    - "/etc/xinetd.d/mysqlchk"
-    - "/etc/haproxy/haproxy.cfg"
-  tags: before_config
-
-- name: restart xinetd
-  service: name=xinetd state=restarted
-  tags: before_config
-
 - name: start openvswitch service
   service: name=openvswitch-switch state=started
   tags: before_config
@@ -149,10 +130,6 @@
   service: name=mysql-bootstrap state=restarted
   tags: before_config
   when: inventory_hostname == groups['openstack-full'][-1]
-
-- name: restart HAproxy service
-  service: name=haproxy state=restarted
-  tags: before_config
 
 # we start keepalived on the last openstack-full node, to ensure all nodes
 # have xinetd updated, otherwise the VIP can come back on the first node
@@ -361,3 +338,22 @@
     - "{{ glance_registry }}"
   tags: after_config
   ignore_errors: yes
+
+- name: change mysqlchk port from 9200 to 8200
+  replace:
+    dest={{ item }}
+    regexp='9200'
+    replace='8200'
+  with_items:
+    - "/etc/services"
+    - "/etc/xinetd.d/mysqlchk"
+    - "/etc/haproxy/haproxy.cfg"
+  tags: before_config
+
+- name: restart xinetd
+  service: name=xinetd state=restarted
+  tags: before_config
+
+- name: restart HAproxy service
+  service: name=haproxy state=restarted
+  tags: before_config
