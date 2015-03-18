@@ -254,8 +254,7 @@ install_monitoring() {
                     install_packages_disabled $dir ${monitoring_packages[$(package_type)]}
                 ;;
                 7)
-                    cp $SRC/files/sensu-0.13.1-1.x86_64.rpm ${dir}/tmp/
-                    do_chroot ${dir} yum -y localinstall /tmp/sensu-0.13.1-1.x86_64.rpm
+                    install_packages $dir sensu
                     do_chroot ${dir} yum -y install ${monitoring_packages[$(package_type)]} $DISABLEREPO
                 ;;
             esac
