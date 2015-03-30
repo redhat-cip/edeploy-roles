@@ -310,7 +310,7 @@ def _tenants_from_users(users):
 def _assign_swift_role(user):
     admin = keystone_admin()
     roles = admin.identity.list_roles()
-    role = next(r for r in roles if r['name'] == 'Member')
+    role = next(r for r in roles if r['name'] == 'SwiftOperator')
     LOG.debug(USERS[user])
     try:
         admin.identity.assign_user_role(
