@@ -49,8 +49,8 @@ case "$(package_tool)" in
         do_chroot ${dir} bash -c 'cd /usr/share/openstack-tempest-juno; python ./setup.py install --single-version-externally-managed --root /'
         do_chroot ${dir} bash -c 'pip install ospurge'
         # TODO: drop me when https://review.openstack.org/#/c/168717/ is megred and packaged.
-        cp files/javelin.py $dir/usr/share/openstack-tempest-juno/tempest/cmd/javelin.py
-        cp files/javelin.py $dir/usr/local/lib/python2.7/dist-packages/tempest/cmd/javelin.py
+        cp $SRC/files/javelin.py $dir/usr/share/openstack-tempest-juno/tempest/cmd/javelin.py
+        cp $SRC/files/javelin.py $dir/usr/local/lib/python2.7/dist-packages/tempest/cmd/javelin.py
         ;;
     "yum")
         add_epel_repository $DIST
@@ -61,7 +61,7 @@ case "$(package_tool)" in
         install_packages $dir openstack-tempest-juno
         remove_epel_repository $DIST
         # TODO: drop me when https://review.openstack.org/#/c/168717/ is megred and packaged.
-        cp files/javelin.py $dir/usr/share/openstack-tempest-juno/tempest/cmd/javelin.py
+        cp $SRC/files/javelin.py $dir/usr/share/openstack-tempest-juno/tempest/cmd/javelin.py
         ;;
     *)
         fatal_error "$package_tool isn't supported for $ROLE role"
