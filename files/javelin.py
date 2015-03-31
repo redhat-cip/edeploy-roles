@@ -307,10 +307,11 @@ def _tenants_from_users(users):
     return tenants
 
 
-def _assign_swift_role(user):
+# NB: manually applied patch https://review.openstack.org/#/c/169108/
+def _assign_swift_role(user, swift_role):
     admin = keystone_admin()
     roles = admin.identity.list_roles()
-    role = next(r for r in roles if r['name'] == 'SwiftOperator')
+    role = next(r for r in roles if r['name'] == swift_role)
     LOG.debug(USERS[user])
     try:
         admin.identity.assign_user_role(
@@ -584,7 +585,9 @@ def create_objects(objects):
     LOG.info("Creating objects")
     for obj in objects:
         LOG.debug("Object %s" % obj)
-        _assign_swift_role(obj['owner'])
+        # NB: manually applied https://review.openstack.org/#/c/169108/
+        swift_role = obj.get('swift_role', 'Member')
+        _assign_swift_role(obj['owner'], swift_role)
         client = client_for_user(obj['owner'])
         client.containers.create_container(obj['container'])
         client.objects.create_object(
@@ -628,6 +631,16 @@ def create_images(images):
     for image in images:
         client = client_for_user(image['owner'])
 
+        # NB: manually applied https://review.openstack.org/#/c/162963/
+        # DEPRECATED: 'format' was used for ami images
+        # Use 'disk_format' and 'container_format' instead
+        if 'format' in image:
+            LOG.warning("Deprecated: 'format' is deprecated for images "
+                        "description. Please use 'disk_format' and 'container_"
+                        "format' instead.")
+            image['disk_format'] = image['format']
+            image['container_format'] = image['format']
+
         # only upload a new image if the name isn't there
         if _get_image_by_name(client, image['name']):
             LOG.info("Image '%s' already exists" % image['name'])
@@ -635,7 +648,7 @@ def create_images(images):
 
         # special handling for 3 part image
         extras = {}
-        if image['format'] == 'ami':
+        if image['disk_format'] == 'ami':
             name, fname = _resolve_image(image, 'aki')
             aki = client.images.create_image(
                 'javelin_' + name, 'aki', 'aki')
@@ -650,7 +663,8 @@ def create_images(images):
 
         _, fname = _resolve_image(image, 'file')
         body = client.images.create_image(
-            image['name'], image['format'], image['format'], **extras)
+            image['name'], image['container_format'],
+            image['disk_format'], **extras)
         image_id = body.get('id')
         client.images.store_image(image_id, open(fname, 'r'))
 
@@ -995,9 +1009,14 @@ def create_resources():
         add_router_interface(RES['routers'])
 
     create_secgroups(RES['secgroups'])
-    create_servers(RES['servers'])
     create_volumes(RES['volumes'])
-    attach_volumes(RES['volumes'])
+
+    # NB: manually applied https://review.openstack.org/#/c/168830/
+    # Only attempt attaching the volumes if servers are defined in the
+    # resourcefile
+    if 'servers' in RES:
+        create_servers(RES['servers'])
+        attach_volumes(RES['volumes'])
 
 
 def destroy_resources():
