@@ -155,11 +155,17 @@ remove_rabbitmq_repo() {
 
 function add_ceph_rpm_repo() {
   case "$OS" in
+    "CentOS")
+       local distro=el
+    ;;&
+    "RedHatEnterpriseServer")
+       local distro=rhel
+    ;;&
     "CentOS"|"RedHatEnterpriseServer")
        cat > ${dir}/etc/yum.repos.d/ceph.repo <<EOF
 [ceph-noarch]
 name=Ceph packages for $basearch
-baseurl=http://ceph.com/rpm/rhel$CODENAME_MAJOR/noarch/
+baseurl=http://ceph.com/rpm/$distro$CODENAME_MAJOR/noarch/
 priority=2
 enabled=1
 gpgcheck=1
@@ -168,7 +174,7 @@ gpgkey=https://ceph.com/git/?p=ceph.git;a=blob_plain;f=keys/release.asc
 
 [ceph]
 name=Ceph packages for $basearch
-baseurl=http://ceph.com/rpm/rhel$CODENAME_MAJOR/x86_64/
+baseurl=http://ceph.com/rpm/$distro$CODENAME_MAJOR/x86_64/
 priority=2
 enabled=1
 gpgcheck=1
