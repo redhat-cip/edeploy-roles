@@ -452,7 +452,6 @@ EOF
         install_packages $dir $(get_openstack_repository $DIST $dir $OS_VERS)
         install_packages $dir qemu-kvm
         add_epel_repository $DIST
-        add_ceph_rpm_repo
         install_packages_disabled $dir libunwind ceph
         remove_epel_repository $DIST
     ;;&
