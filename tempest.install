@@ -38,7 +38,7 @@ install_ib_if_needed $ORIG $dir
 
 install_tempest() {
     mkdir -p ${dir}/usr/share/openstack-tempest-juno
-    git clone -b $PVER-$REL 'https://github.com/enovance/tempest' ${dir}/usr/share/openstack-tempest-juno
+    git clone -b $PVER.$REL 'https://github.com/enovance/tempest' ${dir}/usr/share/openstack-tempest-juno
     do_chroot ${dir} bash -c 'pip install --no-deps tempest-lib'
     do_chroot ${dir} bash -c "pip install --upgrade --no-deps oslo.log oslo.context oslo.i18n oslo.config oslo.serialization oslo.utils --install-option='--prefix=/usr' --install-option='--install-lib=/usr/lib/python2.7/dist-packages/'"
     do_chroot ${dir} bash -c "pip install --upgrade python-glanceclient --install-option='--prefix=/usr' --install-option='--install-lib=/usr/lib/python2.7/dist-packages/'"
