@@ -38,14 +38,12 @@ install_ib_if_needed $ORIG $dir
 
 install_tempest() {
     mkdir -p ${dir}/usr/share/openstack-tempest-juno
-    git clone 'https://github.com/openstack/tempest' ${dir}/usr/share/openstack-tempest-juno
+    git clone -b $PVER-$REL 'https://github.com/enovance/tempest' ${dir}/usr/share/openstack-tempest-juno
     do_chroot ${dir} bash -c 'pip install --no-deps tempest-lib'
     do_chroot ${dir} bash -c "pip install --upgrade --no-deps oslo.log oslo.context oslo.i18n oslo.config oslo.serialization oslo.utils --install-option='--prefix=/usr' --install-option='--install-lib=/usr/lib/python2.7/dist-packages/'"
     do_chroot ${dir} bash -c "pip install --upgrade python-glanceclient --install-option='--prefix=/usr' --install-option='--install-lib=/usr/lib/python2.7/dist-packages/'"
     do_chroot ${dir} bash -c 'cd /usr/share/openstack-tempest-juno; python ./setup.py install --single-version-externally-managed --root /'
     do_chroot ${dir} bash -c 'pip install ospurge'
-    # TODO: drop me when https://review.openstack.org/#/c/168717/ is megred and packaged.
-    cp $SRC/files/javelin.py $dir/usr/share/openstack-tempest-juno/tempest/cmd/javelin.py
 }
 
 case "$(package_tool)" in
@@ -53,8 +51,6 @@ case "$(package_tool)" in
         update_repositories $dir
         install_packages $dir "$PACKAGES python-openssl libxml2-dev libxslt-dev libpq-dev python-dev python-virtualenv libffi-dev python-junitxml"
         install_tempest
-        # TODO: drop me when https://review.openstack.org/#/c/168717/ is megred and packaged.
-        cp $SRC/files/javelin.py $dir/usr/local/lib/python2.7/dist-packages/tempest/cmd/javelin.py
         ;;
     "yum")
         add_epel_repository $DIST
@@ -63,8 +59,6 @@ case "$(package_tool)" in
         install_tempest
         install_packages $dir $(get_openstack_repository centos $dir $OS_VERS)
         remove_epel_repository $DIST
-        # TODO: drop me when https://review.openstack.org/#/c/168717/ is megred and packaged.
-        cp $SRC/files/javelin.py $dir/usr/lib/python2.7/site-packages/tempest/cmd/javelin.py
         ;;
     *)
         fatal_error "$package_tool isn't supported for $ROLE role"
