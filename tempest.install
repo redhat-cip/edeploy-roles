@@ -63,6 +63,8 @@ case "$(package_tool)" in
         install_tempest
         install_packages $dir $(get_openstack_repository centos $dir $OS_VERS)
         remove_epel_repository $DIST
+        # TODO: drop me when https://review.openstack.org/#/c/168717/ is megred and packaged.
+        cp $SRC/files/javelin.py $dir/usr/lib/python2.7/site-packages/tempest/cmd/javelin.py
         ;;
     *)
         fatal_error "$package_tool isn't supported for $ROLE role"
