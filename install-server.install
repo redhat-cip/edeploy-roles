@@ -108,7 +108,6 @@ declare -A openstack_packages
 openstack_packages=(
     ["deb"]="
         python-cinderclient \
-        python-glanceclient \
         python-heatclient \
         python-ironicclient \
         python-keystoneclient \
@@ -125,7 +124,6 @@ openstack_packages=(
 
     ["rpm"]="
         python-cinderclient \
-        python-glanceclient \
         python-heatclient \
         python-keystoneclient \
         python-neutronclient \
