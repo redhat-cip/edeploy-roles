@@ -97,6 +97,9 @@ do_chroot $dir gem install --no-ri --no-rdoc bundler
 cp files/Gemfile-install-server $dir/tmp/Gemfile
 do_chroot $dir bundle install --gemfile=/tmp/Gemfile
 
+# allow to run bundle with sudo
+do_chroot $dir ln -sf /usr/local/bin/bundle /usr/sbin/
+
 
 #####################
 # OpenStack Clients #
