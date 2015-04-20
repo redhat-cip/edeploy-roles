@@ -213,4 +213,10 @@ $SRC/monitor-server.install $dir $dir $version
 
 $SRC/tempest.install $dir $dir $version
 
+###########
+# Cardiff #
+###########
+
+do_chroot $dir pip install pandas
+
 # install-server.install ends here
