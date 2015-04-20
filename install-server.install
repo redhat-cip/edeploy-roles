@@ -236,4 +236,10 @@ case "$OS" in
         ;;
 esac
 
+###########
+# Cardiff #
+###########
+
+do_chroot $dir pip install pandas
+
 # install-server.install ends here
