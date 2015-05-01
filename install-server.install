@@ -137,6 +137,7 @@ openstack_packages=(
         python-ceilometerclient \
         python-swiftclient \
         openstack-nova-common \
+        sos \
 ")
 
 case "$OS" in
