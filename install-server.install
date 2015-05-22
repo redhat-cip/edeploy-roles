@@ -138,6 +138,7 @@ openstack_packages=(
         python-swiftclient \
         openstack-nova-common \
         sos \
+        vim-enhanced \
 ")
 
 case "$OS" in
