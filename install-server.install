@@ -126,6 +126,7 @@ openstack_packages=(
 "
 
     ["rpm"]="
+        nfs-utils \
         python-cinderclient \
         python-heatclient \
         python-keystoneclient \
