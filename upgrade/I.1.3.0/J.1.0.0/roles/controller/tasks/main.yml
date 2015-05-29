@@ -68,7 +68,7 @@
   service: name={{ item }} state=stopped
   with_items:
     - mysqld
-    - mysql-boostrap
+    - mysql-bootstrap
   tags: before_config
   ignore_errors: yes
 
