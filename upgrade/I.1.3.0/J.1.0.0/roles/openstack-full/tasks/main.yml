@@ -15,7 +15,7 @@
 # Mark the nova-compute service as disabled to prevent Nova from scheduling
 # any new servers on this node
 - name: disable nova-compute to prevent instance scheduling
-  command: nova-manage service disable {{ ansible_fqdn }} nova-compute
+  command: nova-manage service disable {{ ansible_hostname }} nova-compute
   tags: before_config
 
 - name: stop keepalived
@@ -299,7 +299,7 @@
   tags: before_config
 
 - name: allow instance scheduling on the compute node
-  command: nova-manage service enable {{ ansible_fqdn }} nova-compute
+  command: nova-manage service enable --host {{ ansible_hostname }} --service nova-compute
   tags: before_config
 
 - name: Ensure old puppet ssl files are removed
