@@ -28,7 +28,7 @@ ORIG=$(cd $(dirname $0); pwd)
 declare -A packages
 packages=(
     ["deb"]="rabbitmq-server"
-    ["rpm"]="rabbitmq-server"
+    ["rpm"]="rabbitmq-server redis"
 )
 
 install_ib_if_needed $ORIG $dir
@@ -53,20 +53,8 @@ case "$OS" in
     "Debian")
       install_packages_disabled $dir -t wheezy-backports redis-server
     ;&
-    "Ubuntu")
+    "CentOS"|"RedHatEnterpriseServer"|"Ubuntu")
       install_packages $dir sensu uchiwa
-    ;;
-    "CentOS"|"RedHatEnterpriseServer")
-        case "$CODENAME_MAJOR" in
-            6)
-              install_packages $dir sensu uchiwa
-            ;;
-            7)
-              # TODO (spredzy) : https://bugzilla.redhat.com/show_bug.cgi?id=1191528
-              do_chroot ${dir} yum -y install --enablerepo=epel-testing redis-2.8.19-1.el7
-              install_packages $dir sensu uchiwa
-            ;;
-        esac
     ;;
 esac
 
