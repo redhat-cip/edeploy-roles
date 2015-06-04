@@ -1,0 +1,62 @@
+#!/bin/bash
+#
+# Copyright (C) 2015 eNovance SAS <licensing@enovance.com>
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+
+src="$1"
+dir="$2"
+version="$3"
+
+ROLE=contrail
+
+ORIG=$(cd $(dirname $0); pwd)
+
+. ${ORIG}/functions
+. ./repositories
+
+declare -A packages
+packages=(
+    ["rpm"]="contrail-vrouter-common contrail-openstack-vrouter contrail-openstack-config contrail-openstack-control contrail-interface-name contrail-setup contrail-openstack contrail-openstack-webui contrail-openstack-database"
+)
+
+install_ib_if_needed $ORIG $dir
+add_epel_repository $DIST
+attach_pool_rh_cdn $dir $RHN_CDN_POOL_ID
+add_rh_cdn_repo $dir rhel-7-server-openstack-6.0-rpms
+# For python-zope-interface
+add_rh_cdn_repo $dir rhel-7-server-optional-beta-rpms
+# For python-gevent
+add_rh_cdn_repo $dir rhel-7-server-extras-rpms
+update_repositories $dir
+
+# NOTE (spredzy): Using yum and not install_packages
+# because the name of the package we install
+# is different from the actual package installed
+# which leads to a package missing error during verification
+#
+# Package to install : contrail-install-packages-2.20-39-juno.el7.noarch
+# Package installed  : contrail-install-packages-2.20-39~juno.el7.noarch
+do_chroot ${dir} yum -y install  $CONTRAIL_URL
+
+# NOTE (spredzy): Removing this packages before installing contrail packages because of
+# contrail-openstack-config-2.20-39.el7.noarch conflicts with file from package python-kazoo-2.0-2.el7ost.noarch
+# contrail-openstack-config-2.20-39.el7.noarch conflicts with file from package python-ncclient-0.4.2-2.el7ost.noarch
+do_chroot ${dir} yum -y remove python-kazoo python-ncclient
+
+do_chroot ${dir} /opt/contrail/contrail_packages/setup.sh
+
+install_packages_disabled $dir ${packages[$(package_type)]}
+
+clear_packages_cache $dir
+remove_epel_repository $DIST
