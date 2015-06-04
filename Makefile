@@ -43,7 +43,7 @@ INST=$(TOP)/install/$(VERS)
 META=$(TOP)/metadata/$(VERS)
 
 ROLES = cloud devstack openstack-common openstack-full mysql puppet-master install-server logcollector monitor-server\
-        postgresql-server puppetdb-server
+        postgresql-server puppetdb-server openstack-full-contrail
 
 all: $(ROLES)
 
@@ -81,6 +81,11 @@ openstack-full: $(INST)/openstack-full.done
 $(INST)/openstack-full.done: openstack-full.install $(INST)/openstack-common.done
 	./openstack-full.install $(INST)/openstack-common $(INST)/openstack-full $(VERS)
 	touch $(INST)/openstack-full.done
+
+openstack-full-contrail: $(INST)/openstack-full-contrail.done
+$(INST)/openstack-full-contrail.done: contrail.install $(INST)/openstack-full.done
+	./contrail.install $(INST)/openstack-full $(INST)/openstack-full-contrail $(VERS)
+	touch $(INST)/openstack-full-contrail.done
 
 puppetdb-server: $(INST)/puppetdb-server.done
 $(INST)/puppetdb-server.done: puppetdb-server.install $(INST)/openstack-common.done
@@ -150,4 +155,4 @@ bversion:
 
 .PHONY: cloud devstack openstack-common openstack-full mysql docker puppet-master\
 	chef-server logcollector dist clean distclean version monitor-server postgresql-server\
-	puppetdb-server
+	puppetdb-server openstack-full-contrail
