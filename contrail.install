@@ -58,5 +58,13 @@ do_chroot ${dir} /opt/contrail/contrail_packages/setup.sh
 
 install_packages_disabled $dir ${packages[$(package_type)]}
 
+# NOTE (spredzy): Submit a patch upstream to templatize the cassandra-env.sh
+# file
+do_chroot ${dir} sed -i '168s/180k/256k/g' /etc/cassandra/conf/cassandra-env.sh
+do_chroot ${dir} sed -i '185,192s/#//g' /etc/cassandra/conf/cassandra-env.sh
+
+# NOTE (spredzy): Upstream package issue
+do_chroot ${dir} ln -s /usr/lib/python2.6/site-packages/cqlshlib /usr/lib/python2.7/site-packages/cqlshlib
+
 clear_packages_cache $dir
 remove_epel_repository $DIST
