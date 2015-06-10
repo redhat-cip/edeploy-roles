@@ -242,4 +242,11 @@ esac
 
 do_chroot $dir pip install pandas
 
+# PBR requirements are not consistent across python-jenkins, JJB and OpenStack
+# project. We need to pin pip to 0.11.0 to satisfy JJB.
+# This will be resolved when:
+# https://review.openstack.org/#/c/189942/ is merged and is part of a release
+# https://review.openstack.org/#/c/189940/ is merged
+do_chroot $dir pip install pbr==0.11.0
+
 # install-server.install ends here
