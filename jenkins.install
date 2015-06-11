@@ -68,16 +68,16 @@ install_ib_if_needed $ORIG $dir
 
 case "$(package_tool)" in
     "apt")
-        [ -f "jenkins-ci.org.key" ] || wget -q http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key -O jenkins-ci.org.key
+        [ -f "jenkins-ci.org.key" ] || wget -q http://pkg.jenkins-ci.org/debian-stable/jenkins-ci.org.key -O jenkins-ci.org.key
         do_chroot $dir apt-key add - < jenkins-ci.org.key
         cat > ${dir}/etc/apt/sources.list.d/jenkins.list <<EOF
-    deb http://pkg.jenkins-ci.org/debian binary/
+    deb http://pkg.jenkins-ci.org/debian-stable binary/
 EOF
         update_repositories $dir
         ;;
     "yum")
-        wget -O $dir/etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat/jenkins.repo
-        chroot $dir rpm --import http://pkg.jenkins-ci.org/redhat/jenkins-ci.org.key
+        wget -O $dir/etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat-stable/jenkins.repo
+        chroot $dir rpm --import http://pkg.jenkins-ci.org/redhat-stable/jenkins-ci.org.key
         ;;
     *)
         fatal_error "$package_tool isn't supported for $ROLE role"
