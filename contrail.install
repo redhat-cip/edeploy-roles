@@ -27,8 +27,16 @@ ORIG=$(cd $(dirname $0); pwd)
 
 declare -A packages
 packages=(
-    ["rpm"]="contrail-vrouter-common contrail-openstack-vrouter contrail-openstack-config contrail-openstack-control contrail-interface-name contrail-setup contrail-openstack contrail-openstack-webui contrail-openstack-database"
-)
+    ["rpm"]="
+    contrail-openstack-analytics \
+    contrail-openstack-config \
+    contrail-openstack-control \
+    contrail-openstack-database \
+    contrail-openstack-vrouter \
+    contrail-openstack-webui \
+    neutron-plugin-contrail \
+    python-contrail \
+")
 
 install_ib_if_needed $ORIG $dir
 add_epel_repository $DIST
@@ -53,6 +61,12 @@ do_chroot ${dir} yum -y install  $CONTRAIL_URL
 # contrail-openstack-config-2.20-39.el7.noarch conflicts with file from package python-kazoo-2.0-2.el7ost.noarch
 # contrail-openstack-config-2.20-39.el7.noarch conflicts with file from package python-ncclient-0.4.2-2.el7ost.noarch
 do_chroot ${dir} yum -y remove python-kazoo python-ncclient
+
+# NOTE (spredzy): Removing this package manually because of multi lib issue.
+# contrail-analytics installs net-snmp-python which installs net-snmp-libs.
+# With current version it fails with the following message
+# Protected multilib versions: 1:net-snmp-libs-5.7.2-18.el7.i686 != 1:net-snmp-libs-5.7.2-20.el7.x86_64
+do_chroot ${dir} rpm -e --nodeps net-snmp-libs-5.7.2-20.el7.x86_64
 
 do_chroot ${dir} /opt/contrail/contrail_packages/setup.sh
 
