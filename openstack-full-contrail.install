@@ -1,0 +1,94 @@
+#!/bin/bash
+#
+# Copyright (C) 2015 eNovance SAS <licensing@enovance.com>
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+
+src="$1"
+dir="$2"
+version="$3"
+
+ROLE=openstack-full-contrail
+
+ORIG=$(cd $(dirname $0); pwd)
+
+. ${ORIG}/functions
+. ./repositories
+
+declare -A packages
+packages=(
+    ["rpm"]="
+    contrail-openstack-analytics \
+    contrail-openstack-config \
+    contrail-openstack-control \
+    contrail-openstack-database \
+    contrail-openstack-vrouter \
+    contrail-openstack-webui \
+    neutron-plugin-contrail \
+    python-contrail \
+")
+
+install_ib_if_needed $ORIG $dir
+add_epel_repository $DIST
+attach_pool_rh_cdn $dir $RHN_CDN_POOL_ID
+add_rh_cdn_repo $dir rhel-7-server-openstack-6.0-rpms
+# For python-zope-interface
+add_rh_cdn_repo $dir rhel-7-server-optional-beta-rpms
+# For python-gevent
+add_rh_cdn_repo $dir rhel-7-server-extras-rpms
+update_repositories $dir
+
+# NOTE (spredzy): Using yum and not install_packages
+# because the name of the package we install
+# is different from the actual package installed
+# which leads to a package missing error during verification
+#
+# Package to install : contrail-install-packages-2.20-60-juno.el7.noarch
+# Package installed  : contrail-install-packages-2.20-60~juno.el7.noarch
+do_chroot ${dir} yum -y install  $CONTRAIL_URL
+
+# NOTE (spredzy): Removing this packages before installing contrail packages because of
+# contrail-openstack-config-2.20-39.el7.noarch conflicts with file from package python-kazoo-2.0-2.el7ost.noarch
+# contrail-openstack-config-2.20-39.el7.noarch conflicts with file from package python-ncclient-0.4.2-2.el7ost.noarch
+# redis-py-0.1-2contrail.el7.noarch conflicts with file from package python-redis-2.10.3-1.el7ost.noarch
+do_chroot ${dir} rpm -e --nodeps python-redis python-kazoo python-ncclient
+
+# NOTE (spredzy): Removing this package manually because of multi lib issue.
+# contrail-analytics installs net-snmp-python which installs net-snmp-libs.
+# With current version it fails with the following message
+# Protected multilib versions: 1:net-snmp-libs-5.7.2-18.el7.i686 != 1:net-snmp-libs-5.7.2-20.el7.x86_64
+do_chroot ${dir} rpm -e --nodeps net-snmp-libs-5.7.2-20.el7.x86_64
+
+do_chroot ${dir} /opt/contrail/contrail_packages/setup.sh
+
+install_packages_disabled $dir ${packages[$(package_type)]}
+
+# NOTE (spredzy): Installing contrail-config will overide native rabbitmq-server
+# files and configuration causing it to break. So we remove it and reinstall it,
+# to make sure we have the proper configuration files
+do_chroot ${dir} rpm -e --nodeps rabbitmq-server
+do_chroot ${dir} yum -y install rabbitmq-server
+
+# NOTE (spredzy): Kernel 3.10.0-229 is a minimum requirement
+do_chroot ${dir} yum -y update kernel
+
+# NOTE (spredzy): Submit a patch upstream to templatize the cassandra-env.sh
+# file
+do_chroot ${dir} sed -i '193s/180k/256k/g' /etc/cassandra/conf/cassandra-env.sh
+do_chroot ${dir} sed -i '212,219s/#//g' /etc/cassandra/conf/cassandra-env.sh
+
+# NOTE (spredzy): Upstream package issue
+do_chroot ${dir} ln -s /usr/lib/python2.6/site-packages/cqlshlib /usr/lib/python2.7/site-packages/cqlshlib
+
+clear_packages_cache $dir
+remove_epel_repository $DIST
