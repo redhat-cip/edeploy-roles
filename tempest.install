@@ -43,7 +43,7 @@ install_tempest() {
     do_chroot ${dir} bash -c "pip install --upgrade --no-deps oslo.concurrency oslo.log oslo.context oslo.i18n oslo.config oslo.serialization oslo.utils --install-option='--prefix=/usr' --install-option='--install-lib=/usr/lib/python2.7/dist-packages/'"
     do_chroot ${dir} bash -c "pip install --upgrade python-glanceclient --install-option='--prefix=/usr' --install-option='--install-lib=/usr/lib/python2.7/dist-packages/'"
     do_chroot ${dir} bash -c 'cd /usr/share/openstack-tempest-juno; python ./setup.py install --single-version-externally-managed --root /'
-    do_chroot ${dir} bash -c 'pip install ospurge netifaces retrying debtcollector functools32 monotonic'
+    do_chroot ${dir} bash -c 'pip install ospurge netifaces retrying debtcollector functools32 monotonic fasteners'
 }
 
 case "$(package_tool)" in
