@@ -311,6 +311,7 @@ prod_packages=(
         file \
         iotop \
         less \
+        linux-image-$(uname -r)-dbg \
         ltrace \
         manpages \
         manpages-dev \
@@ -329,6 +330,7 @@ prod_packages=(
         bash-completion \
         crash \
         iotop \
+        kernel-debuginfo \
         ltrace \
         ipa-client \
         mtr \
