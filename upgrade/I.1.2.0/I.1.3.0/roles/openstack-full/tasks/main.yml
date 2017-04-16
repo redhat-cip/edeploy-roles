@@ -29,6 +29,11 @@
   edeploy: command=upgrade version={{ distro }}-{{ version }}
   tags: before_config
 
+- name: reload systemd scripts list
+  command: systemctl daemon-reload
+  tags: before_config
+  when: ansible_distribution == 'RedHat'
+
 - name: start rabbitmq
   service: name=rabbitmq-server state=started
   tags: before_config
@@ -40,11 +45,6 @@
 # For other nodes, they will be started by Puppet later.
 - name: create systemd mysql-bootstrap script
   copy: src=mysql-bootstrap.service dest=/usr/lib/systemd/system/mysql-bootstrap.service
-  tags: before_config
-  when: ansible_distribution == 'RedHat' and inventory_hostname == groups['openstack-full'][-1]
-
-- name: reload systemd scripts list
-  command: systemctl daemon-reload
   tags: before_config
   when: ansible_distribution == 'RedHat' and inventory_hostname == groups['openstack-full'][-1]
 
