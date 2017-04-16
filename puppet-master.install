@@ -31,62 +31,12 @@ ORIG=$(cd $(dirname $0); pwd)
 rh_install_passenger () {
     # Install all dependencies to run Puppet in passenger mode
     install_packages_disabled $dir puppet-server git augeas ntp httpd puppetdb-terminus python-pip mod_wsgi apr-util-devel apr-devel httpd-devel zlib-devel openssl-devel libcurl-devel gcc-c++ gcc mod_ssl ruby-devel
-
-    # passenger is not packaged in el7, let's install & configure it
-    do_chroot ${dir} gem install rack passenger
-    do_chroot ${dir} passenger-install-apache2-module -a
-    mkdir -p ${dir}/usr/share/puppet/rack/puppetmasterd
-    mkdir -p ${dir}/usr/share/puppet/rack/puppetmasterd/public ${dir}/usr/share/puppet/rack/puppetmasterd/tmp
-    cp ${dir}/usr/share/puppet/ext/rack/config.ru ${dir}/usr/share/puppet/rack/puppetmasterd/
-    do_chroot ${dir} chown puppet:puppet /usr/share/puppet/rack/puppetmasterd/config.ru
-
-    # Bug https://tickets.puppetlabs.com/browse/PUP-1386
-    cat >> ${dir}/usr/share/puppet/rack/puppetmasterd/config.ru <<EOF
-Encoding.default_external = Encoding::UTF_8
-Encoding.default_internal = Encoding::UTF_8
-EOF
-
-    passenger_version=$(do_chroot ${dir} gem list | grep passenger | awk '{print $2}' |sed 's/[)(]//g')
-
-    # do not enable by default as without cert it'll fail
-    cat > ${dir}/etc/httpd/conf.d/puppetmaster.conf.disabled <<EOF
-LoadModule passenger_module /usr/local/share/gems/gems/passenger-${passenger_version}/buildout/apache2/mod_passenger.so
-PassengerRoot /usr/local/share/gems/gems/passenger-${passenger_version}
-PassengerRuby /usr/bin/ruby
-PassengerHighPerformance on
-PassengerMaxPoolSize 12
-PassengerPoolIdleTime 1500
-PassengerStatThrottleRate 120
-Listen 8140
-
-<VirtualHost *:8140>
-        SSLEngine on
-        SSLProtocol             ALL -SSLv2
-        SSLCipherSuite          ALL:!aNULL:!eNULL:!DES:!3DES:!IDEA:!SEED:!DSS:!PSK:!RC4:!MD5:+HIGH:+MEDIUM:!LOW:!SSLv2:!EXP
-        SSLHonorCipherOrder     on
-
-        SSLCertificateFile      /var/lib/puppet/ssl/certs/mycert.pem
-        SSLCertificateKeyFile   /var/lib/puppet/ssl/private_keys/mycert.pem
-        SSLCertificateChainFile /var/lib/puppet/ssl/certs/ca.pem
-        SSLCACertificateFile    /var/lib/puppet/ssl/certs/ca.pem
-        SSLVerifyClient optional
-        SSLVerifyDepth  1
-        SSLOptions +StdEnvVars +ExportCertData
-        RequestHeader unset X-Forwarded-For
-        RequestHeader set X-SSL-Subject %{SSL_CLIENT_S_DN}e
-        RequestHeader set X-Client-DN %{SSL_CLIENT_S_DN}e
-        RequestHeader set X-Client-Verify %{SSL_CLIENT_VERIFY}e
-        DocumentRoot /usr/share/puppet/rack/puppetmasterd/public/
-        RackBaseURI /
-        <Directory /usr/share/puppet/rack/puppetmasterd/>
-                Options None
-                AllowOverride None
-                Order allow,deny
-                allow from all
-        </Directory>
-</VirtualHost>
-EOF
-
+    do_chroot $dir subscription-manager register --force --username=$RHN_SAT_USERNAME --password=$RHN_SAT_PASSWORD
+    attach_pool_rh_cdn $dir $RHN_SAT_POOL_ID
+    do_chroot $dir subscription-manager repos --enable=rhel-7-server-satellite-6.0-rpms
+    install_packages $dir mod_passenger
+    do_chroot $dir subscription-manager register --force --username=$RHN_USERNAME --password=$RHN_PASSWORD
+    attach_pool_rh_cdn $dir $RHN_CDN_POOL_ID
 }
 
 install_puppet () {
