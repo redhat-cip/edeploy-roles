@@ -297,6 +297,7 @@ os_packages=(
         rubygem-json \
         rubygems \
         sysfsutils \
+        tuned \
         xfsprogs \
         xinetd"
 )
